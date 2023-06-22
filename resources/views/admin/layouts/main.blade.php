@@ -72,6 +72,15 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
         <!-- Main Footer -->
         @include('admin.layouts.footer')
+        <div class="modal fade" id="modal-overlay">
+            <div class="overlay modal_loading">
+                <button class="btn btn-primary" style="border:1px; color:#fff;" type="button" disabled>
+                    <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
+                    Loading...
+                </button>
+            </div>
+            <!-- /.modal-dialog -->
+        </div>
     </div>
     <!-- ./wrapper -->
 

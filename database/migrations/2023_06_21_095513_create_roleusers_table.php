@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('roleusers', function (Blueprint $table) {
             $table->id();
+            $table->string('nama');
+            $table->integer('status')->default(1);
+            $table->foreignId('created_id');
             $table->timestamps();
         });
     }

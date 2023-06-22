@@ -1,6 +1,7 @@
 @extends('admin.layouts.main')
 
 @section('container')
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
@@ -15,7 +16,7 @@
             <br>
             <br>
             <div class="col-12">
-                <form action="/user{{ $data != '' ? '/' . $data->username : '' }}" method="POST">
+                <form action="/user{{ $data != '' ? '/' . $data->username : '' }}" id="formUser" method="POST">
                     @if ($data != '')
                         @method('put')
                     @endif
@@ -73,6 +74,55 @@
                                     <span id="password" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+                            <div class="form-group">
+                                <label for="roleuser_id">Role User</label>
+                                <select name="roleuser_id"
+                                    class="form-control select2 @error('roleuser_id') is-invalid @enderror  "
+                                    id="roleuser_id" required {{ auth()->user()->roleuser_id == '2' ? 'disabled' : '' }}>
+                                    <option value="">-- Pilih --</option>
+
+                                    @foreach ($roleSelect as $item)
+                                        @if ($data != '')
+                                            @if (old('roleuser_id') == $item->id || $data->roleuser_id == $item->id)
+                                                <option value="{{ $item->id }}" selected>{{ $item->nama }}
+                                                </option>
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                            @endif
+                                        @else
+                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                @error('roleuser_id')
+                                    <span id="roleuser_id" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            @if (auth()->user()->roleuser_id == '1')
+                                <div class="form-group">
+                                    <label for="parentuser_id">Sales</label>
+                                    <select name="parentuser_id"
+                                        class="form-control select2 @error('parentuser_id') is-invalid @enderror  "
+                                        id="parentuser_id">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($userSelect as $item)
+                                            @if ($data != '')
+                                                @if (old('parentuser_id') == $item->id || $data->parentuser_id == $item->id)
+                                                    <option value="{{ $item->id }}" selected>{{ $item->name }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('parentuser_id')
+                                        <span id="parentuser_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endif
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer">
@@ -93,4 +143,29 @@
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->
+@endsection
+@section('addScript')
+    <script src="{{ asset('adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script>
+        $('.select2').select2()
+        $('#roleuser_id').on('select2:select', function(e) {
+            var data = e.params.data.id;
+            console.log(data);
+            if (data != '3') {
+                $('#parentuser_id').prop('disabled', true);
+            } else {
+                $('#parentuser_id').prop('disabled', false);
+            }
+        });
+        $('#formUser').submit(function() {
+            $('#roleuser_id').prop('disabled', false);
+            $('#modal-overlay').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
+            return true;
+        });
+    </script>
 @endsection

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Roleuser;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -32,7 +33,7 @@ class UserController extends Controller
                 break;
             default:
                 $data = $data->where('roleuser_id', '3')
-                    //->where('user_id', auth()->user()->id)
+                    ->where('parentuser_id', auth()->user()->id)
                     ->latest();
                 break;
         }
@@ -60,21 +61,35 @@ class UserController extends Controller
     }
     public function userFormadd()
     {
+        $userSelect = User::where('status', '1')
+            ->where('roleuser_id', '2')
+            ->get();
+        $roleSelect = Roleuser::where('status', '1')
+            ->get();
+        //dd($userSelect);
         return view('admin.pages.user.form', [
             'title' => 'User',
             'active' => 'user',
             'active_sub' => '',
             "data" => '',
-            //"category" => User::all(),
+            "userSelect" => $userSelect,
+            "roleSelect" => $roleSelect,
         ]);
     }
     public function userEdit(User $user)
     {
+        $userSelect = User::where('status', '1')
+            ->where('roleuser_id', '2')
+            ->get();
+        $roleSelect = Roleuser::where('status', '1')
+            ->get();
         return view('admin.pages.user.form', [
             'title' => 'User',
             'active' => 'user',
             'active_sub' => '',
-            "data" => $user
+            "data" => $user,
+            "userSelect" => $userSelect,
+            "roleSelect" => $roleSelect,
         ]);
     }
     public function userShow(User $user)
@@ -107,7 +122,12 @@ class UserController extends Controller
             'username'  => ['required'],
             'email'     => ['required'],
             'password'  => ['required'],
+            'roleuser_id'  => ['required'],
         ];
+
+        if (auth()->user()->roleuser_id == '1' && $request->roleuser_id == '3') {
+            $rules['parentuser_id'] = 'required';
+        }
 
         if ($request->email != $user->email) {
             $rules['email'] = 'required|unique:users';
@@ -117,12 +137,10 @@ class UserController extends Controller
         }
         $validateData = $request->validate($rules);
         $validateData['password'] = Hash::make($validateData['password']);
-        $validateData['user_id'] =  auth()->user()->id;
 
         if (auth()->user()->roleuser_id == '2') {
-            $validateData['roleuser_id'] = '3';
+            $validateData['parentuser_id'] =  auth()->user()->id;
         }
-
         if (!isset($user->id)) {
             $validateData['email_verified_at'] =  now();
             $validateData['created_at'] =  now();

@@ -74,7 +74,16 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item {{ $active === 'menu1' ? 'menu-open' : '' }}">
+                <li class="nav-item">
+                    <a href="/call" class="nav-link {{ $active === 'call' ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-headset"></i>
+                        <p>
+                            Call
+                            <!--span class="right badge badge-danger">New</span-->
+                        </p>
+                    </a>
+                </li>
+                {{-- <li class="nav-item {{ $active === 'menu1' ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ $active === 'menu1' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>
                         <p>
@@ -96,7 +105,7 @@
                             </a>
                         </li>
                     </ul>
-                </li>
+                </li> --}}
                 <li class="nav-item">
                     <form action="/logout" method="post">
                         @csrf

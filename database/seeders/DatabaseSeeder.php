@@ -6,6 +6,7 @@ namespace Database\Seeders;
 
 use App\Models\Customer;
 use App\Models\Fileexcel;
+use App\Models\Roleuser;
 use App\Models\Statuscall;
 use App\Models\User;
 use Illuminate\Database\Seeder;
@@ -18,17 +19,33 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         User::factory(30)->create();
+        Roleuser::create([
+            'nama'          => 'Superadmin',
+            'created_id'       => '1',
+        ]);
+        Roleuser::create([
+            'nama'          => 'Supervisor',
+            'created_id'       => '1',
+        ]);
+        Roleuser::create([
+            'nama'          => 'Telemarketing',
+            'created_id'       => '1',
+        ]);
+        Roleuser::create([
+            'nama'          => 'Admin',
+            'created_id'       => '1',
+        ]);
         Statuscall::create([
             'nama'          => 'Closing',
-            'user_id'       => '1',
+            'created_id'       => '1',
         ]);
         Statuscall::create([
             'nama'          => 'Interest',
-            'user_id'       => '2',
+            'created_id'       => '2',
         ]);
         Statuscall::create([
             'nama'          => 'Call Back',
-            'user_id'       => '3',
+            'created_id'       => '3',
         ]);
         Fileexcel::create([
             'kode'          => 'SIP-001',

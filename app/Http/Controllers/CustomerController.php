@@ -70,14 +70,17 @@ class CustomerController extends Controller
     }
     public function customerDistribusi()
     {
+        $userSelect = User::where('status', '1')
+            ->where('roleuser_id', '3')
+            ->get();
+        $fileExcel = Fileexcel::where('user_id', auth()->user()->id)
+            ->get();
         return view('admin.pages.customer.distribusi', [
             'title' => 'Distribusi',
             'active' => 'distribusi',
             'active_sub' => 'import',
-            "userData" => User::all(),
-            "fileExceldata" => Fileexcel::where('user_id', auth()->user()->id)
-                ->latest()
-                ->paginate(100),
+            "userData" => $userSelect,
+            "fileExceldata" => $fileExcel,
             "data" => '',
             //"category" => User::all(),
         ]);

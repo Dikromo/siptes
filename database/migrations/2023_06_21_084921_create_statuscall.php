@@ -14,7 +14,8 @@ return new class extends Migration
         Schema::create('statuscalls', function (Blueprint $table) {
             $table->id();
             $table->string('nama');
-            $table->foreignId('user_id');
+            $table->integer('status')->default(1);
+            $table->foreignId('created_id');
             $table->timestamps();
         });
     }

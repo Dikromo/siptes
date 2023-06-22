@@ -167,15 +167,6 @@
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->
-    <div class="modal fade" id="modal-overlay">
-        <div class="overlay modal_loading">
-            <button class="btn btn-primary" style="border:1px; color:#fff;" type="button" disabled>
-                <span class="spinner-grow spinner-grow-sm" role="status" aria-hidden="true"></span>
-                Loading...
-            </button>
-        </div>
-        <!-- /.modal-dialog -->
-    </div>
 @endsection
 @section('addScript')
     <script src="{{ asset('adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>

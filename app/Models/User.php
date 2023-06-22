@@ -44,7 +44,7 @@ class User extends Authenticatable
         'password' => 'hashed',
     ];
 
-    protected $with = ['Roleuser'];
+    //protected $with = ['Roleuser'];
 
     public function Roleuser()
     {

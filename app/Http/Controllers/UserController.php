@@ -25,7 +25,17 @@ class UserController extends Controller
     }
     public function dataTables()
     {
-        $data = User::latest();
+        $data = User::where('status', '1');
+        switch (auth()->user()->roleuser_id) {
+            case '1':
+                $data = $data->latest();
+                break;
+            default:
+                $data = $data->where('roleuser_id', '3')
+                    //->where('user_id', auth()->user()->id)
+                    ->latest();
+                break;
+        }
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('statusText', function ($data) {
@@ -76,6 +86,18 @@ class UserController extends Controller
             "data" => $user
         ]);
     }
+    public function userDestroy(Request $request)
+    {
+        $upData = ['status' => '2'];
+        $id = decrypt($request->id);
+
+        //dd($upData);
+        /** Update Call start time */
+        User::where('id', $id)
+            ->Update($upData);
+        Session::flash('success', 'Data Berhasil Dihapus!');
+        return redirect('/user');
+    }
     public function userStore(Request $request, User $user)
     {
         $checkdata = ['id' => $user->id];
@@ -95,7 +117,11 @@ class UserController extends Controller
         }
         $validateData = $request->validate($rules);
         $validateData['password'] = Hash::make($validateData['password']);
-        //$validateData['user_id'] =  auth()->user()->id;
+        $validateData['user_id'] =  auth()->user()->id;
+
+        if (auth()->user()->roleuser_id == '2') {
+            $validateData['roleuser_id'] = '3';
+        }
 
         if (!isset($user->id)) {
             $validateData['email_verified_at'] =  now();

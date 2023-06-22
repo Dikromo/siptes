@@ -33,6 +33,7 @@ Route::post('/user', [UserController::class, 'userStore'])->middleware('auth');
 Route::put('/user/{user:username}', [UserController::class, 'userStore'])->middleware('auth');
 Route::get('/user/{user:username}', [UserController::class, 'userShow'])->middleware('auth');
 Route::get('/user/{user:username}/edit', [UserController::class, 'userEdit'])->middleware('auth');
+Route::delete('/user', [UserController::class, 'userDestroy'])->middleware('auth');
 
 Route::get('/customer/import', [CustomerController::class, 'customerFormimport'])->middleware('auth');
 Route::post('/customer/import', [CustomerController::class, 'customerImport'])->middleware('auth');

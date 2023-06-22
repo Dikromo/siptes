@@ -22,6 +22,7 @@ return new class extends Migration
             $table->timestamps();
             $table->integer('status')->default(1);
             $table->foreignId('roleuser_id');
+            $table->foreignId('user_id');
         });
     }
 

@@ -10,11 +10,14 @@
             </i>
             Edit
         </a>
-        <a class="btn btn-danger btn-sm" href="#">
-            <i class="fas fa-trash">
-            </i>
-            Delete
-        </a>
+        <form action="/{{ $links }}" method="post" class="d-inline">
+            @method('delete')
+            @csrf
+            <input type="hidden" name="id" value="{{ encrypt($data->id) }}">
+            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah anda yakin?')">
+                <i class="fas fa-trash"></i> Delete
+            </button>
+        </form>
     @break
 
     @case('sales')

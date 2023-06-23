@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Distribusi;
+use App\Models\Statuscall;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
@@ -12,14 +13,19 @@ class CallpagesController extends Controller
     //
     public function salesCallpages()
     {
+        $data = Distribusi::where('user_id', auth()->user()->id)
+            ->where('status', 0)
+            ->limit(1)
+            ->get();
+        $dataall = Distribusi::where('user_id', auth()->user()->id)
+            ->where('status', 0)
+            ->get();
         return view('sales.pages.call.index', [
             'title' => 'Call Page',
             'active' => 'call',
             'active_sub' => 'call',
-            "data" => Distribusi::where('user_id', auth()->user()->id)
-                ->where('status', 0)
-                ->latest()
-                ->paginate(1),
+            "data" => $data,
+            "data_total" => $dataall,
             //"category" => User::all(),
         ]);
     }
@@ -32,21 +38,26 @@ class CallpagesController extends Controller
         /** Update Call start time */
         Distribusi::where('id', $id)
             ->Update($upData);
-
+        $statusSelect = Statuscall::where('status', '1')
+            ->get();
 
         $distribusi = Distribusi::firstWhere('id', $id);
         return view('sales.pages.call.detail', [
             'title' => 'Call Page',
             'active' => 'call',
             'active_sub' => 'call',
-            "data" => $distribusi
+            "data" => $distribusi,
+            "statusSelect" => $statusSelect
         ]);
     }
     public function salesCallback(Request $request)
     {
         $data = Distribusi::where('user_id', $request->user_id)
-            ->where('status', '2');
-        return DataTables::of($data)
+            ->where(function ($query) {
+                $query->where('status', '2')
+                    ->orWhere('status', '3');
+            });
+        return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('statusText', function ($data) {
                 switch ($data->status) {

@@ -70,16 +70,23 @@ class CustomerController extends Controller
     }
     public function customerDistribusi()
     {
-        $userSelect = User::where('status', '1')
-            ->where('roleuser_id', '3')
-            ->get();
+        $userSelect = User::where('status', '1');
+        if (auth()->user()->roleuser_id == '2') {
+            $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
+                ->where('roleuser_id', '3');
+        } else {
+            $userSelect = $userSelect->where(function ($query) {
+                $query->where('roleuser_id', '2')
+                    ->orWhere('roleuser_id', '3');
+            });
+        }
         $fileExcel = Fileexcel::where('user_id', auth()->user()->id)
             ->get();
         return view('admin.pages.customer.distribusi', [
             'title' => 'Distribusi',
             'active' => 'distribusi',
             'active_sub' => 'import',
-            "userData" => $userSelect,
+            "userData" => $userSelect->get(),
             "fileExceldata" => $fileExcel,
             "data" => '',
             //"category" => User::all(),
@@ -89,15 +96,30 @@ class CustomerController extends Controller
     //**Tabel From pada page distribusi */
     public function customerDistribusifrom(Request $request)
     {
-        $data = Customer::where('fileexcel_id', $request->fileexcel_id)
-            ->where(function ($query) {
-                $query->where('status', '0')
-                    ->orWhere('status', null);
-            });
-        return DataTables::of($data)
-            ->addIndexColumn()
-            ->editColumn('no_telp', '{{substr($no_telp, 0, 6)}}xxxx')
-            ->make(true);
+        if ($request->fileexcel_id != 'today') {
+            $data = Customer::where('fileexcel_id', $request->fileexcel_id)
+                ->where(function ($query) {
+                    $query->where('status', '0')
+                        ->orWhere('status', null);
+                });
+
+            return DataTables::of($data->get())
+                ->addIndexColumn()
+                ->editColumn('no_telp', '{{substr($no_telp, 0, 6)}}xxxx')
+                ->make(true);
+        } else {
+            $data = Distribusi::where('user_id', auth()->user()->id)
+                ->where(function ($query) {
+                    $query->where('status', '0')
+                        ->orWhere('status', null);
+                });
+            return DataTables::of($data->get())
+                ->addIndexColumn()
+                ->addColumn('nama', '{{$customer[\'nama\']}}')
+                ->addColumn('no_telp', '{{{substr($customer[\'no_telp\'], 0, 6)}}}xxxx')
+                ->addColumn('perusahaan', '{{$customer[\'perusahaan\']}}')
+                ->make(true);
+        }
     }
     //**Tabel To pada page distribusi */
     public function customerDistribusito(Request $request)
@@ -107,7 +129,7 @@ class CustomerController extends Controller
                 $query->where('status', '0')
                     ->orWhere('status', null);
             });
-        return DataTables::of($data)
+        return DataTables::of($data->get())
             ->addIndexColumn()
             ->editColumn('customer.no_telp', '{{{substr($customer[\'no_telp\'], 0, 6)}}}xxxx')
             ->make(true);
@@ -115,32 +137,58 @@ class CustomerController extends Controller
     //** Proses distribusi */
     public function customerDistribusiproses(Request $request)
     {
-        $data = Customer::inRandomOrder()
-            ->select(
-                'id as customer_id',
-                DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
-                DB::raw('CONCAT("1") as product_id'),
-                DB::raw('CONCAT("1") as bank_id'),
-                DB::raw('CONCAT("0") as status'),
-                DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
-            )
-            ->where('fileexcel_id', $request->fileexcel_id)
-            ->where(function ($query) {
-                $query->where('status', '0')
-                    ->orWhere('status', null);
-            })
-            ->limit($request->total)
-            ->get();
+        if ($request->fileexcel_id == 'today') {
+            $data = Distribusi::inRandomOrder()
+                ->select(
+                    'id as distribusi_id',
+                    DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
+                    DB::raw('CONCAT("1") as product_id'),
+                    DB::raw('CONCAT("1") as bank_id'),
+                    DB::raw('CONCAT("0") as status'),
+                    DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
+                )
+                ->where('user_id', auth()->user()->id)
+                ->where(function ($query) {
+                    $query->where('status', '0')
+                        ->orWhere('status', null);
+                })
+                ->limit($request->total)
+                ->get();
+            foreach ($data as $item) {
+                # code...
+                DB::table('distribusis')
+                    ->where('id', $item->distribusi_id)
+                    ->update(['user_id' => $request->user_id, 'updated_at' => now()]);
+            }
+        } else {
+            $data = Customer::inRandomOrder()
+                ->select(
+                    'id as customer_id',
+                    DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
+                    DB::raw('CONCAT("1") as product_id'),
+                    DB::raw('CONCAT("1") as bank_id'),
+                    DB::raw('CONCAT("0") as status'),
+                    DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
+                )
+                ->where('fileexcel_id', $request->fileexcel_id)
+                ->where(function ($query) {
+                    $query->where('status', '0')
+                        ->orWhere('status', null);
+                })
+                ->limit($request->total)
+                ->get();
 
-        foreach ($data as $item) {
-            # code...
-            DB::table('customers')
-                ->where('id', $item->customer_id)
-                ->update(['status' => 1, 'updated_at' => now()]);
+            foreach ($data as $item) {
+                # code...
+                DB::table('customers')
+                    ->where('id', $item->customer_id)
+                    ->update(['status' => 1, 'updated_at' => now()]);
+            }
+
+            $distribusiInsert = $data->toArray();
+            Distribusi::insert($distribusiInsert);
         }
         // $data->update(['status' => 1]);
-        $distribusiInsert = $data->toArray();
-        Distribusi::insert($distribusiInsert);
         $getUser = User::firstWhere('id', $request->user_id);
         $msg = '
         Sukses mendistribusi data kepada <span style="color:#00ff00;font-weight:600;">' . $getUser->name . '</span>

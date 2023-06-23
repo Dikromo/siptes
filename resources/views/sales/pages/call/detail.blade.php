@@ -14,7 +14,7 @@
                             <a href="tel:{{ $data->customer->no_telp }}" class="btn btn-info btn-lg mx-2"> <i
                                     class="fa fa-mobile-alt"></i>
                                 Call</a>
-                            <a href="https://wa.me/+62{!! substr(strip_tags($data->customer->no_telp), 2, 20) !!}" class="btn btn-success btn-lg mx-2"> <i
+                            <a href="https://wa.me/+62{!! substr(strip_tags($data->customer->no_telp), 1, 20) !!}" class="btn btn-success btn-lg mx-2"> <i
                                     class="fab fa-whatsapp" aria-hidden="true"></i>
                                 Whatsapp</a>
                             {{-- <button type="button" class="btn btn-primary btn-lg mx-2"> <i
@@ -83,9 +83,19 @@
                                                 class="form-control select2 @error('status') is-invalid @enderror  "
                                                 id="status" required>
                                                 <option value="">-- Pilih --</option>
-                                                <option value="1">Closing</option>
-                                                <option value="2">Interest</option>
-                                                <option value="3">Call Back</option>
+                                                @foreach ($statusSelect as $item)
+                                                    @if ($data != '')
+                                                        @if (old('roleuser_id') == $item->id || $data->status == $item->id)
+                                                            <option value="{{ $item->id }}" selected>{{ $item->nama }}
+                                                            </option>
+                                                        @else
+                                                            <option value="{{ $item->id }}">{{ $item->nama }}
+                                                            </option>
+                                                        @endif
+                                                    @else
+                                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                                    @endif
+                                                @endforeach
                                             </select>
                                             @error('status')
                                                 <span id="status" class="error invalid-feedback">{{ $message }}</span>

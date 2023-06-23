@@ -78,6 +78,7 @@
                                     class="form-control select2 @error('fileexcel_id') is-invalid @enderror  "
                                     id="fileexcel_id">
                                     <option value="">-- Pilih --</option>
+                                    <option value="today">Hari Ini</option>
                                     @foreach ($fileExceldata as $item)
                                         @if ($data != '')
                                             @if ($data->fileexcel_id == $item->id)

@@ -30,6 +30,8 @@
                             <h3 class="profile-username text-center">{{ auth()->user()->name }}</h3>
 
                             <p class="text-muted text-center">Software Engineer</p>
+                            <a class="btn"><i class="nav-icon fas fa-database"></i>
+                                Total Data : {{ count($data_total) }}</a>
                             @foreach ($data as $item)
                                 <a href="/call/detail/{{ encrypt($item->id) }}"
                                     class="btn btn-primary btn-lg border_white"><i class="nav-icon fas fa-headset"></i>
@@ -40,7 +42,7 @@
 
                         <h3 class="profile-username text-left pl-2"><i class="nav-icon fas fa-headset"></i> List Call Back
                         </h3>
-                        <div class="col-12">
+                        <div class="col-12 table-responsive">
                             <table class="table table-head-fixed text-nowrap" id="dataTables1">
                                 <thead>
                                     <tr>

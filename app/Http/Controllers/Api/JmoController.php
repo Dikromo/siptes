@@ -28,6 +28,8 @@ class JmoController extends Controller
                 } else {
                     $statusData = true;
 
+                    $cardpath = $item->cardpath == '' || $item->cardpath == null ? 'card.png' : $item->cardpath;
+
                     $jmoData = [
                         'noKartu' => $item->nokartu,
                         'statusPeserta' => $item->statusPeserta,
@@ -44,7 +46,7 @@ class JmoController extends Controller
                         'jht' => $item->jht,
                         'jp' => $item->jp,
                         'jkp' => $item->jkp,
-                        'cardpath' => $item->cardpath,
+                        'cardpath' => $cardpath,
                     ];
                 }
             }

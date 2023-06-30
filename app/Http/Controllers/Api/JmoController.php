@@ -32,7 +32,7 @@ class JmoController extends Controller
                         'statusPeserta' => $item->statusPeserta,
                         'segmenPeserta' => ucwords(strtolower($item->segmenPeserta)),
                         'perusahaan' => strtoupper($item->perusahaan),
-                        'lastUpah' => number_format($item->lastUpah),
+                        'lastUpah' => number_format($item->lastUpah, 2, ",", "."),
                         'lastIuranDate' => ucwords(strtolower($item->lastIuranDate)),
                         'pensiunanDate' => ucwords(strtolower($item->pensiunanDate)),
                         'masaIuranjp' => $item->masaIuranjp,

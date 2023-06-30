@@ -29,6 +29,7 @@ class JmoController extends Controller
                     $statusData = true;
 
                     $jmoData = [
+                        'noKartu' => $item->nokartu,
                         'statusPeserta' => $item->statusPeserta,
                         'segmenPeserta' => ucwords(strtolower($item->segmenPeserta)),
                         'perusahaan' => strtoupper($item->perusahaan),
@@ -43,7 +44,7 @@ class JmoController extends Controller
                         'jht' => $item->jht,
                         'jp' => $item->jp,
                         'jkp' => $item->jkp,
-                        'cardpath' => '',
+                        'cardpath' => $item->cardpath,
                     ];
                 }
             }

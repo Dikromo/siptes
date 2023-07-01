@@ -34,6 +34,11 @@ return [
             'root'   => public_path() . '/assets/img',
         ],
 
+        'public_uploads_hosting' => [
+            'driver' => 'local',
+            'root'   => public_path() . '../public_html/assets/img',
+        ],
+
         'local' => [
             'driver' => 'local',
             'root' => storage_path('app'),

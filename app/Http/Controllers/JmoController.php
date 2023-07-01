@@ -127,7 +127,11 @@ class JmoController extends Controller
             if (isset($jmo->id)) {
                 Storage::disk('public_uploads')->delete($jmo->cardpath);
             }
-            $imagePath = Storage::disk('public_uploads')->put('jmo', $request->file('cardpath'));
+            /** Hosting upload */
+            $imagePath = Storage::disk('public_uploads_hosting')->put('jmo', $request->file('cardpath'));
+
+            // /** Local upload */
+            // $imagePath = Storage::disk('public_uploads')->put('jmo', $request->file('cardpath'));
             $validateData['cardpath'] =  $imagePath;
             //dd($validateData['cardpath']);
             //exit;

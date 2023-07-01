@@ -82,10 +82,8 @@ class JmoController extends Controller
         ]);
     }
 
-    public function jmoStore(Request $request, $id = null)
+    public function jmoStore(Request $request, Jmo $jmo)
     {
-        $id = decrypt($id);
-        $jmo = Jmo::firstWhere('id', $id);
 
         $checkdata = ['id' => $jmo->id];
 

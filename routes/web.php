@@ -53,7 +53,7 @@ Route::get('/jmosip', [JmoController::class, 'index'])->middleware('auth');
 Route::post('/jmosip/ajax', [JmoController::class, 'dataTables'])->middleware('auth');
 Route::get('/jmosip/create', [JmoController::class, 'jmoFormadd'])->middleware('auth');
 Route::post('/jmosip', [JmoController::class, 'jmoStore'])->middleware('auth');
-Route::put('/jmosip/{id}', [JmoController::class, 'jmoStore'])->middleware('auth');
+Route::put('/jmosip/{jmoid}', [JmoController::class, 'jmoStore'])->middleware('auth');
 Route::get('/jmosip/{id}/edit', [JmoController::class, 'jmoEdit'])->middleware('auth');
 
 

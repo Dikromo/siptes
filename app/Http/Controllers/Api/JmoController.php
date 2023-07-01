@@ -46,7 +46,7 @@ class JmoController extends Controller
                         'jht' => $item->jht,
                         'jp' => $item->jp,
                         'jkp' => $item->jkp,
-                        'cardpath' => $cardpath,
+                        'cardpath' => substr(strrchr(rtrim($cardpath, '/'), '/'), 1),
                     ];
                 }
             }

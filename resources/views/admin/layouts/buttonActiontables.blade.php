@@ -1,23 +1,51 @@
 @switch($type)
     @case('all')
-        <a class="btn btn-success btn-sm" href="/{{ $links }}/{{ $data->username }}">
-            <i class="fas fa-eye">
-            </i>
-            View
-        </a>
-        <a class="btn btn-info btn-sm" href="/{{ $links }}/{{ $data->username }}/edit">
-            <i class="fas fa-pencil-alt">
-            </i>
-            Edit
-        </a>
-        <form action="/{{ $links }}" method="post" class="d-inline">
-            @method('delete')
-            @csrf
-            <input type="hidden" name="id" value="{{ encrypt($data->id) }}">
-            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah anda yakin?')">
-                <i class="fas fa-trash"></i> Delete
-            </button>
-        </form>
+        <?php
+        switch ($links) {
+            case 'user':
+                $view = true;
+                $edit = true;
+                $delete = true;
+        
+                $slug = $data->username;
+                break;
+        
+            case 'jmosip':
+                $view = false;
+                $edit = true;
+                $delete = false;
+                $slug = encrypt($data->id);
+                break;
+        
+            default:
+                $slug = '';
+                break;
+        }
+        ?>
+        @if ($view)
+            <a class="btn btn-success btn-sm" href="/{{ $links }}/{{ $slug }}">
+                <i class="fas fa-eye">
+                </i>
+                View
+            </a>
+        @endif
+        @if ($edit)
+            <a class="btn btn-info btn-sm" href="/{{ $links }}/{{ $slug }}/edit">
+                <i class="fas fa-pencil-alt">
+                </i>
+                Edit
+            </a>
+        @endif
+        @if ($delete)
+            <form action="/{{ $links }}" method="post" class="d-inline">
+                @method('delete')
+                @csrf
+                <input type="hidden" name="id" value="{{ encrypt($data->id) }}">
+                <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah anda yakin?')">
+                    <i class="fas fa-trash"></i> Delete
+                </button>
+            </form>
+        @endif
     @break
 
     @case('sales')

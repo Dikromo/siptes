@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CallpagesController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\JmoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
@@ -47,6 +48,13 @@ Route::get('/call/detail/{id}', [CallpagesController::class, 'salesCallshow'])->
 Route::put('/call/detail/{id}', [CallpagesController::class, 'salescallStore'])->middleware('auth');
 Route::post('/call/ajax', [CallpagesController::class, 'salesCallback'])->middleware('auth');
 
+
+Route::get('/jmosip', [JmoController::class, 'index'])->middleware('auth');
+Route::post('/jmosip/ajax', [JmoController::class, 'dataTables'])->middleware('auth');
+Route::get('/jmosip/create', [JmoController::class, 'jmoFormadd'])->middleware('auth');
+Route::post('/jmosip', [JmoController::class, 'jmoStore'])->middleware('auth');
+Route::put('/jmosip/{id}', [JmoController::class, 'jmoStore'])->middleware('auth');
+Route::get('/jmosip/{id}/edit', [JmoController::class, 'jmoEdit'])->middleware('auth');
 
 
 Route::get('/admin', function () {

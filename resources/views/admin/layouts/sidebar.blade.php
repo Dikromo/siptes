@@ -83,6 +83,15 @@
                         </p>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a href="/jmosip" class="nav-link {{ $active === 'jmo' ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-address-card"></i>
+                        <p>
+                            JMO
+                            <!--span class="right badge badge-danger">New</span-->
+                        </p>
+                    </a>
+                </li>
                 {{-- <li class="nav-item {{ $active === 'menu1' ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ $active === 'menu1' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>

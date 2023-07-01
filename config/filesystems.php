@@ -36,7 +36,7 @@ return [
 
         'public_uploads_hosting' => [
             'driver' => 'local',
-            'root'   => public_path() . '/../public_html/assets/img',
+            'root'   => public_path() . '/../../public_html/assets/img',
         ],
 
         'local' => [

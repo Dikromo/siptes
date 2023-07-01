@@ -46,7 +46,7 @@
                                         <label for="nama">Nama</label>
                                         <input type="text" id="nama" name="nama"
                                             class="form-control @error('nama') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('nama') : old('nama', $data->nama) }}">
+                                            value="{{ $data == '' ? old('nama') : old('nama', $data->nama) }}" required>
                                         @error('nama')
                                             <span id="nama" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -55,7 +55,7 @@
                                         <label for="email">Email</label>
                                         <input type="email" id="email" name="email"
                                             class="form-control @error('email') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('email') : old('email', $data->email) }}">
+                                            value="{{ $data == '' ? old('email') : old('email', $data->email) }}" required>
                                         @error('email')
                                             <span id="email" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -64,7 +64,8 @@
                                         <label for="nokartu">No Kartu</label>
                                         <input type="text" id="nokartu" name="nokartu"
                                             class="form-control @error('nokartu') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('nokartu') : old('nokartu', $data->nokartu) }}">
+                                            value="{{ $data == '' ? old('nokartu') : old('nokartu', $data->nokartu) }}"
+                                            required>
                                         @error('nokartu')
                                             <span id="nokartu" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -73,7 +74,8 @@
                                         <label for="perusahaan">Perusahaan</label>
                                         <input type="text" id="perusahaan" name="perusahaan"
                                             class="form-control @error('perusahaan') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('perusahaan') : old('perusahaan', $data->perusahaan) }}">
+                                            value="{{ $data == '' ? old('perusahaan') : old('perusahaan', $data->perusahaan) }}"
+                                            required>
                                         @error('perusahaan')
                                             <span id="perusahaan" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -82,7 +84,8 @@
                                         <label for="lastUpah">Upah Terakhir</label>
                                         <input type="number" id="lastUpah" name="lastUpah"
                                             class="form-control @error('lastUpah') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('lastUpah') : old('lastUpah', $data->lastUpah) }}">
+                                            value="{{ $data == '' ? old('lastUpah') : old('lastUpah', $data->lastUpah) }}"
+                                            required>
                                         @error('lastUpah')
                                             <span id="lastUpah" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -90,7 +93,7 @@
                                     <div class="form-group">
                                         <label for="password">Password</label>
                                         <input type="password" id="password" name="password"
-                                            class="form-control @error('password') is-invalid @enderror">
+                                            class="form-control @error('password') is-invalid @enderror" required>
                                         @error('password')
                                             <span id="password" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -101,7 +104,8 @@
                                         <label for="segmenPeserta">Segmen Peserta</label>
                                         <input type="text" id="segmenPeserta" name="segmenPeserta"
                                             class="form-control @error('segmenPeserta') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('segmenPeserta') : old('segmenPeserta', $data->segmenPeserta) }}">
+                                            value="{{ $data == '' ? old('segmenPeserta') : old('segmenPeserta', $data->segmenPeserta) }}"
+                                            required>
                                         @error('segmenPeserta')
                                             <span id="segmenPeserta" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -112,7 +116,8 @@
                                                 <label for="lastIuranDate">Pembayaran Iuran Terakhir</label>
                                                 <input type="text" id="lastIuranDate" name="lastIuranDate"
                                                     class="form-control @error('lastIuranDate') is-invalid @enderror"
-                                                    value="{{ $data == '' ? old('lastIuranDate') : old('lastIuranDate', $data->lastIuranDate) }}">
+                                                    value="{{ $data == '' ? old('lastIuranDate') : old('lastIuranDate', $data->lastIuranDate) }}"
+                                                    required>
                                                 @error('lastIuranDate')
                                                     <span id="lastIuranDate"
                                                         class="error invalid-feedback">{{ $message }}</span>
@@ -124,7 +129,8 @@
                                                 <label for="pensiunanDate">Tanggal Usia Pensiun</label>
                                                 <input type="text" id="pensiunanDate" name="pensiunanDate"
                                                     class="form-control @error('pensiunanDate') is-invalid @enderror"
-                                                    value="{{ $data == '' ? old('pensiunanDate') : old('pensiunanDate', $data->pensiunanDate) }}">
+                                                    value="{{ $data == '' ? old('pensiunanDate') : old('pensiunanDate', $data->pensiunanDate) }}"
+                                                    required>
                                                 @error('pensiunanDate')
                                                     <span id="pensiunanDate"
                                                         class="error invalid-feedback">{{ $message }}</span>
@@ -136,7 +142,8 @@
                                         <label for="masaIuranjp">Masa Iuran Jaminan Pensiun</label>
                                         <input type="text" id="masaIuranjp" name="masaIuranjp"
                                             class="form-control @error('masaIuranjp') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('masaIuranjp') : old('masaIuranjp', $data->masaIuranjp) }}">
+                                            value="{{ $data == '' ? old('masaIuranjp') : old('masaIuranjp', $data->masaIuranjp) }}"
+                                            required>
                                         @error('masaIuranjp')
                                             <span id="masaIuranjp" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -147,7 +154,8 @@
                                                 <label for="kepesertaanDate">Tanggal Kepesertaan Awal JKP</label>
                                                 <input type="text" id="kepesertaanDate" name="kepesertaanDate"
                                                     class="form-control @error('kepesertaanDate') is-invalid @enderror"
-                                                    value="{{ $data == '' ? old('kepesertaanDate') : old('kepesertaanDate', $data->kepesertaanDate) }}">
+                                                    value="{{ $data == '' ? old('kepesertaanDate') : old('kepesertaanDate', $data->kepesertaanDate) }}"
+                                                    required>
                                                 @error('kepesertaanDate')
                                                     <span id="kepesertaanDate"
                                                         class="error invalid-feedback">{{ $message }}</span>
@@ -159,7 +167,8 @@
                                                 <label for="masaIuranjkp">Masa Iuran JKP</label>
                                                 <input type="text" id="masaIuranjkp" name="masaIuranjkp"
                                                     class="form-control @error('masaIuranjkp') is-invalid @enderror"
-                                                    value="{{ $data == '' ? old('masaIuranjkp') : old('masaIuranjkp', $data->masaIuranjkp) }}">
+                                                    value="{{ $data == '' ? old('masaIuranjkp') : old('masaIuranjkp', $data->masaIuranjkp) }}"
+                                                    required>
                                                 @error('masaIuranjkp')
                                                     <span id="masaIuranjkp"
                                                         class="error invalid-feedback">{{ $message }}</span>

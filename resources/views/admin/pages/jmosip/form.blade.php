@@ -176,6 +176,11 @@
                                             </div>
                                         </div>
                                     </div>
+                                    <div class="row boxPreview" style="display: none">
+                                        <div class="col-md-6">
+                                            <img src="" alt="img-preview" id="imgPreview" width="250px">
+                                        </div>
+                                    </div>
                                     <div class="form-group">
                                         <label for="cardpath">Gambar</label>
                                         <div class="custom-file">
@@ -329,11 +334,24 @@
     <script>
         $('.select2').select2()
         $('#formJmosip').submit(function() {
-            // $('#modal-overlay').modal({
-            //     backdrop: 'static',
-            //     keyboard: false
-            // });
+            $('#modal-overlay').modal({
+                backdrop: 'static',
+                keyboard: false
+            });
             return true;
+        });
+        $('#cardpath').change(function() {
+            const file = this.files[0];
+            console.log(file);
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(event) {
+                    $('.boxPreview').css("display", "block");
+                    console.log(event.target.result);
+                    $('#imgPreview').attr('src', event.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
         });
     </script>
 @endsection

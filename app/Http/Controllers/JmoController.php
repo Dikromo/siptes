@@ -107,9 +107,9 @@ class JmoController extends Controller
         $validateData['lastUpah'] =  $request->lastUpah;
         $validateData['lastIuranDate'] =  $request->lastIuranDate;
         $validateData['pensiunanDate'] =  $request->pensiunanDate;
-        $validateData['masaIuranjp'] =  $request->masaIuranjp . ' Bulan';
+        $validateData['masaIuranjp'] =  $request->masaIuranjp;
         $validateData['kepesertaanDate'] =  $request->kepesertaanDate;
-        $validateData['masaIuranjkp'] =  $request->masaIuranjkp . ' Bulan';
+        $validateData['masaIuranjkp'] =  $request->masaIuranjkp;
         $validateData['jkm'] =  (isset($request->jkm)) ? '1' : '0';
         $validateData['jkk'] =  (isset($request->jkk)) ? '1' : '0';
         $validateData['jht'] =  (isset($request->jht)) ? '1' : '0';
@@ -135,6 +135,8 @@ class JmoController extends Controller
             $validateData['cardpath'] =  $imagePath;
             //dd($validateData['cardpath']);
             //exit;
+        } else {
+            $validateData['cardpath'] =  'jmo/card.png';
         }
 
         Jmo::updateOrInsert($checkdata, $validateData);

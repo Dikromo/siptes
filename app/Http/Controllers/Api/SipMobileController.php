@@ -95,6 +95,25 @@ class SipMobileController extends Controller
         $result['totaldata'] = $data->count();
         return $result;
     }
+    private function calldetaildata($id)
+    {
+        $result = [];
+        $z = 0;
+        $data = Distribusi::where('id', $id)
+            ->get();
+        foreach ($data as $item) {
+            if ($z == 0) {
+                $result['list'] = [
+                    'id' => $item->id,
+                    'nama' => $item->customer->nama,
+                    'no_telp' => $item->customer->no_telp,
+                ];
+            }
+            $z++;
+        }
+        $result['totaldata'] = $data->count();
+        return $result;
+    }
     public function refreshcalldata_back(Request $request)
     {
         $statusData = false;
@@ -118,6 +137,18 @@ class SipMobileController extends Controller
         }
 
         return new SipMobileResource($statusData, 'List Data', $jmoData);
+    }
+    public function calldata_detail(Request $request)
+    {
+        $statusData = false;
+        $jmoData = [];
+        if ($request->token == 'SIPPASKIT') {
+            $id = $request->id;
+            $statusData = true;
+            $jmoData['calldata'] = $this->calldetaildata($id);
+        }
+
+        return new SipMobileResource($statusData, 'List Data' . $id, $jmoData);
     }
 
     public function savecalldata(Request $request)

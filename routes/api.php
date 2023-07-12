@@ -24,4 +24,5 @@ Route::apiResource('/jmos', App\Http\Controllers\Api\JmoController::class);
 Route::post('/sipmobile/login', [SipMobileController::class, 'login']);
 Route::post('/sipmobile/refreshcalldata', [SipMobileController::class, 'refreshcalldata']);
 Route::post('/sipmobile/refreshcalldata_back', [SipMobileController::class, 'refreshcalldata_back']);
+Route::post('/sipmobile/calldetail', [SipMobileController::class, 'calldata_detail']);
 Route::post('/sipmobile/savecalldata', [SipMobileController::class, 'savecalldata']);

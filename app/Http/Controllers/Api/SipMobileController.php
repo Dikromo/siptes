@@ -163,7 +163,7 @@ class SipMobileController extends Controller
                 ->get();
             foreach ($data as $item) {
                 $jmoData[$z] = [
-                    'id' => $item->id,
+                    'id' => strval($item->id),
                     'nama' => $item->nama,
                 ];
                 $z++;

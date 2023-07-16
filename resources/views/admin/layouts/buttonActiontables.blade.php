@@ -17,6 +17,13 @@
                 $slug = encrypt($data->id);
                 break;
         
+            case 'statuscall':
+                $view = false;
+                $edit = true;
+                $delete = false;
+                $slug = encrypt($data->id);
+                break;
+        
             default:
                 $slug = '';
                 break;

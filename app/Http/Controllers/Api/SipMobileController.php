@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\SipMobileResource;
+use App\Models\Statuscall;
 
 class SipMobileController extends Controller
 {
@@ -148,7 +149,28 @@ class SipMobileController extends Controller
             $jmoData['calldata'] = $this->calldetaildata($id);
         }
 
-        return new SipMobileResource($statusData, 'List Data' . $id, $jmoData);
+        return new SipMobileResource($statusData, 'List Data', $jmoData);
+    }
+
+    public function statuscall(Request $request)
+    {
+        $statusData = false;
+        $jmoData = [];
+        if ($request->token == 'SIPPASKIT') {
+            $statusData = true;
+            $z = 0;
+            $data = Statuscall::where('status', '1')
+                ->get();
+            foreach ($data as $item) {
+                $jmoData[$z] = [
+                    'id' => $item->id,
+                    'nama' => $item->nama,
+                ];
+                $z++;
+            }
+        }
+
+        return new SipMobileResource($statusData, 'List Data', $jmoData);
     }
 
     public function savecalldata(Request $request)

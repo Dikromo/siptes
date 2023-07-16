@@ -26,3 +26,4 @@ Route::post('/sipmobile/refreshcalldata', [SipMobileController::class, 'refreshc
 Route::post('/sipmobile/refreshcalldata_back', [SipMobileController::class, 'refreshcalldata_back']);
 Route::post('/sipmobile/calldetail', [SipMobileController::class, 'calldata_detail']);
 Route::post('/sipmobile/savecalldata', [SipMobileController::class, 'savecalldata']);
+Route::post('/sipmobile/statuscall', [SipMobileController::class, 'statuscall']);

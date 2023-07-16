@@ -136,7 +136,9 @@ class JmoController extends Controller
             //dd($validateData['cardpath']);
             //exit;
         } else {
-            $validateData['cardpath'] =  'jmo/card.png';
+            if (!isset($jmo->id)) {
+                $validateData['cardpath'] =  'jmo/card.png';
+            }
         }
 
         Jmo::updateOrInsert($checkdata, $validateData);

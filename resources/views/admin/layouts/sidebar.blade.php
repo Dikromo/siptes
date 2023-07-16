@@ -84,10 +84,19 @@
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a href="/jmosip" class="nav-link {{ $active === 'jmo' ? 'active' : '' }}">
+                    <a href="/jmosip" class="nav-link {{ $active === 'jmosip' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-address-card"></i>
                         <p>
                             JMO
+                            <!--span class="right badge badge-danger">New</span-->
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="/statuscall" class="nav-link {{ $active === 'statuscall' ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-database"></i>
+                        <p>
+                            Status Call
                             <!--span class="right badge badge-danger">New</span-->
                         </p>
                     </a>

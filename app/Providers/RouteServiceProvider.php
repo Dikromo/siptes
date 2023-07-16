@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Jmo;
+use App\Models\Statuscall;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
 use Illuminate\Http\Request;
@@ -33,6 +34,9 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::bind('jmoid', function (string $value) {
             return Jmo::where('id', decrypt($value))->firstOrFail();
+        });
+        Route::bind('statuscallid', function (string $value) {
+            return Statuscall::where('id', decrypt($value))->firstOrFail();
         });
 
 

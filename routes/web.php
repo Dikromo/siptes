@@ -5,7 +5,9 @@ use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\JmoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\StatuscallController;
 use App\Http\Controllers\UserController;
+use App\Models\Statuscall;
 
 /*
 |--------------------------------------------------------------------------
@@ -55,6 +57,14 @@ Route::get('/jmosip/create', [JmoController::class, 'jmoFormadd'])->middleware('
 Route::post('/jmosip', [JmoController::class, 'jmoStore'])->middleware('auth');
 Route::put('/jmosip/{jmoid}', [JmoController::class, 'jmoStore'])->middleware('auth');
 Route::get('/jmosip/{id}/edit', [JmoController::class, 'jmoEdit'])->middleware('auth');
+
+
+Route::get('/statuscall', [StatuscallController::class, 'index'])->middleware('auth');
+Route::post('/statuscall/ajax', [StatuscallController::class, 'dataTables'])->middleware('auth');
+Route::get('/statuscall/create', [StatuscallController::class, 'statuscallFormadd'])->middleware('auth');
+Route::post('/statuscall', [StatuscallController::class, 'statuscallStore'])->middleware('auth');
+Route::put('/statuscall/{statuscallid}', [StatuscallController::class, 'statuscallStore'])->middleware('auth');
+Route::get('/statuscall/{id}/edit', [StatuscallController::class, 'statuscallEdit'])->middleware('auth');
 
 
 Route::get('/admin', function () {

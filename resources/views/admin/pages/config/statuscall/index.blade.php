@@ -9,10 +9,10 @@
         <div class="row">
             <div class="col-12">
                 <div>
-                    <a class="btn btn-primary btn-sm" href="/jmosip/create">
+                    <a class="btn btn-primary btn-sm" href="/statuscall/create">
                         <i class="fas fa-user-plus">
                         </i>
-                        Add Jmo
+                        Add Status Call
                     </a>
                 </div>
                 <br>

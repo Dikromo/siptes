@@ -39,7 +39,7 @@
                                 <tr>
                                     <th>NO</th>
                                     <th>Nama</th>
-                                    <th>Email</th>
+                                    <th>Username</th>
                                     <th>Status</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
@@ -108,8 +108,8 @@
                 data: 'name',
                 name: 'name'
             }, {
-                data: 'email',
-                name: 'email'
+                data: 'username',
+                name: 'username'
             }, {
                 data: 'statusText',
                 name: 'statusText'

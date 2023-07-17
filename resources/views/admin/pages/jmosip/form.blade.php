@@ -176,9 +176,10 @@
                                             </div>
                                         </div>
                                     </div>
-                                    <div class="row boxPreview" style="display: none">
+                                    <div class="row boxPreview" style="display: {{ $data == '' ? 'none' : 'block' }}">
                                         <div class="col-md-6">
-                                            <img src="" alt="img-preview" id="imgPreview" width="250px">
+                                            <img src="{{ $data == '' ? '' : url('/') . '/assets/img/' . $data->cardpath }}"
+                                                alt="img-preview" id="imgPreview" width="250px">
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -331,8 +332,12 @@
     <script src="{{ asset('adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
     <script>
         $('.select2').select2()
+        $(function() {
+            bsCustomFileInput.init();
+        });
         $('#formJmosip').submit(function() {
             $('#modal-overlay').modal({
                 backdrop: 'static',

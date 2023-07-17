@@ -3,17 +3,17 @@
 @section('container')
     <div class="container-fluid">
         <div class="row">
-            {{-- <div class="col-12">
-                <div class="float-sm-right">
-                    <a class="btn btn-warning btn-sm" href="/user">
-                        <i class="fas fa-arrow-left">
+            <div class="col-12">
+                <div class="float-sm-left">
+                    <a class="btn btn-info btn-sm" href="{{ url('/') . '/assets/template/importcustomer.xlsx' }}">
+                        <i class="fas fa-file-excel">
                         </i>
-                        Back
+                        Download Format
                     </a>
                 </div>
             </div>
             <br>
-            <br> --}}
+            <br>
             <div class="col-12">
                 <form id="formImport" action="/customer/import" method="POST" enctype="multipart/form-data">
                     @csrf
@@ -96,7 +96,11 @@
     </div>
 @endsection
 @section('addScript')
+    <script src="{{ asset('adminlte/plugins/bs-custom-file-input/bs-custom-file-input.min.js') }}"></script>
     <script>
+        $(function() {
+            bsCustomFileInput.init();
+        });
         $('#formImport').submit(function() {
             $('#modal-overlay').modal({
                 backdrop: 'static',

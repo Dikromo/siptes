@@ -47,7 +47,7 @@
                                         <th>NO</th>
                                         <th>Nama</th>
                                         <th>Telp</th>
-                                        <th>Status</th>
+                                        <th>Provider</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -72,6 +72,23 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body ">
+
+                            <?php
+                            $arrayTipe = ['DISTRIBUSI', 'TARIK DATA'];
+                            ?>
+                            <div class="form-group">
+                                <label for="tipe">Tipe</label>
+                                <select name="tipe" class="form-control select2 @error('tipe') is-invalid @enderror  "
+                                    id="tipe">
+                                    <option value="">-- Pilih --</option>
+                                    @foreach ($arrayTipe as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                                @error('tipe')
+                                    <span id="tipe" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
                             <div class="form-group">
                                 <label for="kode">Kode</label>
                                 <select name="fileexcel_id"
@@ -91,6 +108,22 @@
                                 </select>
                                 @error('fileexcel_id')
                                     <span id="fileexcel_id" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                            <?php
+                            $arrayProvider = ['SIMPATI', 'INDOSAT', 'XL', 'AXIS', 'THREE', 'SMART'];
+                            ?>
+                            <div class="form-group">
+                                <label for="provider">Provider</label>
+                                <select name="provider"
+                                    class="form-control select2 @error('provider') is-invalid @enderror  " id="provider">
+                                    <option value="">-- Pilih --</option>
+                                    @foreach ($arrayProvider as $item)
+                                        <option value="{{ $item }}">{{ $item }}</option>
+                                    @endforeach
+                                </select>
+                                @error('provider')
+                                    <span id="provider" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
                             <div class="form-group">
@@ -152,7 +185,7 @@
                                         <th>NO</th>
                                         <th>Nama</th>
                                         <th>Telp</th>
-                                        <th>Perusahaan</th>
+                                        <th>Provider</th>
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -175,20 +208,33 @@
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>
         var fromTabel = 0;
+        var toTabel = 0;
         $('.select2').select2()
         $('#formDistribusi').submit(function() {
-            if (fromTabel != 0 && $('#total').val() != '0' && $('#total').val() <= fromTabel) {
-                $('#modal-overlay').modal({
-                    backdrop: 'static',
-                    keyboard: false
-                });
-                return true;
+            if ($('#tipe').val() == 'DISTRIBUSI') {
+                if (fromTabel != 0 && $('#total').val() != '0' && $('#total').val() <= fromTabel) {
+                    $('#modal-overlay').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    return true;
+                }
+            }
+
+            if ($('#tipe').val() == 'TARIK DATA') {
+                if (toTabel != 0 && $('#total').val() != '0' && $('#total').val() <= toTabel) {
+                    $('#modal-overlay').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    return true;
+                }
             }
             alert('Tidak dapat melakukan proses!');
             return false;
         });
         $(document).ready(function() {
-            $("#fileexcel_id").change(function() {
+            $("#provider").change(function() {
                 dataTablesfrom(this.value);
             });
             $("#user_id").change(function() {
@@ -225,7 +271,8 @@
                     url: '/customer/ajax/from',
                     data: {
                         _token: '{{ csrf_token() }}',
-                        fileexcel_id: select,
+                        fileexcel_id: $("#fileexcel_id").val(),
+                        provider: select,
                     }
                 },
                 columns: [{
@@ -238,8 +285,8 @@
                     data: 'no_telp',
                     name: 'no_telp'
                 }, {
-                    data: 'perusahaan',
-                    name: 'perusahaan'
+                    data: 'provider',
+                    name: 'provider'
                 }]
             });
         }
@@ -252,7 +299,7 @@
                 bDestroy: true,
                 searching: false,
                 initComplete: function(settings, json) {
-                    //fromTabel = this.api().data().length;
+                    toTabel = this.api().data().length;
                 },
                 ajax: {
                     type: 'POST',
@@ -272,8 +319,8 @@
                     data: 'customer.no_telp',
                     name: 'customer.no_telp'
                 }, {
-                    data: 'customer.perusahaan',
-                    name: 'customer.perusahaan'
+                    data: 'customer.provider',
+                    name: 'customer.provider'
                 }]
             });
         }

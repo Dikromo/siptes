@@ -83,24 +83,27 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="/jmosip" class="nav-link {{ $active === 'jmosip' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-address-card"></i>
-                        <p>
-                            JMO
-                            <!--span class="right badge badge-danger">New</span-->
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/statuscall" class="nav-link {{ $active === 'statuscall' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-database"></i>
-                        <p>
-                            Status Call
-                            <!--span class="right badge badge-danger">New</span-->
-                        </p>
-                    </a>
-                </li>
+
+                @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
+                    <li class="nav-item">
+                        <a href="/jmosip" class="nav-link {{ $active === 'jmosip' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-address-card"></i>
+                            <p>
+                                JMO
+                                <!--span class="right badge badge-danger">New</span-->
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/statuscall" class="nav-link {{ $active === 'statuscall' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-database"></i>
+                            <p>
+                                Status Call
+                                <!--span class="right badge badge-danger">New</span-->
+                            </p>
+                        </a>
+                    </li>
+                @endif
                 {{-- <li class="nav-item {{ $active === 'menu1' ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ $active === 'menu1' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-tachometer-alt"></i>

@@ -1,32 +1,62 @@
 @switch($type)
     @case('all')
         <?php
-        switch ($links) {
-            case 'user':
-                $view = true;
-                $edit = true;
-                $delete = true;
+        if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') {
+            switch ($links) {
+                case 'user':
+                    $view = true;
+                    $edit = true;
+                    $delete = true;
         
-                $slug = $data->username;
-                break;
+                    $slug = $data->username;
+                    break;
         
-            case 'jmosip':
-                $view = false;
-                $edit = true;
-                $delete = false;
-                $slug = encrypt($data->id);
-                break;
+                case 'jmosip':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $slug = encrypt($data->id);
+                    break;
         
-            case 'statuscall':
-                $view = false;
-                $edit = true;
-                $delete = false;
-                $slug = encrypt($data->id);
-                break;
+                case 'statuscall':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $slug = encrypt($data->id);
+                    break;
         
-            default:
-                $slug = '';
-                break;
+                default:
+                    $slug = '';
+                    break;
+            }
+        } else {
+            switch ($links) {
+                case 'user':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+        
+                    $slug = $data->username;
+                    break;
+        
+                case 'jmosip':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $slug = encrypt($data->id);
+                    break;
+        
+                case 'statuscall':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $slug = encrypt($data->id);
+                    break;
+        
+                default:
+                    $slug = '';
+                    break;
+            }
         }
         ?>
         @if ($view)

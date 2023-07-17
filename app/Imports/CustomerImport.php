@@ -29,11 +29,52 @@ class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, WithValid
     public function model(array $row)
     {
         ++$this->total;
+        $cekProvider = substr($row['no_telp'], 0, 4);
+        $dataProvider = '';
+        $simpati = array('0811', '0812', '0813', '0851', '0852', '0853', '0821', '0822', '0823');
+        $indosat = array('0814', '0815', '0816', '0855', '0856', '0857', '0858');
+        $xl = array('0817', '0818', '0819', '0859', '0877', '0878');
+        $axis = array('0838');
+        $three = array('0896', '0895', '0897', '0898', '0899');
+        $smart = array('0881', '0882', '0888');
+        $telkom = array('0212', '0213', '0214', '0215', '0216', '0217', '0218');
+        $esia = array('0219');
+
+        switch ($cekProvider) {
+            case in_array($cekProvider, $simpati):
+                $dataProvider = 'SIMPATI';
+                break;
+            case in_array($cekProvider, $indosat):
+                $dataProvider = 'INDOSAT';
+                break;
+            case in_array($cekProvider, $xl):
+                $dataProvider = 'XL';
+                break;
+            case in_array($cekProvider, $axis):
+                $dataProvider = 'AXIS';
+                break;
+            case in_array($cekProvider, $three):
+                $dataProvider = 'THREE';
+                break;
+            case in_array($cekProvider, $smart):
+                $dataProvider = 'SMART';
+                break;
+            case in_array($cekProvider, $telkom):
+                $dataProvider = 'TELKOM';
+                break;
+            case in_array($cekProvider, $esia):
+                $dataProvider = 'ESIA';
+                break;
+            default:
+                $dataProvider = 'Tidak Ditemukan';
+                break;
+        }
         return new Customer([
             //
             'nama'          => $row['nama'],
             'no_telp'       => $row['no_telp'],
-            'perusahaan'    => $row['perusahaan'],
+            'perusahaan'    => $row['perusahaan'] == null ? '' : $row['perusahaan'],
+            'provider'      => $dataProvider,
             'fileexcel_id'  => $this->id,
         ]);
     }

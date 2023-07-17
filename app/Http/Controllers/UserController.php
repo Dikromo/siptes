@@ -122,11 +122,11 @@ class UserController extends Controller
             'username'  => ['required'],
             'email'     => ['required'],
             'password'  => ['required'],
-            'roleuser_id'  => ['required'],
         ];
 
         if (auth()->user()->roleuser_id == '1' && $request->roleuser_id == '3') {
             $rules['parentuser_id'] = 'required';
+            $rules['roleuser_id'] = 'required';
         }
 
         if ($request->email != $user->email) {
@@ -139,6 +139,7 @@ class UserController extends Controller
         $validateData['password'] = Hash::make($validateData['password']);
 
         if (auth()->user()->roleuser_id == '2') {
+            $validateData['roleuser_id'] =  '3';
             $validateData['parentuser_id'] =  auth()->user()->id;
         }
         if (!isset($user->id)) {

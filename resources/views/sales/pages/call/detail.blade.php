@@ -69,9 +69,9 @@
                                         </div>
                                         <div class="form-group">
                                             <label for="no_telp">No Telp</label>
-                                            <input type="number" id="no_telp" name="no_telp"
+                                            <input type="text" id="no_telp" name="no_telp"
                                                 class="form-control @error('no_telp') is-invalid @enderror"
-                                                value="{{ $data == '' ? old('no_telp') : old('no_telp', $data->customer->no_telp) }}"
+                                                value="{{ $data == '' ? old('no_telp') : old('no_telp', substr($data->customer->no_telp, 0, 6) . 'xx-xxxx') }}"
                                                 disabled>
                                             @error('no_telp')
                                                 <span id="no_telp" class="error invalid-feedback">{{ $message }}</span>

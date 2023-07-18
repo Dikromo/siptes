@@ -68,7 +68,11 @@ Route::get('/statuscall/{id}/edit', [StatuscallController::class, 'statuscallEdi
 
 
 Route::get('/admin', function () {
-    return view('admin.tes', ['title' => 'Administrator', 'active' => 'dashboard', 'active_sub' => '']);
+    if (auth()->user()->roleuser_id == '3') {
+        return redirect('/call');
+    } else {
+        return view('admin.tes', ['title' => 'Administrator', 'active' => 'dashboard', 'active_sub' => '']);
+    }
 })->middleware('auth');
 Route::get('/tes1', function () {
     return view('admin.tes', ['title' => 'tes1', 'active' => 'menu1', 'active_sub' => 'menu_sub1']);

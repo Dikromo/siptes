@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\CallpagesController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JmoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
@@ -66,6 +67,9 @@ Route::post('/statuscall', [StatuscallController::class, 'statuscallStore'])->mi
 Route::put('/statuscall/{statuscallid}', [StatuscallController::class, 'statuscallStore'])->middleware('auth');
 Route::get('/statuscall/{id}/edit', [StatuscallController::class, 'statuscallEdit'])->middleware('auth');
 
+
+Route::get('/dashboard/sales', [DashboardController::class, 'salescall'])->middleware('auth');
+Route::post('/dashboard/ajaxsalescall', [DashboardController::class, 'getSalescall'])->middleware('auth');
 
 Route::get('/admin', function () {
     if (auth()->user()->roleuser_id == '3') {

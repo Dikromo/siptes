@@ -48,6 +48,15 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a href="/dashboard/sales" class="nav-link {{ $active === 'dashboardsales' ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-chart-column"></i>
+                        <p>
+                            Dashboard Sales
+                            <!--span class="right badge badge-danger">New</span-->
+                        </p>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a href="/user" class="nav-link {{ $active === 'user' ? 'active' : '' }}">
                         <i class="nav-icon fas fa-user"></i>
                         <p>

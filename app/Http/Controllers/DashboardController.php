@@ -88,7 +88,7 @@ class DashboardController extends Controller
                 DB::raw("COUNT(id) as count")
             )
                 ->where('user_id', $request->user_id)
-                ->where('status', $item->status)
+                ->where('status', $item->id)
                 ->whereDate('distribusi_at', $hariini);
             foreach ($data->get() as $items) {
                 array_push($result['salescall'], $items->count);

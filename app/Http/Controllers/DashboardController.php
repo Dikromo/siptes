@@ -64,7 +64,7 @@ class DashboardController extends Controller
             ->where('user_id', $request->user_id)
             ->whereDate('distribusi_at', $hariini);
         foreach ($dataAll->get() as $items) {
-            array_push($result['salescall'], $items->count);
+            array_push($result['salescall'], (int)$items->count);
         }
 
         // Get Data Status 0
@@ -78,7 +78,7 @@ class DashboardController extends Controller
             })
             ->whereDate('distribusi_at', $hariini);
         foreach ($dataAll->get() as $items) {
-            array_push($result['salescall'], $items->count);
+            array_push($result['salescall'], (int)$items->count);
         }
 
         // Get Data By Status Call
@@ -91,7 +91,7 @@ class DashboardController extends Controller
                 ->where('status', $item->id)
                 ->whereDate('distribusi_at', $hariini);
             foreach ($data->get() as $items) {
-                array_push($result['salescall'], $items->count);
+                array_push($result['salescall'], (int)$items->count);
             }
         }
 

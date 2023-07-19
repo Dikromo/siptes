@@ -62,7 +62,7 @@ class DashboardController extends Controller
             DB::raw("COUNT(id) as count")
         )
             ->where('user_id', $request->user_id)
-            ->whereDate('created_at', $hariini);
+            ->whereDate('distribusi_at', $hariini);
         foreach ($dataAll->get() as $items) {
             array_push($result['salescall'], $items->count);
         }
@@ -76,7 +76,7 @@ class DashboardController extends Controller
                 $query->where('status', '0')
                     ->orWhere('status', null);
             })
-            ->whereDate('created_at', $hariini);
+            ->whereDate('distribusi_at', $hariini);
         foreach ($dataAll->get() as $items) {
             array_push($result['salescall'], $items->count);
         }
@@ -89,7 +89,7 @@ class DashboardController extends Controller
             )
                 ->where('user_id', $request->user_id)
                 ->where('status', $item->status)
-                ->whereDate('created_at', $hariini);
+                ->whereDate('distribusi_at', $hariini);
             foreach ($data->get() as $items) {
                 array_push($result['salescall'], $items->count);
             }

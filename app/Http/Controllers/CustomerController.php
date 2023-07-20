@@ -161,7 +161,6 @@ class CustomerController extends Controller
                     ->limit($request->total)
                     ->get();
                 foreach ($data as $item) {
-                    # code...
                     DB::table('distribusis')
                         ->where('id', $item->distribusi_id)
                         ->update(['user_id' => $request->user_id, 'updated_at' => now(), 'distribusi_at' => now()]);

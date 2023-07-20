@@ -164,7 +164,7 @@ class CustomerController extends Controller
                     # code...
                     DB::table('distribusis')
                         ->where('id', $item->distribusi_id)
-                        ->update(['user_id' => $request->user_id, 'updated_at' => now()]);
+                        ->update(['user_id' => $request->user_id, 'updated_at' => now(), 'distribusi_at' => now()]);
                 }
             } else {
                 $data = Customer::inRandomOrder()

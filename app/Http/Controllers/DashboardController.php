@@ -25,19 +25,12 @@ class DashboardController extends Controller
             });
         }
 
-        $statuscall = ['Total Data', 'Belum Ditelfon'];
-        $dataStatuscall = Statuscall::latest();
-        foreach ($dataStatuscall->get() as $item) {
-            array_push($statuscall, $item->nama);
-        }
-
         return view(
             'admin.pages.dashboard.dashboardsales',
             [
                 'title' => 'Dashboard Sales',
                 'active' => 'dashboardsales',
                 'active_sub' => '',
-                "statusCall" => $statuscall,
                 "userData" => $userSelect->get(),
                 'data' => ''
             ]
@@ -48,8 +41,10 @@ class DashboardController extends Controller
         $dataStatuscall = Statuscall::latest();
         $result = [];
         $result['salescall'] = [];
+        $result['statuscall'] = (isset($request->date_by) && $request->date_by == 'updated_at') ? [] : ['Total Data', 'Belum Ditelfon'];
         $result['hariini'] = (isset($request->tanggal)) ? date('d F Y', strtotime($request->tanggal)) : date('d F Y');
         $hariini = (isset($request->tanggal)) ? date('Y-m-d', strtotime($request->tanggal)) : date('Y-m-d');
+        $date_by = (isset($request->date_by)) ? $request->date_by : 'distribusi_at';
 
         $dataUser = User::select('name')
             ->where('id', $request->user_id);
@@ -57,30 +52,35 @@ class DashboardController extends Controller
             $result['nama'] = $items->name;
         }
 
-        // Total Data
-        $dataAll = Distribusi::select(
-            DB::raw("COUNT(id) as count")
-        )
-            ->where('user_id', $request->user_id)
-            ->whereDate('distribusi_at', $hariini);
-        foreach ($dataAll->get() as $items) {
-            array_push($result['salescall'], (int)$items->count);
+        // Get Status
+        foreach ($dataStatuscall->get() as $item) {
+            array_push($result['statuscall'], $item->nama);
         }
+        if (isset($request->date_by) && $request->date_by != 'updated_at') {
+            // Total Data
+            $dataAll = Distribusi::select(
+                DB::raw("COUNT(id) as count")
+            )
+                ->where('user_id', $request->user_id)
+                ->whereDate($date_by, $hariini);
+            foreach ($dataAll->get() as $items) {
+                array_push($result['salescall'], (int)$items->count);
+            }
 
-        // Get Data Status 0
-        $dataAll = Distribusi::select(
-            DB::raw("COUNT(id) as count")
-        )
-            ->where('user_id', $request->user_id)
-            ->where(function ($query) {
-                $query->where('status', '0')
-                    ->orWhere('status', null);
-            })
-            ->whereDate('distribusi_at', $hariini);
-        foreach ($dataAll->get() as $items) {
-            array_push($result['salescall'], (int)$items->count);
+            // Get Data Status 0
+            $dataAll = Distribusi::select(
+                DB::raw("COUNT(id) as count")
+            )
+                ->where('user_id', $request->user_id)
+                ->where(function ($query) {
+                    $query->where('status', '0')
+                        ->orWhere('status', null);
+                })
+                ->whereDate($date_by, $hariini);
+            foreach ($dataAll->get() as $items) {
+                array_push($result['salescall'], (int)$items->count);
+            }
         }
-
         // Get Data By Status Call
         foreach ($dataStatuscall->get() as $item) {
             # code...
@@ -89,7 +89,7 @@ class DashboardController extends Controller
             )
                 ->where('user_id', $request->user_id)
                 ->where('status', $item->id)
-                ->whereDate('distribusi_at', $hariini);
+                ->whereDate($date_by, $hariini);
             foreach ($data->get() as $items) {
                 array_push($result['salescall'], (int)$items->count);
             }

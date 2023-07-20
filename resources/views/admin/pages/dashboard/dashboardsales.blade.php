@@ -17,6 +17,23 @@
                                 <span id="tanggal" class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div>
+                        <?php
+                        $date_by = [['nama' => 'Distribusi', 'field' => 'distribusi_at'], ['nama' => 'Sales Call', 'field' => 'updated_at']];
+                        
+                        ?>
+                        <div class="form-group">
+                            <label for="date_by">Berdasarkan Tanggal</label>
+                            <select name="date_by" class="form-control select2 @error('date_by') is-invalid @enderror  "
+                                id="date_by">
+                                <option value="">-- Pilih --</option>
+                                @foreach ($date_by as $key => $val)
+                                    <option value="{{ $val['field'] }}">{{ $val['nama'] }}</option>
+                                @endforeach
+                            </select>
+                            @error('date_by')
+                                <span id="date_by" class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <div class="form-group">
                             <label for="user_id">Sales</label>
                             <select name="user_id" class="form-control select2 @error('user_id') is-invalid @enderror  "
@@ -73,11 +90,10 @@
     <script src="https://code.highcharts.com/modules/accessibility.js"></script>
 
     <script>
-        var statusCall = <?php echo json_encode($statusCall); ?>;
         $('.select2').select2()
 
         function proses() {
-            if ($('#user_id').val() != '' && $('#tanggal').val() != '') {
+            if ($('#user_id').val() != '' && $('#tanggal').val() != '' && $('#date_by').val() != '') {
                 $.ajax({
                     type: "POST",
                     url: "/dashboard/ajaxsalescall",
@@ -85,6 +101,7 @@
                         _token: '{{ csrf_token() }}',
                         user_id: $('#user_id').val(),
                         tanggal: $('#tanggal').val(),
+                        date_by: $('#date_by').val(),
                     },
                     dataType: "json",
                     encode: true,
@@ -112,10 +129,10 @@
                     align: 'left'
                 },
                 xAxis: {
-                    categories: statusCall,
+                    categories: data.statuscall,
                     crosshair: true,
                     accessibility: {
-                        description: 'Countries'
+                        description: ''
                     }
                 },
                 yAxis: {

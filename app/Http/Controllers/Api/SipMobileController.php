@@ -84,10 +84,10 @@ class SipMobileController extends Controller
             'statuscalls.nama as statustext'
         )
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
-            ->where('user_id', $id)
+            ->where('distribusis.user_id', $id)
             ->where(function ($query) {
-                $query->where('status', '3')
-                    ->orWhere('status', '2');
+                $query->where('distribusis.status', '3')
+                    ->orWhere('distribusis.status', '2');
             })
             ->get();
         foreach ($data as $item) {

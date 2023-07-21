@@ -306,10 +306,11 @@ class CustomerController extends Controller
             ->where('distribusis.status', '<>', '0')
             ->orderby('distribusis.updated_at', 'desc')
             ->limit(100);
-        if (auth()->user()->roleuser_id != '1' && auth()->user()->roleuser_id != '4') {
-            $data = $data->where('sales.parentuser_id', auth()->user()->user_id);
+        if (auth()->user()->roleuser_id != '1' || auth()->user()->roleuser_id != '4') {
+            $data = $data->where('sales.parentuser_id', auth()->user()->id);
         }
         $data = $data->get();
+        //echo $data;
         return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($data) {

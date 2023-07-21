@@ -62,7 +62,7 @@ class CallpagesController extends Controller
             ->addColumn('statusText', function ($data) {
                 switch ($data->status) {
                     case '2':
-                        $statusText = 'Interest';
+                        $statusText = 'Prospek';
                         break;
                     case '3':
                         $statusText = 'Call Back';

@@ -79,8 +79,16 @@ class SipMobileController extends Controller
     {
         $result = [];
         $z = 0;
-        $data = Distribusi::where('user_id', $id)
-            ->where('status', 3)
+        $data = Distribusi::select(
+            'distribusis.*',
+            'statuscalls.nama as statustext'
+        )
+            ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->where('user_id', $id)
+            ->where(function ($query) {
+                $query->where('status', '3')
+                    ->orWhere('status', '2');
+            })
             ->get();
         foreach ($data as $item) {
             $result['list'][$z] = [
@@ -88,7 +96,7 @@ class SipMobileController extends Controller
                 'nama' => $item->customer->nama,
                 'no_telp' => $item->customer->no_telp,
                 'status' => $item->status,
-                'deskripsi' => $item->deskripsi,
+                'deskripsi' => $item->statustext . ' : ' . $item->deskripsi,
                 'call_date' => $item->updated_at,
             ];
             $z++;

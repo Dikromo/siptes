@@ -89,6 +89,8 @@ class SipMobileController extends Controller
                 $query->where('distribusis.status', '3')
                     ->orWhere('distribusis.status', '2');
             })
+            ->orderBy('distribusis.updated_at', 'desc')
+            ->limit(2)
             ->get();
         foreach ($data as $item) {
             $result['list'][$z] = [

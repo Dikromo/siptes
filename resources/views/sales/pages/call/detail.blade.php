@@ -111,6 +111,87 @@
                                                 <span id="deskripsi" class="error invalid-feedback">{{ $message }}</span>
                                             @enderror
                                         </div>
+                                        @if ($data != '')
+                                            @if ($data->status == '1')
+                                                <?php
+                                                $prosesNasabah = ['VIP', 'REGULER'];
+                                                ?>
+                                                <div class="form-group">
+                                                    <label for="tipeproses">Proses Cek</label>
+                                                    <select name="tipeproses"
+                                                        class="form-control select2 @error('tipeproses') is-invalid @enderror  "
+                                                        id="tipeproses">
+                                                        <option value="">-- Pilih --</option>
+                                                        @foreach ($prosesNasabah as $item)
+                                                            @if (old('tipeproses') == $item || $data->tipeproses == $item)
+                                                                <option value="{{ $item }}" selected>
+                                                                    {{ $item }}
+                                                                </option>
+                                                            @else
+                                                                <option value="{{ $item }}">
+                                                                    {{ $item }}
+                                                                </option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                    @error('prosesnasabah')
+                                                        <span id="provider"
+                                                            class="error invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="nik">NIK</label>
+                                                    <input type="hidden" id="tipe" name="tipe" value="apply">
+                                                    <input type="text" id="nik" name="nik"
+                                                        class="form-control @error('nik') is-invalid @enderror"
+                                                        value="{{ $data == '' ? old('nik') : old('nik', $data->nik) }}">
+                                                    @error('nik')
+                                                        <span id="nik"
+                                                            class="error invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="dob">DOB</label>
+                                                    <input type="date" id="dob" name="dob"
+                                                        class="form-control @error('dob') is-invalid @enderror"
+                                                        value="{{ $data == '' ? old('dob') : old('dob', $data->dob) }}">
+                                                    @error('dob')
+                                                        <span id="dob"
+                                                            class="error invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="perusahaan">Perusahaan</label>
+                                                    <input type="text" id="perusahaan" name="perusahaan"
+                                                        class="form-control @error('perusahaan') is-invalid @enderror"
+                                                        value="{{ $data == '' ? old('perusahaan') : old('perusahaan', $data->perusahaan) }}">
+                                                    @error('perusahaan')
+                                                        <span id="perusahaan"
+                                                            class="error invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="jabatan">Jabatan</label>
+                                                    <input type="text" id="jabatan" name="jabatan"
+                                                        class="form-control @error('jabatan') is-invalid @enderror"
+                                                        value="{{ $data == '' ? old('jabatan') : old('jabatan', $data->jabatan) }}">
+                                                    @error('jabatan')
+                                                        <span id="jabatan"
+                                                            class="error invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                                <div class="form-group">
+                                                    <label for="jmoasli">JMO Asli</label>
+                                                    <input type="number" id="jmoasli" name="jmoasli"
+                                                        class="form-control @error('jmoasli') is-invalid @enderror"
+                                                        value="{{ $data == '' ? old('jmoasli') : old('jmoasli', $data->jmoasli) }}">
+                                                    @error('jmoasli')
+                                                        <span id="jmoasli"
+                                                            class="error invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            @endif
+                                        @endif
                                     </div>
                                     <!-- /.card-body -->
                                     <div class="card-footer">

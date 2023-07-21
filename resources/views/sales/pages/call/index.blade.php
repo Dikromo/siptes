@@ -62,6 +62,30 @@
                                 </tbody>
                             </table>
                         </div>
+                        <hr>
+
+                        <h3 class="profile-username text-left pl-2"><i class="nav-icon fas fa-headset"></i> List Apply
+                        </h3>
+                        <div class="col-12 table-responsive">
+                            <table class="table table-head-fixed text-nowrap" id="dataTables2">
+                                <thead>
+                                    <tr>
+                                        <th>NO</th>
+                                        <th>Nama</th>
+                                        <th>Status</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Budi Hartanto</td>
+                                        <td>Call Lagi</td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                         {{-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> --}}
                     </div>
                     <!-- /.card-body -->
@@ -101,6 +125,46 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     user_id: '{{ auth()->user()->id }}',
+                    status: '2',
+                }
+            },
+            columns: [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex',
+            }, {
+                data: 'customer.nama',
+                name: 'customer.nama'
+            }, {
+                data: 'statusText',
+                name: 'statusText'
+            }, {
+                data: 'action',
+                name: 'action',
+                orderable: false,
+                searchable: false,
+            }],
+            columnDefs: [{
+                targets: 3,
+                className: "text-center",
+            }]
+        });
+
+        $('#dataTables2').DataTable({
+            processing: true,
+            serverside: true,
+            autoWidth: false,
+            bDestroy: true,
+            searching: false,
+            initComplete: function(settings, json) {
+                //fromTabel = this.api().data().length;
+            },
+            ajax: {
+                type: 'POST',
+                url: '/call/ajax',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    user_id: '{{ auth()->user()->id }}',
+                    status: '1',
                 }
             },
             columns: [{

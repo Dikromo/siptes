@@ -45,6 +45,10 @@ Route::get('/customer/distribusi', [CustomerController::class, 'customerDistribu
 Route::post('/customer/distribusi/proses', [CustomerController::class, 'customerDistribusiproses'])->middleware('auth');
 Route::post('/customer/ajax/from', [CustomerController::class, 'customerDistribusifrom'])->middleware('auth');
 Route::post('/customer/ajax/to', [CustomerController::class, 'customerDistribusito'])->middleware('auth');
+Route::get('/customer/cekdbr', [CustomerController::class, 'viewCekdbr'])->middleware('auth');
+Route::post('/customer/ajax/cekdbr', [CustomerController::class, 'cekDbr'])->middleware('auth');
+Route::get('/customer/callhistory', [CustomerController::class, 'viewCallhistory'])->middleware('auth');
+Route::post('/customer/ajax/callhistory', [CustomerController::class, 'callhistory'])->middleware('auth');
 
 Route::get('/call', [CallpagesController::class, 'salesCallpages'])->middleware('auth');
 Route::get('/call/detail/{id}', [CallpagesController::class, 'salesCallshow'])->middleware('auth');

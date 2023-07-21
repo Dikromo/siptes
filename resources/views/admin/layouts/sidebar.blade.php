@@ -92,8 +92,25 @@
                         </p>
                     </a>
                 </li>
-
+                <li class="nav-item">
+                    <a href="/customer/callhistory" class="nav-link {{ $active === 'callhistory' ? 'active' : '' }}">
+                        <i class="nav-icon fas fa-list"></i>
+                        <p>
+                            Call History
+                            <!--span class="right badge badge-danger">New</span-->
+                        </p>
+                    </a>
+                </li>
                 @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
+                    <li class="nav-item">
+                        <a href="/customer/cekdbr" class="nav-link {{ $active === 'cekdbr' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-database"></i>
+                            <p>
+                                Cek DBR
+                                <!--span class="right badge badge-danger">New</span-->
+                            </p>
+                        </a>
+                    </li>
                     <li class="nav-item">
                         <a href="/jmosip" class="nav-link {{ $active === 'jmosip' ? 'active' : '' }}">
                             <i class="nav-icon fas fa-address-card"></i>

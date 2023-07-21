@@ -52,15 +52,22 @@ class CallpagesController extends Controller
     }
     public function salesCallback(Request $request)
     {
-        $data = Distribusi::where('user_id', $request->user_id)
-            ->where(function ($query) {
+        $data = Distribusi::where('user_id', $request->user_id);
+        if ($request->status != '1') {
+            $data = $data->where(function ($query) {
                 $query->where('status', '2')
                     ->orWhere('status', '3');
             });
+        } else {
+            $data = $data->where('status', $request->status);
+        }
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('statusText', function ($data) {
                 switch ($data->status) {
+                    case '1':
+                        $statusText = 'Apply';
+                        break;
                     case '2':
                         $statusText = 'Prospek';
                         break;
@@ -86,11 +93,27 @@ class CallpagesController extends Controller
             'status'     => ['required'],
             'deskripsi'  => ['required'],
         ];
+        if ($request->tipeproses == 'VIP') {
+            $rules['tipeproses'] = 'required';
+            $rules['nik'] = 'required';
+            $rules['dob'] = 'required';
+            $rules['perusahaan'] = 'required';
+            $rules['jabatan'] = 'required';
+            $rules['jmoasli'] = 'required';
+        }
+
+        if ($request->tipeproses == 'REGULER') {
+            $rules['tipeproses'] = 'required';
+            $rules['nik'] = 'required';
+            $rules['dob'] = 'required';
+        }
 
         $validateData = $request->validate($rules);
 
-        $validateData['end_call_time'] =  now();
-        $validateData['updated_at'] =  now();
+        if (!isset($request->tipeproses)) {
+            $validateData['end_call_time'] =  now();
+            $validateData['updated_at'] =  now();
+        }
 
         Distribusi::updateOrInsert($checkdata, $validateData);
         Session::flash('success', 'Data Berhasil diupdate!');

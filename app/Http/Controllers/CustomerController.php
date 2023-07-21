@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -253,6 +254,69 @@ class CustomerController extends Controller
             $msg = 'Proses tidak ada';
         }
         return back()->withErrors(['msg' => $msg]);
+    }
+    public function viewCekdbr()
+    {
+        return view('admin.pages.customer.cekdbr', [
+            'title' => 'Cek DBR',
+            'active' => 'cekdbr',
+            'active_sub' => 'cekdbr',
+            "data" => '',
+            //"category" => User::all(),
+        ]);
+    }
+    public function cekDbr(Request $request)
+    {
+        $data = Distribusi::select(
+            'distribusis.*',
+            'parent.name as parentuser_nama'
+        )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
+            ->join('users as parent', 'parent.id', '=', 'sales.parentuser_id')
+            ->where('distribusis.status', '1')
+            ->whereDate('distribusis.updated_at', $request->tanggal)
+            ->whereNotNull('distribusis.tipeproses');
+        $data = $data->get();
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($data) {
+                return view('admin.layouts.buttonActiontables')
+                    ->with(['data' => $data, 'links' => 'jmosip', 'type' => 'all']);
+            })
+            ->editColumn('jmoasli', '{{{number_format($jmoasli, 2, ",", ".")}}}')
+            ->make(true);
+    }
+    public function viewCallhistory()
+    {
+        return view('admin.pages.customer.callhistory', [
+            'title' => 'Call History',
+            'active' => 'callhistory',
+            'active_sub' => 'callhistory',
+            "data" => '',
+            //"category" => User::all(),
+        ]);
+    }
+    public function callhistory(Request $request)
+    {
+        $data = Distribusi::select(
+            'distribusis.*',
+            'sales.name as salesnama',
+            'statuscalls.nama as statustext'
+        )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
+            ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->where('distribusis.status', '<>', '0')
+            ->orderby('distribusis.updated_at', 'desc')
+            ->limit(100);
+        if (auth()->user()->roleuser_id != '1' && auth()->user()->roleuser_id != '4') {
+            $data = $data->where('sales.parentuser_id', auth()->user()->user_id);
+        }
+        $data = $data->get();
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->addColumn('action', function ($data) {
+                return view('admin.layouts.buttonActiontables')
+                    ->with(['data' => $data, 'links' => 'jmosip', 'type' => 'all']);
+            })
+            ->make(true);
     }
     /**
      * Show the form for creating a new resource.

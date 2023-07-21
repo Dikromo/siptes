@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Models\Produk;
 use App\Models\Customer;
 use App\Models\Fileexcel;
 use App\Models\Distribusi;
@@ -80,6 +81,9 @@ class CustomerController extends Controller
                     ->orWhere('roleuser_id', '3');
             });
         }
+
+        $produkSelect = Produk::where('status', '1')
+            ->get();
         $fileExcel = Fileexcel::where('user_id', auth()->user()->id)
             ->get();
         return view('admin.pages.customer.distribusi', [
@@ -88,6 +92,7 @@ class CustomerController extends Controller
             'active_sub' => 'import',
             "userData" => $userSelect->get(),
             "fileExceldata" => $fileExcel,
+            "produkSelect" => $produkSelect,
             "data" => '',
             //"category" => User::all(),
         ]);
@@ -96,13 +101,21 @@ class CustomerController extends Controller
     //**Tabel From pada page distribusi */
     public function customerDistribusifrom(Request $request)
     {
+
+        $produk_id = auth()->user()->roleuser_id == '1' ? $request->produk_id : auth()->user()->produk_id;
+        $tanggal = date('Y-m-d');
+        // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->fileexcel_id != 'today') {
-            $data = Customer::where('fileexcel_id', $request->fileexcel_id)
-                ->where(function ($query) {
-                    $query->where('status', '0')
-                        ->orWhere('status', null);
-                })
-                ->where('provider', $request->provider);
+            $data = Customer::leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
+                $join->on('customers.id', '=', 'distribusis.customer_id')
+                    ->where(function ($query)  use ($produk_id, $tanggal) {
+                        $query->where('distribusis.produk_id', '=', $produk_id)
+                            ->orwhereDate('distribusis.distribusi_at', $tanggal);
+                    });
+            })
+                ->where('provider', $request->provider)
+                ->where('customers.fileexcel_id', $request->fileexcel_id)
+                ->where('distribusis.produk_id', null);
 
             return DataTables::of($data->get())
                 ->addIndexColumn()
@@ -115,7 +128,9 @@ class CustomerController extends Controller
                     $query->where('distribusis.status', '0')
                         ->orWhere('distribusis.status', null);
                 })
+                ->where('distribusis.produk_id', $produk_id)
                 ->where('customers.provider', $request->provider);
+
             return DataTables::of($data->get())
                 ->addIndexColumn()
                 ->addColumn('nama', '{{$customer[\'nama\']}}')
@@ -140,13 +155,16 @@ class CustomerController extends Controller
     //** Proses distribusi */
     public function customerDistribusiproses(Request $request)
     {
+        $produk_id = auth()->user()->roleuser_id == '1' ? $request->produk_id : auth()->user()->produk_id;
+        $tanggal = date('Y-m-d');
+        // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->tipe == 'DISTRIBUSI') {
             if ($request->fileexcel_id == 'today') {
                 $data = Distribusi::inRandomOrder()
                     ->select(
                         'distribusis.id as distribusi_id',
                         DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
-                        DB::raw('CONCAT("1") as product_id'),
+                        DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
                         DB::raw('CONCAT("1") as bank_id'),
                         DB::raw('CONCAT("0") as status'),
                         DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
@@ -168,19 +186,23 @@ class CustomerController extends Controller
             } else {
                 $data = Customer::inRandomOrder()
                     ->select(
-                        'id as customer_id',
+                        'customers.id as customer_id',
                         DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
-                        DB::raw('CONCAT("1") as product_id'),
+                        DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
                         DB::raw('CONCAT("1") as bank_id'),
                         DB::raw('CONCAT("0") as status'),
                         DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
                     )
-                    ->where('fileexcel_id', $request->fileexcel_id)
-                    ->where(function ($query) {
-                        $query->where('status', '0')
-                            ->orWhere('status', null);
+                    ->leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
+                        $join->on('customers.id', '=', 'distribusis.customer_id')
+                            ->where(function ($query)  use ($produk_id, $tanggal) {
+                                $query->where('distribusis.produk_id', '=', $produk_id)
+                                    ->orwhereDate('distribusis.distribusi_at', $tanggal);
+                            });
                     })
-                    ->where('provider', $request->provider)
+                    ->where('customers.fileexcel_id', $request->fileexcel_id)
+                    ->where('distribusis.produk_id', null)
+                    ->where('customers.provider', $request->provider)
                     ->limit($request->total)
                     ->get();
 
@@ -204,7 +226,7 @@ class CustomerController extends Controller
                 ->select(
                     'distribusis.id as distribusi_id',
                     DB::raw('CONCAT("' . auth()->user()->id . '") as user_id'),
-                    DB::raw('CONCAT("1") as product_id'),
+                    DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
                     DB::raw('CONCAT("1") as bank_id'),
                     DB::raw('CONCAT("0") as status'),
                     DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),

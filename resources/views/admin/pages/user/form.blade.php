@@ -122,6 +122,33 @@
                                         <span id="parentuser_id" class="error invalid-feedback">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                <div class="form-group">
+                                    <label for="produk_id">Produk</label>
+                                    <select name="produk_id"
+                                        class="form-control select2 @error('produk_id') is-invalid @enderror  "
+                                        id="produk_id">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($produkSelect as $item)
+                                            @if ($data != '')
+                                                @if (old('produk_id') == $item->id || $data->produk_id == $item->id)
+                                                    <option value="{{ $item->id }}" selected>
+                                                        {{ $item->tipe . ' - ' . $item->nama }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">
+                                                        {{ $item->tipe . ' - ' . $item->nama }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item->id }}">
+                                                    {{ $item->tipe . ' - ' . $item->nama }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('produk_id')
+                                        <span id="produk_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             @endif
                         </div>
                         <!-- /.card-body -->

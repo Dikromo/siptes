@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Produk;
 use App\Models\Roleuser;
 use App\Models\User;
 use Illuminate\Http\Request;
@@ -66,6 +67,8 @@ class UserController extends Controller
             ->get();
         $roleSelect = Roleuser::where('status', '1')
             ->get();
+        $produkSelect = Produk::where('status', '1')
+            ->get();
         //dd($userSelect);
         return view('admin.pages.user.form', [
             'title' => 'User',
@@ -74,6 +77,7 @@ class UserController extends Controller
             "data" => '',
             "userSelect" => $userSelect,
             "roleSelect" => $roleSelect,
+            "produkSelect" => $produkSelect,
         ]);
     }
     public function userEdit(User $user)
@@ -83,6 +87,8 @@ class UserController extends Controller
             ->get();
         $roleSelect = Roleuser::where('status', '1')
             ->get();
+        $produkSelect = Produk::where('status', '1')
+            ->get();
         return view('admin.pages.user.form', [
             'title' => 'User',
             'active' => 'user',
@@ -90,6 +96,7 @@ class UserController extends Controller
             "data" => $user,
             "userSelect" => $userSelect,
             "roleSelect" => $roleSelect,
+            "produkSelect" => $produkSelect,
         ]);
     }
     public function userShow(User $user)
@@ -127,6 +134,11 @@ class UserController extends Controller
         if (auth()->user()->roleuser_id == '1' && $request->roleuser_id == '3') {
             $rules['parentuser_id'] = 'required';
             $rules['roleuser_id'] = 'required';
+            $rules['produk_id'] = 'required';
+        }
+        if (auth()->user()->roleuser_id == '1' && $request->roleuser_id == '2') {
+            $rules['roleuser_id'] = 'required';
+            $rules['produk_id'] = 'required';
         }
 
         if ($request->email != $user->email) {
@@ -141,6 +153,7 @@ class UserController extends Controller
         if (auth()->user()->roleuser_id == '2') {
             $validateData['roleuser_id'] =  '3';
             $validateData['parentuser_id'] =  auth()->user()->id;
+            $validateData['produk_id'] =  auth()->user()->produk_id;
         }
         if (!isset($user->id)) {
             $validateData['email_verified_at'] =  now();

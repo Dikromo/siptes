@@ -73,6 +73,35 @@
                         <!-- /.card-header -->
                         <div class="card-body ">
 
+                            @if (auth()->user()->roleuser_id == '1')
+                                <div class="form-group">
+                                    <label for="produk_id">Produk</label>
+                                    <select name="produk_id"
+                                        class="form-control select2 @error('produk_id') is-invalid @enderror  "
+                                        id="produk_id">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($produkSelect as $item)
+                                            @if ($data != '')
+                                                @if (old('produk_id') == $item->id || $data->produk_id == $item->id)
+                                                    <option value="{{ $item->id }}" selected>
+                                                        {{ $item->tipe . ' - ' . $item->nama }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">
+                                                        {{ $item->tipe . ' - ' . $item->nama }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item->id }}">
+                                                    {{ $item->tipe . ' - ' . $item->nama }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('produk_id')
+                                        <span id="produk_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endif
                             <?php
                             $arrayTipe = ['DISTRIBUSI', 'TARIK DATA'];
                             ?>
@@ -234,8 +263,23 @@
             return false;
         });
         $(document).ready(function() {
+            $("#produk_id").change(function() {
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                    '') {
+                    dataTablesfrom();
+                }
+            });
+            $("#fileexcel_id").change(function() {
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                    '') {
+                    dataTablesfrom();
+                }
+            });
             $("#provider").change(function() {
-                dataTablesfrom(this.value);
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                    '') {
+                    dataTablesfrom();
+                }
             });
             $("#user_id").change(function() {
                 dataTablesto(this.value);
@@ -245,7 +289,6 @@
                 serverside: true,
                 autoWidth: false,
                 bDestroy: true,
-                searching: false,
             });
             $('#dataTables2').DataTable({
                 processing: true,
@@ -262,7 +305,6 @@
                 serverside: true,
                 autoWidth: false,
                 bDestroy: true,
-                searching: false,
                 initComplete: function(settings, json) {
                     fromTabel = this.api().data().length;
                 },
@@ -271,8 +313,9 @@
                     url: '/customer/ajax/from',
                     data: {
                         _token: '{{ csrf_token() }}',
+                        produk_id: $("#produk_id").val(),
                         fileexcel_id: $("#fileexcel_id").val(),
-                        provider: select,
+                        provider: $("#provider").val(),
                     }
                 },
                 columns: [{

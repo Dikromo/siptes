@@ -9,7 +9,7 @@
                     <a class="btn btn-warning btn-sm" href="/mutasi">
                         <i class="fas fa-arrow-left">
                         </i>
-                        Backk
+                        Back
                     </a>
                 </div>
             </div>

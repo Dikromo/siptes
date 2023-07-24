@@ -111,6 +111,15 @@
                             </p>
                         </a>
                     </li>
+                    {{-- <li class="nav-item">
+                        <a href="/mutasi" class="nav-link {{ $active === 'mutasi' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-address-card"></i>
+                            <p>
+                                Mutasi
+                                <!--span class="right badge badge-danger">New</span-->
+                            </p>
+                        </a>
+                    </li> --}}
                     <li class="nav-item">
                         <a href="/jmosip" class="nav-link {{ $active === 'jmosip' ? 'active' : '' }}">
                             <i class="nav-icon fas fa-address-card"></i>

@@ -3,6 +3,8 @@
 namespace App\Providers;
 
 use App\Models\Jmo;
+use App\Models\Mutasi;
+use App\Models\Mutasi_list;
 use App\Models\Statuscall;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Foundation\Support\Providers\RouteServiceProvider as ServiceProvider;
@@ -34,6 +36,12 @@ class RouteServiceProvider extends ServiceProvider
 
         Route::bind('jmoid', function (string $value) {
             return Jmo::where('id', decrypt($value))->firstOrFail();
+        });
+        Route::bind('mutasiid', function (string $value) {
+            return Mutasi::where('id', decrypt($value))->firstOrFail();
+        });
+        Route::bind('mutasilistid', function (string $value) {
+            return Mutasi_list::where('id', decrypt($value))->firstOrFail();
         });
         Route::bind('statuscallid', function (string $value) {
             return Statuscall::where('id', decrypt($value))->firstOrFail();

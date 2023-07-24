@@ -6,6 +6,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\JmoController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\MutasiController;
 use App\Http\Controllers\StatuscallController;
 use App\Http\Controllers\UserController;
 use App\Models\Statuscall;
@@ -62,6 +63,18 @@ Route::get('/jmosip/create', [JmoController::class, 'jmoFormadd'])->middleware('
 Route::post('/jmosip', [JmoController::class, 'jmoStore'])->middleware('auth');
 Route::put('/jmosip/{jmoid}', [JmoController::class, 'jmoStore'])->middleware('auth');
 Route::get('/jmosip/{id}/edit', [JmoController::class, 'jmoEdit'])->middleware('auth');
+
+
+Route::get('/mutasi', [MutasiController::class, 'index'])->middleware('auth');
+Route::post('/mutasi/ajax', [MutasiController::class, 'dataTables'])->middleware('auth');
+Route::get('/mutasi/create', [MutasiController::class, 'mutasiFormadd'])->middleware('auth');
+Route::post('/mutasi', [MutasiController::class, 'mutasiStore'])->middleware('auth');
+Route::put('/mutasi/{mutasiid}', [MutasiController::class, 'mutasiStore'])->middleware('auth');
+Route::get('/mutasi/{id}/edit', [MutasiController::class, 'mutasiEdit'])->middleware('auth');
+Route::post('/mutasilist', [MutasiController::class, 'mutasilistStore'])->middleware('auth');
+Route::post('/mutasilist/detail', [MutasiController::class, 'mutasilistEdit'])->middleware('auth');
+Route::post('/mutasilist/ajax', [MutasiController::class, 'mutasilistdataTables'])->middleware('auth');
+Route::put('/mutasilist/{mutasilistid}', [MutasiController::class, 'mutasilistStore'])->middleware('auth');
 
 
 Route::get('/statuscall', [StatuscallController::class, 'index'])->middleware('auth');

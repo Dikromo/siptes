@@ -17,6 +17,12 @@
                     $delete = false;
                     $slug = encrypt($data->id);
                     break;
+                case 'mutasi':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $slug = encrypt($data->id);
+                    break;
         
                 case 'statuscall':
                     $view = false;
@@ -40,6 +46,12 @@
                     break;
         
                 case 'jmosip':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $slug = encrypt($data->id);
+                    break;
+                case 'mutasi':
                     $view = false;
                     $edit = true;
                     $delete = false;
@@ -83,6 +95,14 @@
                 </button>
             </form>
         @endif
+    @break
+
+    @case('onclick')
+        <a class="btn btn-info btn-sm" onclick="{{ $links }}">
+            <i class="fas fa-pencil-alt">
+            </i>
+            Edit
+        </a>
     @break
 
     @case('sales')

@@ -18,7 +18,7 @@ class MutasiController extends Controller
     public function index()
     {
         return view(
-            'admin.pages.mutasi.index',
+            'admin.pages.Mutasi.index',
             [
                 'title' => 'Mutasi',
                 'active' => 'mutasi',
@@ -104,7 +104,7 @@ class MutasiController extends Controller
     public function mutasiFormadd()
     {
         //dd($userSelect);
-        return view('admin.pages.mutasi.form', [
+        return view('admin.pages.Mutasi.form', [
             'title' => 'Mutasi',
             'active' => 'mutasi',
             'active_sub' => '',
@@ -115,7 +115,7 @@ class MutasiController extends Controller
     {
         $id = decrypt($id);
         $mutasi = Mutasi::firstWhere('id', $id);
-        return view('admin.pages.mutasi.form', [
+        return view('admin.pages.Mutasi.form', [
             'title' => 'Mutasi',
             'active' => 'mutasi',
             'active_sub' => '',

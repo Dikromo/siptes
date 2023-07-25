@@ -30,6 +30,7 @@ class UserController extends Controller
         $data = User::where('status', '1');
         switch (auth()->user()->roleuser_id) {
             case '1':
+            case '4':
                 $data = $data->latest();
                 break;
             default:
@@ -131,12 +132,12 @@ class UserController extends Controller
             'password'  => ['required'],
         ];
 
-        if (auth()->user()->roleuser_id == '1' && $request->roleuser_id == '3') {
+        if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && $request->roleuser_id == '3') {
             $rules['parentuser_id'] = 'required';
             $rules['roleuser_id'] = 'required';
             $rules['produk_id'] = 'required';
         }
-        if (auth()->user()->roleuser_id == '1' && $request->roleuser_id == '2') {
+        if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && $request->roleuser_id == '2') {
             $rules['roleuser_id'] = 'required';
             $rules['produk_id'] = 'required';
         }

@@ -47,60 +47,66 @@
                         </p>
                     </a>
                 </li>
-                <li class="nav-item">
-                    <a href="/dashboard/sales" class="nav-link {{ $active === 'dashboardsales' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-chart-column"></i>
-                        <p>
-                            Dashboard Sales
-                            <!--span class="right badge badge-danger">New</span-->
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/user" class="nav-link {{ $active === 'user' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-user"></i>
-                        <p>
-                            User
-                            <!--span class="right badge badge-danger">New</span-->
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/customer/import" class="nav-link {{ $active === 'customer' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-database"></i>
-                        <p>
-                            Import Customer
-                            <!--span class="right badge badge-danger">New</span-->
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/customer/distribusi" class="nav-link {{ $active === 'distribusi' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-database"></i>
-                        <p>
-                            Distribusi Customer
-                            <!--span class="right badge badge-danger">New</span-->
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/call" class="nav-link {{ $active === 'call' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-headset"></i>
-                        <p>
-                            Call
-                            <!--span class="right badge badge-danger">New</span-->
-                        </p>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="/customer/callhistory" class="nav-link {{ $active === 'callhistory' ? 'active' : '' }}">
-                        <i class="nav-icon fas fa-list"></i>
-                        <p>
-                            Call History
-                            <!--span class="right badge badge-danger">New</span-->
-                        </p>
-                    </a>
-                </li>
+                @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2' || auth()->user()->roleuser_id == '4')
+                    <li class="nav-item">
+                        <a href="/dashboard/sales" class="nav-link {{ $active === 'dashboardsales' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-chart-column"></i>
+                            <p>
+                                Dashboard Sales
+                                <!--span class="right badge badge-danger">New</span-->
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="/user" class="nav-link {{ $active === 'user' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-user"></i>
+                            <p>
+                                User
+                                <!--span class="right badge badge-danger">New</span-->
+                            </p>
+                        </a>
+                    </li>
+                    @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2')
+                        <li class="nav-item">
+                            <a href="/customer/import" class="nav-link {{ $active === 'customer' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-database"></i>
+                                <p>
+                                    Import Customer
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/customer/distribusi"
+                                class="nav-link {{ $active === 'distribusi' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-database"></i>
+                                <p>
+                                    Distribusi Customer
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/call" class="nav-link {{ $active === 'call' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-headset"></i>
+                                <p>
+                                    Call
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                    @endif
+                    <li class="nav-item">
+                        <a href="/customer/callhistory"
+                            class="nav-link {{ $active === 'callhistory' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-list"></i>
+                            <p>
+                                Call History
+                                <!--span class="right badge badge-danger">New</span-->
+                            </p>
+                        </a>
+                    </li>
+                @endif
                 @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
                     <li class="nav-item">
                         <a href="/customer/cekdbr" class="nav-link {{ $active === 'cekdbr' ? 'active' : '' }}">
@@ -111,7 +117,7 @@
                             </p>
                         </a>
                     </li>
-                    {{-- <li class="nav-item">
+                    <li class="nav-item">
                         <a href="/mutasi" class="nav-link {{ $active === 'mutasi' ? 'active' : '' }}">
                             <i class="nav-icon fas fa-address-card"></i>
                             <p>
@@ -119,7 +125,7 @@
                                 <!--span class="right badge badge-danger">New</span-->
                             </p>
                         </a>
-                    </li> --}}
+                    </li>
                     <li class="nav-item">
                         <a href="/jmosip" class="nav-link {{ $active === 'jmosip' ? 'active' : '' }}">
                             <i class="nav-icon fas fa-address-card"></i>

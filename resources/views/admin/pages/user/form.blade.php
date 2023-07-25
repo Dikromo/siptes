@@ -98,12 +98,12 @@
                                     <span id="roleuser_id" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
-                            @if (auth()->user()->roleuser_id == '1')
+                            @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
                                 <div class="form-group">
                                     <label for="parentuser_id">Sales</label>
                                     <select name="parentuser_id"
                                         class="form-control select2 @error('parentuser_id') is-invalid @enderror  "
-                                        id="parentuser_id">
+                                        id="parentuser_id" {{ $data->roleuser_id != '3' ? 'disabled' : '' }}>
                                         <option value="">-- Pilih --</option>
                                         @foreach ($userSelect as $item)
                                             @if ($data != '')

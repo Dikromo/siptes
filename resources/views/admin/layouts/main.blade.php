@@ -14,6 +14,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
         @switch(auth()->user()->roleuser_id)
             @case(1)
             @case(2)
+
+            @case(4)
                 <!-- Navbar -->
                 @include('admin.layouts.navbar')
                 <!-- /.navbar -->
@@ -26,11 +28,13 @@ scratch. This page gets rid of all links and provides the needed markup only.
         @endswitch
 
         <!-- Content Wrapper. Contains page content -->
-        <div class="content-wrapper {{ auth()->user()->roleuser_id === 3 ? 'm-0' : '' }}">
+        <div class="content-wrapper {{ auth()->user()->roleuser_id == 3 ? 'm-0' : '' }}">
             <!-- Content Header (Page header) -->
             @switch(auth()->user()->roleuser_id)
                 @case(1)
                 @case(2)
+
+                @case(4)
                     <div class="content-header">
                         <div class="container-fluid">
                             <div class="row mb-2">

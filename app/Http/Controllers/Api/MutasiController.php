@@ -69,12 +69,12 @@ class MutasiController extends Controller
             switch ($request->jenis) {
                 case 'Uang Masuk':
                     $resultdata['jenis'] = 'Uang Masuk';
-                    $data = $data->where('jenis', 'DB');
+                    $data = $data->where('jenis', 'CR');
                     break;
 
                 case 'Uang Keluar':
                     $resultdata['jenis'] = 'Uang Keluar';
-                    $data = $data->where('jenis', 'CR');
+                    $data = $data->where('jenis', 'DB');
                     break;
 
                 default:

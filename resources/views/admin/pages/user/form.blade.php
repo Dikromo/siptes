@@ -103,7 +103,8 @@
                                     <label for="parentuser_id">Sales</label>
                                     <select name="parentuser_id"
                                         class="form-control select2 @error('parentuser_id') is-invalid @enderror  "
-                                        id="parentuser_id" {{ $data->roleuser_id != '3' ? 'disabled' : '' }}>
+                                        id="parentuser_id"
+                                        {{ ($data == '' ? '' : $data->roleuser_id != '3') ? 'disabled' : '' }}>
                                         <option value="">-- Pilih --</option>
                                         @foreach ($userSelect as $item)
                                             @if ($data != '')

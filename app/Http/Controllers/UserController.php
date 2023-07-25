@@ -30,8 +30,11 @@ class UserController extends Controller
         $data = User::where('status', '1');
         switch (auth()->user()->roleuser_id) {
             case '1':
-            case '4':
                 $data = $data->latest();
+                break;
+            case '4':
+                $data = $data->where('roleuser_id', '<>', '1')
+                    ->latest();
                 break;
             default:
                 $data = $data->where('roleuser_id', '3')

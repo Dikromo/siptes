@@ -20,14 +20,19 @@ class MutasiController extends Controller
             $data = Mutasi::where('status', '1')
                 ->where('pin', $request->pin)
                 ->get();
-            foreach ($data as $item) {
-                $resultdata = [
-                    'id' => strval($item->id),
-                    'nama' => $item->nama,
-                    'norek' => $item->norek,
-                    'pin' => $item->pin,
-                    'pin2' => $item->pin2,
-                ];
+            if ($data->count() > 0) {
+                foreach ($data as $item) {
+                    $resultdata = [
+                        'id' => strval($item->id),
+                        'nama' => $item->nama,
+                        'norek' => $item->norek,
+                        'pin' => $item->pin,
+                        'pin2' => $item->pin2,
+                    ];
+                }
+            } else {
+                $statusData = false;
+                $resultdata['list_data'] = [];
             }
         }
 
@@ -67,6 +72,7 @@ class MutasiController extends Controller
                     $z++;
                 }
             } else {
+                $statusData = false;
                 $resultdata['list_data'] = [];
             }
         }

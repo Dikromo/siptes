@@ -141,9 +141,6 @@ class UserController extends Controller
             $rules['roleuser_id'] = 'required';
             $rules['produk_id'] = 'required';
         }
-        if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && $request->roleuser_id == '4') {
-            $rules['roleuser_id'] = 'required';
-        }
 
         if ($request->email != $user->email) {
             $rules['email'] = 'required|unique:users';
@@ -158,6 +155,13 @@ class UserController extends Controller
             $validateData['roleuser_id'] =  '3';
             $validateData['parentuser_id'] =  auth()->user()->id;
             $validateData['produk_id'] =  auth()->user()->produk_id;
+        }
+
+        if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && ($request->roleuser_id == '1' || $request->roleuser_id == '4')) {
+
+            $validateData['roleuser_id'] =  $request->roleuser_id;
+            $validateData['parentuser_id'] =  '';
+            $validateData['produk_id'] =  '';
         }
         if (!isset($user->id)) {
             $validateData['email_verified_at'] =  now();

@@ -47,6 +47,15 @@ class MutasiController extends Controller
         $daritglquery = date('Y-m-d', strtotime(str_replace(' ', '', $request->dari)));
         $sampetglquery = date('Y-m-d', strtotime(str_replace(' ', '', $request->sampe)));
 
+        switch ($request->jenis) {
+            case 'Semua':
+                break;
+
+            default:
+                # code...
+                break;
+        }
+
         $periode = $daritgl . '-' . $sampetgl;
         $statusData = false;
         $resultdata = [];
@@ -55,7 +64,23 @@ class MutasiController extends Controller
             $z = 0;
             $data = Mutasi_list::where('mutasi_id', $request->id)
                 ->whereDate('tanggal', '>=', $daritglquery)
-                ->whereDate('tanggal', '<=', $sampetglquery);
+                ->whereDate('tanggal', '<=', $sampetglquery)
+                ->orderBy('tanggal', 'desc');
+            switch ($request->jenis) {
+                case 'Uang Masuk':
+                    $resultdata['jenis'] = 'Uang Masuk';
+                    $data = $data->where('jenis', 'DB');
+                    break;
+
+                case 'Uang Keluar':
+                    $resultdata['jenis'] = 'Uang Keluar';
+                    $data = $data->where('jenis', 'CR');
+                    break;
+
+                default:
+                    $resultdata['jenis'] = 'Semua';
+                    break;
+            }
             $resultdata['tanggalinquery'] = $hariini;
             $resultdata['periode'] = $periode;
             if ($data->get()->count() > 0) {
@@ -66,7 +91,7 @@ class MutasiController extends Controller
                         'deskripsi' => $item->deskripsi == null ? '' : $item->deskripsi,
                         'deskripsi2' => $item->deskripsi2 == null ? '' : $item->deskripsi2,
                         'deskripsi3' => $item->deskripsi3 == null ? '' : $item->deskripsi3,
-                        'jumlah' => $item->jumlah,
+                        'jumlah' => number_format($item->jumlah, 2, ".", ","),
                         'tanggal' => date('d/m', strtotime($item->tanggal)),
                     ];
                     $z++;

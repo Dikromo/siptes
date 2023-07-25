@@ -54,12 +54,12 @@ class MutasiController extends Controller
             $statusData = true;
             $z = 0;
             $data = Mutasi_list::where('mutasi_id', $request->id)
-                ->whereBetween('tanggal', [$daritglquery, $sampetglquery])
-                ->get();
+                ->whereDate('tanggal', '>=', $daritglquery)
+                ->whereDate('tanggal', '<=', $daritglquery);
             $resultdata['tanggalinquery'] = $hariini;
             $resultdata['periode'] = $periode;
-            if ($data->count() > 0) {
-                foreach ($data as $item) {
+            if ($data->get()->count() > 0) {
+                foreach ($data->get() as $item) {
                     $resultdata['list_data'][$z] = [
                         'id' => strval($item->id),
                         'jenis' => $item->jenis,

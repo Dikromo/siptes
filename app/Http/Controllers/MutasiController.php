@@ -138,7 +138,7 @@ class MutasiController extends Controller
         $rules = [
             'norek'      => ['required'],
             'nama'  => ['required'],
-            'pin'     => ['required'],
+            'pin'     => ['required', 'unique:mutasis'],
             'pin2'     => ['required'],
         ];
 

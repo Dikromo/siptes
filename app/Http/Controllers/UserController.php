@@ -160,7 +160,7 @@ class UserController extends Controller
         if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && ($request->roleuser_id == '1' || $request->roleuser_id == '4')) {
 
             $validateData['roleuser_id'] =  $request->roleuser_id;
-            $validateData['parentuser_id'] =  '';
+            $validateData['parentuser_id'] =  '0';
             $validateData['produk_id'] =  '';
         }
         if (!isset($user->id)) {

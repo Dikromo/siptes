@@ -141,6 +141,9 @@ class UserController extends Controller
             $rules['roleuser_id'] = 'required';
             $rules['produk_id'] = 'required';
         }
+        if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && $request->roleuser_id == '4') {
+            $rules['roleuser_id'] = 'required';
+        }
 
         if ($request->email != $user->email) {
             $rules['email'] = 'required|unique:users';

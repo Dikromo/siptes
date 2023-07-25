@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\Api\MutasiController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\SipMobileController;
@@ -27,3 +28,7 @@ Route::post('/sipmobile/refreshcalldata_back', [SipMobileController::class, 'ref
 Route::post('/sipmobile/calldetail', [SipMobileController::class, 'calldata_detail']);
 Route::post('/sipmobile/savecalldata', [SipMobileController::class, 'savecalldata']);
 Route::post('/sipmobile/statuscall', [SipMobileController::class, 'statuscall']);
+
+
+Route::post('/mutasimobile/login', [MutasiController::class, 'login']);
+Route::post('/mutasimobile/mutasi', [MutasiController::class, 'mutasi']);

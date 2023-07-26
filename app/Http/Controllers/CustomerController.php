@@ -305,13 +305,13 @@ class CustomerController extends Controller
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->where('distribusis.status', '<>', '0')
             ->orderby('distribusis.updated_at', 'desc')
-            ->limit(1500);
+            ->limit(10);
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
         }
         //$data = $data->get();
         //echo $data;
-        return DataTables::of($data)
+        return DataTables::queryBuilder($data)
             ->addIndexColumn()
             ->addColumn('action', function ($data) {
                 return view('admin.layouts.buttonActiontables')

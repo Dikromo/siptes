@@ -308,7 +308,7 @@ class CustomerController extends Controller
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
         }
         $data = $data
-            ->orderby('distribusis.end_call_time', 'desc')
+            ->orderby('distribusis.updated_date', 'desc')
             ->limit(2000);
         $data = $data->get();
         //echo $data;

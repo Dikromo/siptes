@@ -124,8 +124,8 @@
                 data: 'statustext',
                 name: 'statustext'
             }, {
-                data: 'end_call_time',
-                name: 'end_call_time'
+                data: 'updated_date',
+                name: 'updated_date'
             }],
             columnDefs: [{
                 targets: 0,

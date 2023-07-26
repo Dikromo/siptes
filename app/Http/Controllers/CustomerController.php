@@ -309,7 +309,7 @@ class CustomerController extends Controller
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
         }
-        //$data = $data->get();
+        $data = $data->get();
         //echo $data;
         return DataTables::of($data)
             ->addIndexColumn()
@@ -317,7 +317,7 @@ class CustomerController extends Controller
                 return view('admin.layouts.buttonActiontables')
                     ->with(['data' => $data, 'links' => 'jmosip', 'type' => 'all']);
             })
-            ->toJson();
+            ->make(true);
     }
     /**
      * Show the form for creating a new resource.

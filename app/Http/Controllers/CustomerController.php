@@ -311,7 +311,7 @@ class CustomerController extends Controller
         }
         //$data = $data->get();
         //echo $data;
-        return DataTables::queryBuilder($data)
+        return DataTables::of($data)
             ->addIndexColumn()
             ->addColumn('action', function ($data) {
                 return view('admin.layouts.buttonActiontables')

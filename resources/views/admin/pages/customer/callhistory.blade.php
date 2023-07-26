@@ -124,8 +124,8 @@
                 data: 'statustext',
                 name: 'statustext'
             }, {
-                data: 'updated_date',
-                name: 'updated_date'
+                data: 'updated_at',
+                name: 'updated_at'
             }],
             columnDefs: [{
                 targets: 0,

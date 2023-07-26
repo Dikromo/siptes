@@ -303,12 +303,13 @@ class CustomerController extends Controller
             'statuscalls.nama as statustext'
         )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
-            ->where('distribusis.status', '<>', '0')
-            ->orderby('distribusis.updated_at', 'desc')
-            ->limit(2000);
+            ->where('distribusis.status', '<>', '0');
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
         }
+        $data = $data
+            ->orderby('distribusis.updated_at', 'desc')
+            ->limit(2000);
         $data = $data->get();
         //echo $data;
         return DataTables::of($data)

@@ -95,7 +95,7 @@
         var hari = "<?php echo date('Y-m-d'); ?>";
         $('#dataTables').DataTable({
             processing: true,
-            serverside: true,
+            serverSide: true,
             autoWidth: false,
             bDestroy: true,
             initComplete: function(settings, json) {

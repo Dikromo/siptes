@@ -312,11 +312,13 @@
             var hari = "<?php echo date('Y-m-d'); ?>";
             $('#dataTables1').DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 bDestroy: true,
                 initComplete: function(settings, json) {
-                    fromTabel = this.api().data().length;
+                    fromTabel = this.api().page.info().recordsTotal;
+
+                    console.log(fromTabel);
                 },
                 ajax: {
                     type: 'POST',
@@ -331,6 +333,8 @@
                 columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
                 }, {
                     data: 'nama',
                     name: 'nama'
@@ -354,12 +358,12 @@
         function dataTablesto(select) {
             $('#dataTables2').DataTable({
                 processing: true,
-                serverside: true,
+                serverSide: true,
                 autoWidth: false,
                 bDestroy: true,
                 searching: false,
                 initComplete: function(settings, json) {
-                    toTabel = this.api().data().length;
+                    toTabel = this.api().page.info().recordsTotal;
                 },
                 ajax: {
                     type: 'POST',

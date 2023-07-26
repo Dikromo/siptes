@@ -132,7 +132,7 @@ class CustomerController extends Controller
                 ->where('distribusis.produk_id', $produk_id)
                 ->where('customers.provider', $request->provider);
 
-            return DataTables::of($data->get())
+            return DataTables::of($data)
                 ->addIndexColumn()
                 ->addColumn('nama', '{{$customer[\'nama\']}}')
                 ->addColumn('no_telp', '{{{substr($customer[\'no_telp\'], 0, 6)}}}xxxx')

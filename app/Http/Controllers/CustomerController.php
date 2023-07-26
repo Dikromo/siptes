@@ -317,7 +317,7 @@ class CustomerController extends Controller
                 return view('admin.layouts.buttonActiontables')
                     ->with(['data' => $data, 'links' => 'jmosip', 'type' => 'all']);
             })
-            ->make(true);
+            ->toJson();
     }
     /**
      * Show the form for creating a new resource.

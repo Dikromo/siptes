@@ -49,17 +49,18 @@
                                         <th>NO</th>
                                         <th>Nama</th>
                                         <th>Status</th>
+                                        <th>Remarks</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                {{-- <tbody>
                                     <tr>
                                         <td>1</td>
                                         <td>Budi Hartanto</td>
                                         <td>Call Lagi</td>
                                         <td></td>
                                     </tr>
-                                </tbody>
+                                </tbody> --}}
                             </table>
                         </div>
                         <hr>
@@ -73,17 +74,18 @@
                                         <th>NO</th>
                                         <th>Nama</th>
                                         <th>Status</th>
+                                        <th>Remarks</th>
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                <tbody>
+                                {{-- <tbody>
                                     <tr>
                                         <td>1</td>
                                         <td>Budi Hartanto</td>
                                         <td>Call Lagi</td>
                                         <td></td>
                                     </tr>
-                                </tbody>
+                                </tbody> --}}
                             </table>
                         </div>
                         {{-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> --}}
@@ -115,7 +117,6 @@
             serverside: true,
             autoWidth: false,
             bDestroy: true,
-            searching: false,
             initComplete: function(settings, json) {
                 //fromTabel = this.api().data().length;
             },
@@ -138,13 +139,16 @@
                 data: 'statusText',
                 name: 'statusText'
             }, {
+                data: 'deskripsi',
+                name: 'deskripsi'
+            }, {
                 data: 'action',
                 name: 'action',
                 orderable: false,
                 searchable: false,
             }],
             columnDefs: [{
-                targets: 3,
+                targets: 4,
                 className: "text-center",
             }]
         });
@@ -154,7 +158,6 @@
             serverside: true,
             autoWidth: false,
             bDestroy: true,
-            searching: false,
             initComplete: function(settings, json) {
                 //fromTabel = this.api().data().length;
             },
@@ -177,13 +180,16 @@
                 data: 'statusText',
                 name: 'statusText'
             }, {
+                data: 'deskripsi',
+                name: 'deskripsi'
+            }, {
                 data: 'action',
                 name: 'action',
                 orderable: false,
                 searchable: false,
             }],
             columnDefs: [{
-                targets: 3,
+                targets: 4,
                 className: "text-center",
             }]
         });

@@ -318,7 +318,7 @@ class CustomerController extends Controller
                 return view('admin.layouts.buttonActiontables')
                     ->with(['data' => $data, 'links' => 'jmosip', 'type' => 'all']);
             })
-            ->editColumn('updated_at', '{{{date_format($updated_at,"Y-m-d H:i:s");}}}')
+            ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
             ->make(true);
     }
     /**

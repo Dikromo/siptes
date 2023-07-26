@@ -94,8 +94,6 @@
         // $(document).ready(function() {
         var hari = "<?php echo date('Y-m-d'); ?>";
         $('#dataTables').DataTable({
-            processing: true,
-            serverSide: true,
             autoWidth: false,
             bDestroy: true,
             initComplete: function(settings, json) {
@@ -108,9 +106,12 @@
                     _token: '{{ csrf_token() }}',
                 }
             },
+            lengthMenu: [5, 10, 20, 50, 100, 200, 500],
             columns: [{
                 data: 'DT_RowIndex',
                 name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
             }, {
                 data: 'salesnama',
                 name: 'salesnama'
@@ -131,12 +132,14 @@
                 targets: 0,
                 className: "text-center",
             }],
-            dom: 'Bfrtip',
+            dom: 'lBfrtip',
             buttons: [{
                 extend: 'excel',
                 text: 'Export Excel',
                 filename: 'export_callhistory_' + hari
-            }, ]
+            }, ],
+            processing: true,
+            serverSide: true
         }).buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');
         // })
     </script>

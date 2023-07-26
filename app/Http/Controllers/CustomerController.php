@@ -308,16 +308,10 @@ class CustomerController extends Controller
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
         }
         $data = $data
-            ->orderby('distribusis.updated_at', 'desc')
-            ->limit(2000);
-        $data = $data->get();
+            ->orderby('distribusis.updated_at', 'desc');
         //echo $data;
         return DataTables::of($data)
             ->addIndexColumn()
-            ->addColumn('action', function ($data) {
-                return view('admin.layouts.buttonActiontables')
-                    ->with(['data' => $data, 'links' => 'jmosip', 'type' => 'all']);
-            })
             ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
             ->make(true);
     }

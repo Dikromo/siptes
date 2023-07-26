@@ -304,7 +304,8 @@ class CustomerController extends Controller
         )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->where('distribusis.status', '<>', '0')
-            ->orderby('distribusis.updated_at', 'desc');
+            ->orderby('distribusis.updated_at', 'desc')
+            ->limit(1500);
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
         }

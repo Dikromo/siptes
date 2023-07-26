@@ -118,7 +118,7 @@ class CustomerController extends Controller
                 ->where('customers.fileexcel_id', $request->fileexcel_id)
                 ->where('distribusis.produk_id', null);
 
-            return DataTables::of($data)
+            return DataTables::of($data->get())
                 ->addIndexColumn()
                 ->editColumn('no_telp', '{{substr($no_telp, 0, 6)}}xxxx')
                 ->make(true);

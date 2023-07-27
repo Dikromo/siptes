@@ -106,7 +106,10 @@
                     _token: '{{ csrf_token() }}',
                 }
             },
-            lengthMenu: [10, 50, 100, 200, 500],
+            lengthMenu: [
+                [10, 50, 100, 200, 500, -1],
+                [10, 50, 100, 200, 500, "All"]
+            ],
             columns: [{
                 data: 'DT_RowIndex',
                 name: 'DT_RowIndex',
@@ -114,16 +117,16 @@
                 searchable: false
             }, {
                 data: 'salesnama',
-                name: 'salesnama'
+                name: 'sales.name as salesnama'
             }, {
                 data: 'customer.nama',
-                name: 'customer.nama'
+                name: 'customers.nama',
             }, {
                 data: 'customer.provider',
-                name: 'customer.provider'
+                name: 'customers.provider',
             }, {
                 data: 'statustext',
-                name: 'statustext'
+                name: 'statuscalls.nama as statustext'
             }, {
                 data: 'updated_at',
                 name: 'updated_at'

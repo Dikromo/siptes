@@ -303,6 +303,7 @@ class CustomerController extends Controller
             'statuscalls.nama as statustext'
         )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
             ->where('distribusis.status', '<>', '0');
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);

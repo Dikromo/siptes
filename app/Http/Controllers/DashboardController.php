@@ -38,7 +38,8 @@ class DashboardController extends Controller
     }
     public function getSalescall(Request $request)
     {
-        $dataStatuscall = Statuscall::latest();
+        $dataStatuscall = Statuscall::orderby('jenis', 'asc')
+            ->orderby('id', 'asc');
         $result = [];
         $result['salescall'] = [];
         $result['statuscall'] = (isset($request->date_by) && $request->date_by == 'updated_at') ? [] : ['Total Data', 'Belum Ditelfon'];

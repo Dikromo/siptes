@@ -39,6 +39,8 @@ class CallpagesController extends Controller
         Distribusi::where('id', $id)
             ->Update($upData);
         $statusSelect = Statuscall::where('status', '1')
+            ->orderby('jenis', 'asc')
+            ->orderby('id', 'asc')
             ->get();
 
         $distribusi = Distribusi::firstWhere('id', $id);
@@ -56,7 +58,8 @@ class CallpagesController extends Controller
         if ($request->status != '1') {
             $data = $data->where(function ($query) {
                 $query->where('status', '2')
-                    ->orWhere('status', '3');
+                    ->orWhere('status', '3')
+                    ->orWhere('status', '14');
             });
         } else {
             $data = $data->where('status', $request->status);
@@ -74,6 +77,9 @@ class CallpagesController extends Controller
                         break;
                     case '3':
                         $statusText = 'Call Back';
+                        break;
+                    case '14':
+                        $statusText = 'Lanjut WA';
                         break;
                 }
                 return $statusText;

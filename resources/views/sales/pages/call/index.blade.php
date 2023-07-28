@@ -29,7 +29,9 @@
 
                             <h3 class="profile-username text-center">{{ auth()->user()->name }}</h3>
 
-                            <p class="text-muted text-center">Software Engineer</p>
+                            <p class="text-muted text-center">
+                                {{ auth()->user()->roleuser_id == '3' ? 'TELEMARKETING' : '' }}
+                            </p>
                             <a class="btn"><i class="nav-icon fas fa-database"></i>
                                 Total Data : {{ count($data_total) }}</a>
                             @foreach ($data as $item)

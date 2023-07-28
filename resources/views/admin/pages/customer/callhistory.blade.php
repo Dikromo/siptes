@@ -34,6 +34,7 @@
                                     <th>Nama</th>
                                     <th>Provider</th>
                                     <th>Status</th>
+                                    <th>Start Call</th>
                                     <th>End Call</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
@@ -127,6 +128,9 @@
             }, {
                 data: 'statustext',
                 name: 'statuscalls.nama as statustext'
+            }, {
+                data: 'call_time',
+                name: 'call_time'
             }, {
                 data: 'updated_at',
                 name: 'updated_at'

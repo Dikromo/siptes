@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cabang;
 use App\Models\Produk;
 use App\Models\Roleuser;
 use App\Models\User;
@@ -27,19 +28,28 @@ class UserController extends Controller
     }
     public function dataTables()
     {
-        $data = User::where('status', '1');
+        $data = User::select(
+            'users.*',
+            'roleusers.nama as roletext',
+        )
+            ->join('roleusers', 'roleusers.id', '=', 'users.roleuser_id')
+            ->where('users.status', '1');
         switch (auth()->user()->roleuser_id) {
             case '1':
-                $data = $data->latest();
+                $data = $data->orderby('users.created_at', 'desc');
                 break;
             case '4':
+            case '5':
                 $data = $data->where('roleuser_id', '<>', '1')
-                    ->latest();
+                    ->where('roleuser_id', '<>', '4')
+                    ->where('roleuser_id', '<>', '5')
+                    ->where('cabang_id', auth()->user()->cabang_id)
+                    ->orderby('users.created_at', 'desc');
                 break;
             default:
                 $data = $data->where('roleuser_id', '3')
                     ->where('parentuser_id', auth()->user()->id)
-                    ->latest();
+                    ->orderby('users.created_at', 'desc');
                 break;
         }
         return DataTables::of($data)
@@ -67,40 +77,54 @@ class UserController extends Controller
     public function userFormadd()
     {
         $userSelect = User::where('status', '1')
-            ->where('roleuser_id', '2')
-            ->get();
-        $roleSelect = Roleuser::where('status', '1')
-            ->get();
-        $produkSelect = Produk::where('status', '1')
-            ->get();
+            ->where('roleuser_id', '2');
+
+        $roleSelect = Roleuser::where('status', '1');
+        $produkSelect = Produk::where('status', '1');
+        $cabangSelect = Cabang::where('status', '1');
+
+        if (auth()->user()->roleuser_id != '1') {
+            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id);
+            $roleSelect = $roleSelect->where('id', '<>', '1')
+                ->where('id', '<>', '4')
+                ->where('id', '<>', '5');
+        }
         //dd($userSelect);
         return view('admin.pages.user.form', [
             'title' => 'User',
             'active' => 'user',
             'active_sub' => '',
             "data" => '',
-            "userSelect" => $userSelect,
-            "roleSelect" => $roleSelect,
-            "produkSelect" => $produkSelect,
+            "userSelect" => $userSelect->get(),
+            "roleSelect" => $roleSelect->get(),
+            "produkSelect" => $produkSelect->get(),
+            "cabangSelect" => $cabangSelect->get(),
         ]);
     }
     public function userEdit(User $user)
     {
         $userSelect = User::where('status', '1')
-            ->where('roleuser_id', '2')
-            ->get();
-        $roleSelect = Roleuser::where('status', '1')
-            ->get();
-        $produkSelect = Produk::where('status', '1')
-            ->get();
+            ->where('roleuser_id', '2');
+
+        $roleSelect = Roleuser::where('status', '1');
+        $produkSelect = Produk::where('status', '1');
+        $cabangSelect = Cabang::where('status', '1');
+
+        if (auth()->user()->roleuser_id != '1') {
+            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id);
+            $roleSelect = $roleSelect->where('id', '<>', '1')
+                ->where('id', '<>', '4')
+                ->where('id', '<>', '5');
+        }
         return view('admin.pages.user.form', [
             'title' => 'User',
             'active' => 'user',
             'active_sub' => '',
             "data" => $user,
-            "userSelect" => $userSelect,
-            "roleSelect" => $roleSelect,
-            "produkSelect" => $produkSelect,
+            "userSelect" => $userSelect->get(),
+            "roleSelect" => $roleSelect->get(),
+            "produkSelect" => $produkSelect->get(),
+            "cabangSelect" => $cabangSelect->get(),
         ]);
     }
     public function userShow(User $user)
@@ -132,17 +156,43 @@ class UserController extends Controller
             'name'      => ['required'],
             'username'  => ['required'],
             'email'     => ['required'],
-            'password'  => ['required'],
         ];
+        if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
 
-        if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && $request->roleuser_id == '3') {
-            $rules['parentuser_id'] = 'required';
             $rules['roleuser_id'] = 'required';
-            $rules['produk_id'] = 'required';
+            if ($request->roleuser_id != '1') {
+                $rules['cabang_id'] = 'required';
+            }
+            if ($request->roleuser_id == '2' || $request->roleuser_id == '3') {
+                $rules['produk_id'] = 'required';
+                if ($request->roleuser_id == '3') {
+                    $rules['parentuser_id'] = 'required';
+                }
+            }
         }
-        if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && $request->roleuser_id == '2') {
+        if (auth()->user()->roleuser_id == '2') {
             $rules['roleuser_id'] = 'required';
+            $rules['cabang_id'] = 'required';
             $rules['produk_id'] = 'required';
+            $rules['parentuser_id'] = 'required';
+        }
+
+        // if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && $request->roleuser_id == '3') {
+        //     $rules['parentuser_id'] = 'required';
+        //     $rules['roleuser_id'] = 'required';
+        //     $rules['produk_id'] = 'required';
+        // }
+        // if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && $request->roleuser_id == '2') {
+        //     $rules['roleuser_id'] = 'required';
+        //     $rules['produk_id'] = 'required';
+        // }
+        if (!isset($user->id)) {
+            $rules['password'] = 'required';
+        }
+        if (isset($user->id)) {
+            if ($request->password != '') {
+                $rules['password'] = 'required';
+            }
         }
 
         if ($request->email != $user->email) {
@@ -152,13 +202,38 @@ class UserController extends Controller
             $rules['username'] = 'required|unique:users';
         }
         $validateData = $request->validate($rules);
-        $validateData['password'] = Hash::make($validateData['password']);
 
-        if (auth()->user()->roleuser_id == '2') {
-            $validateData['roleuser_id'] =  '3';
-            $validateData['parentuser_id'] =  auth()->user()->id;
-            $validateData['produk_id'] =  auth()->user()->produk_id;
+        if (!isset($user->id)) {
+            $validateData['password'] = Hash::make($validateData['password']);
         }
+        if (isset($user->id)) {
+            if ($request->password != '') {
+                $validateData['password'] = Hash::make($validateData['password']);
+            }
+        }
+        if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
+            if ($request->roleuser_id == '2') {
+                $validateData['parentuser_id'] =  '0';
+            }
+            if ($request->roleuser_id == '4' || $request->roleuser_id == '5') {
+                $validateData['parentuser_id'] =  '0';
+                $validateData['produk_id'] =  '';
+            }
+        }
+
+        // if (auth()->user()->roleuser_id == '2') {
+        //     $validateData['roleuser_id'] =  '3';
+        //     $validateData['parentuser_id'] =  auth()->user()->id;
+        //     $validateData['produk_id'] =  auth()->user()->produk_id;
+        //     $validateData['cabang_id'] =  auth()->user()->cabang_id;
+        // }
+
+        // if (auth()->user()->roleuser_id == '5') {
+        //     $validateData['roleuser_id'] =  $request->roleuser_id;
+        //     $validateData['parentuser_id'] =  $request->parentuser_id;
+        //     $validateData['produk_id'] =  auth()->user()->produk_id;
+        //     $validateData['cabang_id'] =  auth()->user()->cabang_id;
+        // }
 
         if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4') && ($request->roleuser_id == '1' || $request->roleuser_id == '4')) {
 

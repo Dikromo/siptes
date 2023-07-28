@@ -75,12 +75,22 @@ class CustomerController extends Controller
         $userSelect = User::where('status', '1');
         if (auth()->user()->roleuser_id == '2') {
             $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
+                ->where('cabang_id', auth()->user()->cabang_id)
                 ->where('roleuser_id', '3');
+        } else if (auth()->user()->roleuser_id == '5') {
+            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
+                ->where(function ($query) {
+                    $query->where('roleuser_id', '2')
+                        ->orWhere('roleuser_id', '3');
+                })
+                ->orderby('roleuser_id', 'asc');
         } else {
             $userSelect = $userSelect->where(function ($query) {
                 $query->where('roleuser_id', '2')
                     ->orWhere('roleuser_id', '3');
-            });
+            })
+                ->orderby('cabang_id', 'asc')
+                ->orderby('roleuser_id', 'asc');
         }
 
         $produkSelect = Produk::where('status', '1')
@@ -103,7 +113,7 @@ class CustomerController extends Controller
     public function customerDistribusifrom(Request $request)
     {
 
-        $produk_id = auth()->user()->roleuser_id == '1' ? $request->produk_id : auth()->user()->produk_id;
+        $produk_id = auth()->user()->roleuser_id == '2' ? auth()->user()->produk_id : $request->produk_id;
         $tanggal = date('Y-m-d');
         // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->fileexcel_id != 'today') {
@@ -156,7 +166,7 @@ class CustomerController extends Controller
     //** Proses distribusi */
     public function customerDistribusiproses(Request $request)
     {
-        $produk_id = auth()->user()->roleuser_id == '1' ? $request->produk_id : auth()->user()->produk_id;
+        $produk_id = auth()->user()->roleuser_id == '2' ? auth()->user()->produk_id : $request->produk_id;
         $tanggal = date('Y-m-d');
         // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->tipe == 'DISTRIBUSI') {
@@ -307,6 +317,9 @@ class CustomerController extends Controller
             ->where('distribusis.status', '<>', '0');
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
+        }
+        if (auth()->user()->roleuser_id != '1') {
+            $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
         }
         $data = $data
             ->orderby('distribusis.updated_at', 'desc');

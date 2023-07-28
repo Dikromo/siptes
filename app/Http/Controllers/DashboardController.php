@@ -18,11 +18,11 @@ class DashboardController extends Controller
         if (auth()->user()->roleuser_id == '2') {
             $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
                 ->where('roleuser_id', '3');
+        } else if (auth()->user()->roleuser_id == '5') {
+            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
+                ->Where('roleuser_id', '3');
         } else {
-            $userSelect = $userSelect->where(function ($query) {
-                $query->where('roleuser_id', '2')
-                    ->orWhere('roleuser_id', '3');
-            });
+            $userSelect = $userSelect->where('roleuser_id', '3');
         }
 
         return view(

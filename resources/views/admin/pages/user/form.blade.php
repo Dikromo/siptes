@@ -74,33 +74,61 @@
                                     <span id="password" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
-                            <div class="form-group">
-                                <label for="roleuser_id">Role User</label>
-                                <select name="roleuser_id"
-                                    class="form-control select2 @error('roleuser_id') is-invalid @enderror  "
-                                    id="roleuser_id" required {{ auth()->user()->roleuser_id == '2' ? 'disabled' : '' }}>
-                                    <option value="">-- Pilih --</option>
+                            {{-- hidden input --}}
+                            @if (auth()->user()->roleuser_id == '2')
+                                <input type="hidden" id="hroleuser_id" name="roleuser_id"
+                                    class="form-control @error('roleuser_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('roleuser_id', '3') : old('roleuser_id', $data->roleuser_id) }}">
+                                <input type="hidden" id="hparentuser_id" name="parentuser_id"
+                                    class="form-control @error('parentuser_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('parentuser_id', auth()->user()->id) : old('parentuser_id', $data->parentuser_id) }}">
+                                <input type="hidden" id="hproduk_id" name="produk_id"
+                                    class="form-control @error('produk_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('produk_id', auth()->user()->produk_id) : old('produk_id', $data->produk_id) }}">
+                                <input type="hidden" id="hcabang_id" name="cabang_id"
+                                    class="form-control @error('cabang_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('cabang_id', auth()->user()->cabang_id) : old('cabang_id', $data->cabang_id) }}">
+                            @endif
+                            @if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5')
+                                <input type="hidden" id="hparentuser_id" name="parentuser_id"
+                                    class="form-control @error('parentuser_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('parentuser_id') : old('parentuser_id', $data->parentuser_id) }}">
+                                <input type="hidden" id="hproduk_id" name="produk_id"
+                                    class="form-control @error('produk_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('produk_id') : old('produk_id', $data->produk_id) }}">
+                                <input type="hidden" id="hcabang_id" name="cabang_id"
+                                    class="form-control @error('cabang_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('cabang_id', auth()->user()->cabang_id) : old('cabang_id', $data->cabang_id) }}">
+                            @endif
+                            {{-- End hidden input --}}
+                            @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5')
+                                <div class="form-group">
+                                    <label for="roleuser_id">Role User</label>
+                                    <select name="roleuser_id"
+                                        class="form-control select2 @error('roleuser_id') is-invalid @enderror  "
+                                        id="roleuser_id" required
+                                        {{ auth()->user()->roleuser_id == '2' ? 'disabled' : '' }}>
+                                        <option value="">-- Pilih --</option>
 
-                                    @foreach ($roleSelect as $item)
-                                        @if ($data != '')
-                                            @if (old('roleuser_id') == $item->id || $data->roleuser_id == $item->id)
-                                                <option value="{{ $item->id }}" selected>{{ $item->nama }}
-                                                </option>
+                                        @foreach ($roleSelect as $item)
+                                            @if ($data != '')
+                                                @if (old('roleuser_id') == $item->id || $data->roleuser_id == $item->id)
+                                                    <option value="{{ $item->id }}" selected>{{ $item->nama }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                                @endif
                                             @else
                                                 <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                             @endif
-                                        @else
-                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                                @error('roleuser_id')
-                                    <span id="roleuser_id" class="error invalid-feedback">{{ $message }}</span>
-                                @enderror
-                            </div>
-                            @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
+                                        @endforeach
+                                    </select>
+                                    @error('roleuser_id')
+                                        <span id="roleuser_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
                                 <div class="form-group">
-                                    <label for="parentuser_id">Sales</label>
+                                    <label for="parentuser_id">Supervisor</label>
                                     <select name="parentuser_id"
                                         class="form-control select2 @error('parentuser_id') is-invalid @enderror  "
                                         id="parentuser_id"
@@ -127,7 +155,8 @@
                                     <label for="produk_id">Produk</label>
                                     <select name="produk_id"
                                         class="form-control select2 @error('produk_id') is-invalid @enderror  "
-                                        id="produk_id">
+                                        id="produk_id"
+                                        {{ ($data == '' ? '' : $data->roleuser_id != '2') ? 'disabled' : '' }}>
                                         <option value="">-- Pilih --</option>
                                         @foreach ($produkSelect as $item)
                                             @if ($data != '')
@@ -150,6 +179,36 @@
                                         <span id="produk_id" class="error invalid-feedback">{{ $message }}</span>
                                     @enderror
                                 </div>
+                                @if (auth()->user()->roleuser_id == '1')
+                                    <div class="form-group">
+                                        <label for="cabang_id">Lokasi</label>
+                                        <select name="cabang_id"
+                                            class="form-control select2 @error('cabang_id') is-invalid @enderror  "
+                                            id="cabang_id">
+                                            <option value="">-- Pilih --</option>
+                                            @foreach ($cabangSelect as $item)
+                                                @if ($data != '')
+                                                    @if (old('cabang_id') == $item->id || $data->cabang_id == $item->id)
+                                                        <option value="{{ $item->id }}" selected>
+                                                            {{ $item->nama }}
+                                                        </option>
+                                                    @else
+                                                        <option value="{{ $item->id }}">
+
+                                                            {{ $item->nama }}</option>
+                                                    @endif
+                                                @else
+                                                    <option value="{{ $item->id }}">
+                                                        {{ $item->nama }}
+                                                    </option>
+                                                @endif
+                                            @endforeach
+                                        </select>
+                                        @error('cabang_id')
+                                            <span id="cabang_id" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                @endif
                             @endif
                         </div>
                         <!-- /.card-body -->
@@ -180,12 +239,29 @@
         $('.select2').select2()
         $('#roleuser_id').on('select2:select', function(e) {
             var data = e.params.data.id;
-            console.log(data);
-            if (data != '3') {
-                $('#parentuser_id').prop('disabled', true);
-            } else {
+
+            $('#parentuser_id').val('').change();
+            $('#produk_id').val('').change();
+            if (data == '3') {
                 $('#parentuser_id').prop('disabled', false);
+                $('#produk_id').prop('disabled', true);
+            } else if (data == '2') {
+                $('#hparentuser_id').val('');
+                $('#hproduk_id').val('');
+                $('#parentuser_id').prop('disabled', true);
+                $('#produk_id').prop('disabled', false);
+            } else {
+                $('#hparentuser_id').val('');
+                $('#hproduk_id').val('');
+                $('#parentuser_id').prop('disabled', true);
+                $('#produk_id').prop('disabled', true);
             }
+        });
+
+        $('#parentuser_id').on('select2:select', function(e) {
+            var data = e.params.data.id;
+            $('#hparentuser_id').val(data);
+            getProduk(data);
         });
         $('#formUser').submit(function() {
             $('#roleuser_id').prop('disabled', false);
@@ -195,5 +271,21 @@
             });
             return true;
         });
+
+        function getProduk(param) {
+            $.ajax({
+                type: 'POST',
+                url: "/cek/produkspv",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: param,
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                $('#hproduk_id').val(data);
+                $('#produk_id').val(data).change();
+            });
+        }
     </script>
 @endsection

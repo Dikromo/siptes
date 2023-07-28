@@ -47,7 +47,10 @@
                         </p>
                     </a>
                 </li>
-                @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2' || auth()->user()->roleuser_id == '4')
+                @if (auth()->user()->roleuser_id == '1' ||
+                        auth()->user()->roleuser_id == '2' ||
+                        auth()->user()->roleuser_id == '4' ||
+                        auth()->user()->roleuser_id == '5')
                     <li class="nav-item">
                         <a href="/dashboard/sales" class="nav-link {{ $active === 'dashboardsales' ? 'active' : '' }}">
                             <i class="nav-icon fas fa-chart-column"></i>
@@ -66,7 +69,7 @@
                             </p>
                         </a>
                     </li>
-                    @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2')
+                    @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2' || auth()->user()->roleuser_id == '5')
                         <li class="nav-item">
                             <a href="/customer/import" class="nav-link {{ $active === 'customer' ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-database"></i>

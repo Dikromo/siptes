@@ -72,7 +72,11 @@
                         </div>
                         <!-- /.card-header -->
                         <div class="card-body ">
-
+                            @if (auth()->user()->roleuser_id != '1' && auth()->user()->roleuser_id != '2')
+                                <input type="hidden" id="produk_id" name="produk_id"
+                                    class="form-control @error('produk_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('produk_id', auth()->user()->produk_id) : old('produk_id', $data->produk_id) }}">
+                            @endif
                             @if (auth()->user()->roleuser_id == '1')
                                 <div class="form-group">
                                     <label for="produk_id">Produk</label>
@@ -158,7 +162,7 @@
                             <div class="form-group">
                                 <label for="user_id">Sales</label>
                                 <select name="user_id" class="form-control select2 @error('user_id') is-invalid @enderror  "
-                                    id="user_id">
+                                    id="user_id" required>
                                     <option value="">-- Pilih --</option>
                                     @foreach ($userData as $item)
                                         @if ($data != '')
@@ -247,6 +251,7 @@
     <script>
         var fromTabel = 0;
         var toTabel = 0;
+        var rolecek = '{{ auth()->user()->roleuser_id }}';
         $('.select2').select2()
         $('#formDistribusi').submit(function() {
             if ($('#tipe').val() == 'DISTRIBUSI') {
@@ -291,6 +296,9 @@
                 }
             });
             $("#user_id").change(function() {
+                if (rolecek != '2') {
+                    getProduk($("#user_id").val());
+                }
                 dataTablesto(this.value);
             });
             $('#dataTables1').DataTable({
@@ -388,6 +396,28 @@
                     data: 'customer.provider',
                     name: 'customer.provider'
                 }]
+            });
+        }
+
+        function getProduk(param) {
+            $.ajax({
+                type: 'POST',
+                url: "/cek/produkspv",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: param,
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                $('#produk_id').val(data);
+                $('#produk_id').val(data).change();
+                // if (rolecek != '1' && rolecek != '2') {
+                //     if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                //         .val()) {
+                //         dataTablesfrom();
+                //     }
+                // }
             });
         }
     </script>

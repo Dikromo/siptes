@@ -40,6 +40,7 @@
                                     <th>NO</th>
                                     <th>Nama</th>
                                     <th>Username</th>
+                                    <th>Role</th>
                                     <th>Status</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
@@ -104,12 +105,17 @@
             columns: [{
                 data: 'DT_RowIndex',
                 name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
             }, {
                 data: 'name',
                 name: 'name'
             }, {
                 data: 'username',
                 name: 'username'
+            }, {
+                data: 'roletext',
+                name: 'roleusers.nama'
             }, {
                 data: 'statusText',
                 name: 'statusText'
@@ -120,7 +126,7 @@
                 searchable: false,
             }],
             columnDefs: [{
-                targets: 4,
+                targets: 5,
                 className: "text-center",
             }]
         })

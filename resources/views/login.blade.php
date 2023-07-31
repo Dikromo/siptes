@@ -63,7 +63,7 @@
                         <!-- /.col -->
                     </div>
                 </form>
-                @if (strtolower($browser) == 'chrome')
+                @if (strtolower($browser) != 'chrome')
                     <br>
                     <p style="text-align:justify">Note : Sitem berjalan dengan baik jika menggunakan Browser Chrome,
                         Klik

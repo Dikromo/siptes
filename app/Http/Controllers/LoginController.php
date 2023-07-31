@@ -3,14 +3,16 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Jenssegers\Agent\Facades\Agent;
 use Illuminate\Support\Facades\Auth;
 
 class LoginController extends Controller
 {
     //
-    public function index()
+    public function index(Request $request)
     {
-        return view('login', ['title' => 'Login', 'active' => 'login', 'active_sub' => '']);
+        $browser = Agent::browser();
+        return view('login', ['title' => 'Login', 'active' => 'login', 'active_sub' => '', 'browser' => $browser]);
     }
     public function auth(Request $request)
     {

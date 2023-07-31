@@ -96,7 +96,7 @@ class CustomerController extends Controller
         $produkSelect = Produk::where('status', '1')
             ->get();
         $fileExcel = Fileexcel::where('user_id', auth()->user()->id)
-            ->without("customer")
+            ->without("Customer")
             ->get();
         return view('admin.pages.customer.distribusi', [
             'title' => 'Distribusi',

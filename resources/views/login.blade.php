@@ -67,8 +67,8 @@
                     <br>
                     <p style="text-align:justify">Note : Sitem berjalan dengan baik jika menggunakan Browser Chrome,
                         Klik
-                        <a
-                            href="https://play.google.com/store/apps/details?id=com.android.chrome&hl=id&gl=US">disini</a>
+                        <a href="https://play.google.com/store/apps/details?id=com.android.chrome&hl=id&gl=US"
+                            target="_blank">disini</a>
                         untuk mendownload Browser Chrome
                     </p>
                 @endif

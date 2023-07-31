@@ -11,8 +11,10 @@ use Maatwebsite\Excel\Concerns\SkipsFailures;
 use Maatwebsite\Excel\Concerns\SkipsOnFailure;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Maatwebsite\Excel\Concerns\WithValidation;
+use Maatwebsite\Excel\Concerns\WithBatchInserts;
+use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, WithValidation, SkipsOnFailure
+class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, WithValidation, SkipsOnFailure, WithBatchInserts, WithChunkReading
 {
     /**
      * @param array $row
@@ -88,5 +90,14 @@ class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, WithValid
             // Above is alias for as it always validates in batches
             'no_telp' => ['unique:customers'],
         ];
+    }
+    public function batchSize(): int
+    {
+        return 1000;
+    }
+
+    public function chunkSize(): int
+    {
+        return 1000;
     }
 }

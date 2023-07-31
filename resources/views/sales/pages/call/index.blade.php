@@ -32,6 +32,17 @@
                             <p class="text-muted text-center">
                                 {{ auth()->user()->roleuser_id == '3' ? 'TELEMARKETING' : '' }}
                             </p>
+                            <div class="row justify-content-md-center">
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-success"><i class="fas fa-headset"></i></span>
+                                        <div class="info-box-content">
+                                            <span class="info-box-text">Total Calls Out</span>
+                                            <span class="info-box-number">{{ $dataCallout }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                             <a class="btn"><i class="nav-icon fas fa-database"></i>
                                 Total Data : {{ count($data_total) }}</a>
                             @foreach ($data as $item)

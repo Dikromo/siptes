@@ -13,6 +13,8 @@ class CallpagesController extends Controller
     //
     public function salesCallpages()
     {
+        $hariini = date('Y-m-d');
+        //$hariini = date('Y-m-d', strtotime('2023-07-21'));
         $data = Distribusi::where('user_id', auth()->user()->id)
             ->where('status', 0)
             ->limit(1)
@@ -20,12 +22,20 @@ class CallpagesController extends Controller
         $dataall = Distribusi::where('user_id', auth()->user()->id)
             ->where('status', 0)
             ->get();
+
+        $dataCallout = Distribusi::where('user_id', auth()->user()->id)
+            ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->where('distribusis.status', '<>', 0)
+            ->where('statuscalls.jenis', '1')
+            ->whereDate('distribusis.updated_at', $hariini)
+            ->get();
         return view('sales.pages.call.index', [
             'title' => 'Call Page',
             'active' => 'call',
             'active_sub' => 'call',
             "data" => $data,
             "data_total" => $dataall,
+            "dataCallout" => $dataCallout->count(),
             //"category" => User::all(),
         ]);
     }

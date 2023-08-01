@@ -330,7 +330,8 @@ class CustomerController extends Controller
         }
         $data = $data
             ->orderby('distribusis.updated_at', 'desc')
-            ->without("Customer");
+            ->without("Customer")
+            ->without("User");
         //echo $data;
         return DataTables::of($data)
             ->addIndexColumn()

@@ -32,7 +32,7 @@
                                     <th>NO</th>
                                     <th>Sales</th>
                                     <th>Nama</th>
-                                    @if (auth()->user()->cabang_id == '2')
+                                    @if (auth()->user()->cabang_id == '4')
                                         <th>Campaign</th>
                                         <th>4 Digit No Telp</th>
                                     @endif
@@ -99,7 +99,7 @@
         // $(document).ready(function() {
         var hari = "<?php echo date('Y-m-d'); ?>";
         var cabangs = "<?php echo auth()->user()->cabang_id; ?>";
-        if (cabangs == '2') {
+        if (cabangs == '4') {
             $paramColumn = [{
                 data: 'DT_RowIndex',
                 name: 'DT_RowIndex',

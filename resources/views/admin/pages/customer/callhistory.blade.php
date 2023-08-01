@@ -32,6 +32,10 @@
                                     <th>NO</th>
                                     <th>Sales</th>
                                     <th>Nama</th>
+                                    @if (auth()->user()->cabang_id == '2')
+                                        <th>Campaign</th>
+                                        <th>4 Digit No Telp</th>
+                                    @endif
                                     <th>Provider</th>
                                     <th>Status</th>
                                     <th>Start Call</th>
@@ -94,6 +98,64 @@
     <script type="text/javascript">
         // $(document).ready(function() {
         var hari = "<?php echo date('Y-m-d'); ?>";
+        var cabangs = "<?php echo auth()->user()->cabang_id; ?>";
+        if (cabangs == '2') {
+            $paramColumn = [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
+            }, {
+                data: 'salesnama',
+                name: 'sales.name as salesnama'
+            }, {
+                data: 'nama',
+                name: 'customers.nama',
+            }, {
+                data: 'kode',
+                name: 'fileexcels.kode',
+            }, {
+                data: 'no_telp',
+                name: 'customers.no_telp',
+            }, {
+                data: 'provider',
+                name: 'customers.provider',
+            }, {
+                data: 'statustext',
+                name: 'statuscalls.nama as statustext'
+            }, {
+                data: 'call_time',
+                name: 'call_time'
+            }, {
+                data: 'updated_at',
+                name: 'updated_at'
+            }];
+        } else {
+            $paramColumn = [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
+            }, {
+                data: 'salesnama',
+                name: 'sales.name as salesnama'
+            }, {
+                data: 'nama',
+                name: 'customers.nama',
+            }, {
+                data: 'provider',
+                name: 'customers.provider',
+            }, {
+                data: 'statustext',
+                name: 'statuscalls.nama as statustext'
+            }, {
+                data: 'call_time',
+                name: 'call_time'
+            }, {
+                data: 'updated_at',
+                name: 'updated_at'
+            }];
+        }
         $('#dataTables').DataTable({
             autoWidth: false,
             bDestroy: true,
@@ -111,30 +173,7 @@
                 [10, 50, 100, 200, 500, -1],
                 [10, 50, 100, 200, 500, "All"]
             ],
-            columns: [{
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
-                orderable: false,
-                searchable: false
-            }, {
-                data: 'salesnama',
-                name: 'sales.name as salesnama'
-            }, {
-                data: 'customer.nama',
-                name: 'customers.nama',
-            }, {
-                data: 'customer.provider',
-                name: 'customers.provider',
-            }, {
-                data: 'statustext',
-                name: 'statuscalls.nama as statustext'
-            }, {
-                data: 'call_time',
-                name: 'call_time'
-            }, {
-                data: 'updated_at',
-                name: 'updated_at'
-            }],
+            columns: $paramColumn,
             columnDefs: [{
                 targets: 0,
                 className: "text-center",

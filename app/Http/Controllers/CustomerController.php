@@ -311,11 +311,16 @@ class CustomerController extends Controller
     {
         $data = Distribusi::select(
             'distribusis.*',
+            'customers.nama as nama',
+            'customers.no_telp as no_telp',
+            'customers.provider as provider',
             'sales.name as salesnama',
-            'statuscalls.nama as statustext'
+            'statuscalls.nama as statustext',
+            'fileexcels.kode as kode'
         )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
             ->where('distribusis.status', '<>', '0');
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
@@ -324,10 +329,12 @@ class CustomerController extends Controller
             $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
         }
         $data = $data
-            ->orderby('distribusis.updated_at', 'desc');
+            ->orderby('distribusis.updated_at', 'desc')
+            ->without("Customer");
         //echo $data;
         return DataTables::of($data)
             ->addIndexColumn()
+            ->editColumn('no_telp', '\'{{{substr($no_telp,-4)}}}')
             ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
             ->make(true);
     }

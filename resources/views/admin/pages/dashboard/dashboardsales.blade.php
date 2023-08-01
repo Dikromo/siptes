@@ -11,8 +11,8 @@
                         <div class="form-group">
                             <label for="tanggal">Tanggal</label>
                             <input type="date" id="tanggal" name="tanggal"
-                                class="form-control @error('tanggal') is-invalid @enderror" value="{{ old('tanggal') }}"
-                                required>
+                                class="form-control @error('tanggal') is-invalid @enderror"
+                                value="{{ old('tanggal', date('Y-m-d')) }}" required>
                             @error('tanggal')
                                 <span id="tanggal" class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -27,7 +27,11 @@
                                 id="date_by">
                                 <option value="">-- Pilih --</option>
                                 @foreach ($date_by as $key => $val)
-                                    <option value="{{ $val['field'] }}">{{ $val['nama'] }}</option>
+                                    @if ($val['nama'] == 'Distribusi')
+                                        <option value="{{ $val['field'] }}" selected>{{ $val['nama'] }}</option>
+                                    @else
+                                        <option value="{{ $val['field'] }}">{{ $val['nama'] }}</option>
+                                    @endif
                                 @endforeach
                             </select>
                             @error('date_by')

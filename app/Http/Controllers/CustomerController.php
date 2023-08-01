@@ -264,7 +264,8 @@ class CustomerController extends Controller
         } else {
             $msg = 'Proses tidak ada';
         }
-        return back()->withErrors(['msg' => $msg]);
+        $oldData = ['tipe' => $request->tipe, 'fileexcel_id' => $request->fileexcel_id, 'provider' => $request->provider];
+        return back()->with(['msg' => $msg])->with(['oldData' => $oldData]);
     }
     public function viewCekdbr()
     {

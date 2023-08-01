@@ -9,13 +9,13 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
-                @error('msg')
+                @if (session('msg'))
                     <div class="alert alert-info alert-dismissible">
                         <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
                         <h5><i class="icon fas fa-info"></i> Alert!</h5>
-                        {!! $message !!}
+                        {!! session('msg') !!}
                     </div>
-                @enderror()
+                @endif
             </div>
         </div>
         <div class="row">
@@ -115,7 +115,19 @@
                                     id="tipe">
                                     <option value="">-- Pilih --</option>
                                     @foreach ($arrayTipe as $item)
-                                        <option value="{{ $item }}">{{ $item }}</option>
+                                        @if (session('oldData') != '')
+                                            @if (session('oldData')['tipe'] == $item)
+                                                <option value="{{ $item }}" selected>{{ $item }}</option>
+                                            @else
+                                                <option value="{{ $item }}">
+                                                    {{ $item }}
+                                                </option>
+                                            @endif
+                                        @else
+                                            <option value="{{ $item }}">
+                                                {{ $item }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 @error('tipe')
@@ -128,10 +140,20 @@
                                     class="form-control select2 @error('fileexcel_id') is-invalid @enderror  "
                                     id="fileexcel_id">
                                     <option value="">-- Pilih --</option>
-                                    <option value="today">Hari Ini</option>
+
+                                    @if (session('oldData') != '')
+                                        @if (session('oldData')['fileexcel_id'] == 'today')
+                                            <option value="today" selected>Hari Ini</option>
+                                        @else
+                                            <option value="today">Hari Ini</option>
+                                        @endif
+                                    @else
+                                        <option value="today">Hari Ini</option>
+                                    @endif
+
                                     @foreach ($fileExceldata as $item)
-                                        @if ($data != '')
-                                            @if ($data->fileexcel_id == $item->id)
+                                        @if (session('oldData') != '')
+                                            @if (session('oldData')['fileexcel_id'] == $item->id)
                                                 <option value="{{ $item->id }}" selected>{{ $item->kode }}</option>
                                             @endif
                                         @else
@@ -152,7 +174,19 @@
                                     class="form-control select2 @error('provider') is-invalid @enderror  " id="provider">
                                     <option value="">-- Pilih --</option>
                                     @foreach ($arrayProvider as $item)
-                                        <option value="{{ $item }}">{{ $item }}</option>
+                                        @if (session('oldData') != '')
+                                            @if (session('oldData')['provider'] == $item)
+                                                <option value="{{ $item }}" selected>{{ $item }}</option>
+                                            @else
+                                                <option value="{{ $item }}">
+                                                    {{ $item }}
+                                                </option>
+                                            @endif
+                                        @else
+                                            <option value="{{ $item }}">
+                                                {{ $item }}
+                                            </option>
+                                        @endif
                                     @endforeach
                                 </select>
                                 @error('provider')
@@ -277,6 +311,12 @@
             return false;
         });
         $(document).ready(function() {
+            setTimeout(() => {
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                    '') {
+                    dataTablesfrom();
+                }
+            }, 2000);
             $("#produk_id").change(function() {
                 if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
                     '') {

@@ -122,7 +122,7 @@ class CustomerController extends Controller
             if ($request->tipe == 'RELOAD') {
                 $lastDistribusi = DB::table('distribusis')
                     ->select('customer_id', DB::raw('MAX(id) as id'))
-                    ->where('produk_id', '1')
+                    ->where('produk_id', $produk_id)
                     ->groupBy('customer_id');
 
                 $data = DB::table($lastDistribusi, 'a')
@@ -308,7 +308,7 @@ class CustomerController extends Controller
         } else if ($request->tipe == 'RELOAD') {
             $lastDistribusi = DB::table('distribusis')
                 ->select('customer_id', DB::raw('MAX(id) as id'))
-                ->where('produk_id', '1')
+                ->where('produk_id', $produk_id)
                 ->groupBy('customer_id');
 
             $data = DB::table($lastDistribusi, 'a')

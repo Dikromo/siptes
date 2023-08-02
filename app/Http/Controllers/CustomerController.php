@@ -120,36 +120,33 @@ class CustomerController extends Controller
         // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->fileexcel_id != 'today') {
             if ($request->tipe == 'RELOAD') {
-                $data = Distribusi::select(
-                    'distribusis.*',
-                    'customers.*',
-                )
-                    ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-                    ->leftjoin('distribusis as b', function ($join) use ($produk_id, $tanggal) {
-                        $join->on('b.customer_id', '=', 'distribusis.customer_id')
-                            ->where('b.produk_id', $produk_id)
-                            ->where(function ($query)  use ($tanggal) {
-                                $query->where('b.status', '=', '0')
-                                    ->orwhereDate('b.distribusi_at', $tanggal);
-                            });
-                    })
+                $lastDistribusi = DB::table('distribusis')
+                    ->select('customer_id', DB::raw('MAX(id) as id'))
+                    ->where('produk_id', '1')
+                    ->groupBy('customer_id');
+
+                $data = DB::table($lastDistribusi, 'a')
+                    ->select(
+                        'customers.nama',
+                        'customers.no_telp',
+                        'customers.provider',
+                    )
+                    ->join('customers', 'customers.id', '=', 'a.customer_id')
+                    ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                     // jika local status nya 4 dan 5
                     // jika server status nya 12 dan 13
                     ->where(function ($query) {
-                        $query->where('distribusis.status', '12')
-                            ->orWhere('distribusis.status', '13');
+                        $query->where('b.status', '12')
+                            ->orWhere('b.status', '13');
                     })
-                    ->whereDate('distribusis.distribusi_at', '<>', $tanggal)
-                    ->where('distribusis.produk_id', $produk_id)
+                    ->whereDate('b.distribusi_at', '<>', $tanggal)
+                    ->where('b.produk_id', $produk_id)
                     ->where('customers.fileexcel_id', $request->fileexcel_id)
-                    ->where('customers.provider', $request->provider)
-                    ->where('b.customer_id', null);
+                    ->where('customers.provider', $request->provider);
 
                 return DataTables::of($data)
                     ->addIndexColumn()
-                    ->addColumn('nama', '{{$customer[\'nama\']}}')
-                    ->addColumn('no_telp', '{{{substr($customer[\'no_telp\'], 0, 6)}}}xxxx')
-                    ->addColumn('perusahaan', '{{$customer[\'perusahaan\']}}')
+                    ->editColumn('no_telp', '{{{substr($no_telp, 0, 6)}}}xxxx')
                     ->make(true);
             } else {
                 $data = Customer::leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
@@ -309,41 +306,36 @@ class CustomerController extends Controller
         Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span>';
             $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
         } else if ($request->tipe == 'RELOAD') {
-            $data = Distribusi::inRandomOrder()
+            $lastDistribusi = DB::table('distribusis')
+                ->select('customer_id', DB::raw('MAX(id) as id'))
+                ->where('produk_id', '1')
+                ->groupBy('customer_id');
+
+            $data = DB::table($lastDistribusi, 'a')
                 ->select(
-                    'distribusis.customer_id',
+                    'b.customer_id',
                     DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
                     DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
                     DB::raw('CONCAT("1") as bank_id'),
                     DB::raw('CONCAT("0") as status'),
                     DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
                 )
-                ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-                ->leftjoin('distribusis as b', function ($join) use ($produk_id, $tanggal) {
-                    $join->on('b.customer_id', '=', 'distribusis.customer_id')
-                        ->where('b.produk_id', $produk_id)
-                        ->where(function ($query)  use ($tanggal) {
-                            $query->where('b.status', '=', '0')
-                                ->orwhereDate('b.distribusi_at', $tanggal);
-                        });
-                })
+                ->join('customers', 'customers.id', '=', 'a.customer_id')
+                ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                 // jika local status nya 4 dan 5
                 // jika server status nya 12 dan 13
                 ->where(function ($query) {
-                    $query->where('distribusis.status', '12')
-                        ->orWhere('distribusis.status', '13');
+                    $query->where('b.status', '12')
+                        ->orWhere('b.status', '13');
                 })
-                ->whereDate('distribusis.distribusi_at', '<>', $tanggal)
-                ->where('distribusis.produk_id', $produk_id)
+                ->whereDate('b.distribusi_at', '<>', $tanggal)
+                ->where('b.produk_id', $produk_id)
                 ->where('customers.fileexcel_id', $request->fileexcel_id)
                 ->where('customers.provider', $request->provider)
-                ->where('b.customer_id', null)
                 ->limit($request->total)
-                ->without("Customer")
-                ->without("User")
                 ->get();
             $distribusiInsert = $data->toArray();
-            //print("<pre>" . print_r($distribusiInsert, true) . "</pre>");
+            $distribusiInsert = json_decode(json_encode($distribusiInsert), true);
             Distribusi::insert($distribusiInsert);
 
             $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);

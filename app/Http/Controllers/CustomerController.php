@@ -16,6 +16,7 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Models\Log_distribusi;
 use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
@@ -118,21 +119,53 @@ class CustomerController extends Controller
         $tanggal = date('Y-m-d');
         // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->fileexcel_id != 'today') {
-            $data = Customer::leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
-                $join->on('customers.id', '=', 'distribusis.customer_id')
-                    ->where(function ($query)  use ($produk_id, $tanggal) {
-                        $query->where('distribusis.produk_id', '=', $produk_id)
-                            ->orwhereDate('distribusis.distribusi_at', $tanggal);
-                    });
-            })
-                ->where('provider', $request->provider)
-                ->where('customers.fileexcel_id', $request->fileexcel_id)
-                ->where('distribusis.produk_id', null);
+            if ($request->tipe == 'RELOAD') {
+                $data = Distribusi::select(
+                    'distribusis.*',
+                    'customers.*',
+                )
+                    ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+                    ->leftjoin('distribusis as b', function ($join) use ($produk_id, $tanggal) {
+                        $join->on('b.customer_id', '=', 'distribusis.customer_id')
+                            ->where('b.produk_id', $produk_id)
+                            ->where(function ($query)  use ($tanggal) {
+                                $query->where('b.status', '=', '0')
+                                    ->orwhereDate('b.distribusi_at', $tanggal);
+                            });
+                    })
+                    ->where(function ($query) {
+                        $query->where('distribusis.status', '4')
+                            ->orWhere('distribusis.status', '5');
+                    })
+                    ->whereDate('distribusis.distribusi_at', '<>', $tanggal)
+                    ->where('distribusis.produk_id', $produk_id)
+                    ->where('customers.fileexcel_id', $request->fileexcel_id)
+                    ->where('customers.provider', $request->provider)
+                    ->where('b.customer_id', null);
 
-            return DataTables::of($data->get())
-                ->addIndexColumn()
-                ->editColumn('no_telp', '{{substr($no_telp, 0, 6)}}xxxx')
-                ->make(true);
+                return DataTables::of($data)
+                    ->addIndexColumn()
+                    ->addColumn('nama', '{{$customer[\'nama\']}}')
+                    ->addColumn('no_telp', '{{{substr($customer[\'no_telp\'], 0, 6)}}}xxxx')
+                    ->addColumn('perusahaan', '{{$customer[\'perusahaan\']}}')
+                    ->make(true);
+            } else {
+                $data = Customer::leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
+                    $join->on('customers.id', '=', 'distribusis.customer_id')
+                        ->where(function ($query)  use ($produk_id, $tanggal) {
+                            $query->where('distribusis.produk_id', '=', $produk_id)
+                                ->orwhereDate('distribusis.distribusi_at', $tanggal);
+                        });
+                })
+                    ->where('provider', $request->provider)
+                    ->where('customers.fileexcel_id', $request->fileexcel_id)
+                    ->where('distribusis.produk_id', null);
+
+                return DataTables::of($data->get())
+                    ->addIndexColumn()
+                    ->editColumn('no_telp', '{{substr($no_telp, 0, 6)}}xxxx')
+                    ->make(true);
+            }
         } else {
             $data = Distribusi::join('customers', 'customers.id', '=', 'distribusis.customer_id')
                 ->where('user_id', auth()->user()->id)
@@ -169,6 +202,10 @@ class CustomerController extends Controller
     {
         $produk_id = auth()->user()->roleuser_id == '2' ? auth()->user()->produk_id : $request->produk_id;
         $tanggal = date('Y-m-d');
+        $msglog = '';
+        $msglog2 = '';
+        $getUser = '';
+        $msglogFileexcel = 'today';
         // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->tipe == 'DISTRIBUSI') {
             if ($request->fileexcel_id == 'today') {
@@ -195,6 +232,7 @@ class CustomerController extends Controller
                         ->where('id', $item->distribusi_id)
                         ->update(['user_id' => $request->user_id, 'updated_at' => now(), 'distribusi_at' => now()]);
                 }
+                $msglog2 = '';
             } else {
                 $data = Customer::inRandomOrder()
                     ->select(
@@ -227,12 +265,18 @@ class CustomerController extends Controller
 
                 $distribusiInsert = $data->toArray();
                 Distribusi::insert($distribusiInsert);
+
+                $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
+                $msglog2 = ' campaign ' . $getfileexcel->kode;
+                $msglogFileexcel = $getfileexcel->kode;
             }
             // $data->update(['status' => 1]);
-            $getUser = User::firstWhere('id', $request->user_id);
+            $getUser = User::firstWhere('id', $request->user_id)->name;
             $msg = '
-        Sukses mendistribusi data kepada <span style="color:#00ff00;font-weight:600;">' . $getUser->name . '</span>
+        Sukses mendistribusi data kepada <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span>
         ';
+
+            $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
         } else if ($request->tipe == 'TARIK DATA') {
             $data = Distribusi::inRandomOrder()
                 ->select(
@@ -258,14 +302,99 @@ class CustomerController extends Controller
                     ->where('id', $item->distribusi_id)
                     ->update(['user_id' => auth()->user()->id, 'updated_at' => now()]);
             }
-            $getUser = User::firstWhere('id', $request->user_id);
+            $getUser = User::firstWhere('id', $request->user_id)->name;
             $msg = '
-        Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser->name . '</span>';
+        Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span>';
+            $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
+        } else if ($request->tipe == 'RELOAD') {
+            $data = Distribusi::inRandomOrder()
+                ->select(
+                    'distribusis.customer_id',
+                    DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
+                    DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
+                    DB::raw('CONCAT("1") as bank_id'),
+                    DB::raw('CONCAT("0") as status'),
+                    DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
+                )
+                ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+                ->leftjoin('distribusis as b', function ($join) use ($produk_id, $tanggal) {
+                    $join->on('b.customer_id', '=', 'distribusis.customer_id')
+                        ->where('b.produk_id', $produk_id)
+                        ->where(function ($query)  use ($tanggal) {
+                            $query->where('b.status', '=', '0')
+                                ->orwhereDate('b.distribusi_at', $tanggal);
+                        });
+                })
+                ->where(function ($query) {
+                    $query->where('distribusis.status', '4')
+                        ->orWhere('distribusis.status', '5');
+                })
+                ->whereDate('distribusis.distribusi_at', '<>', $tanggal)
+                ->where('distribusis.produk_id', $produk_id)
+                ->where('customers.fileexcel_id', $request->fileexcel_id)
+                ->where('customers.provider', $request->provider)
+                ->where('b.customer_id', null)
+                ->limit($request->total)
+                ->without("Customer")
+                ->without("User")
+                ->get();
+            $distribusiInsert = $data->toArray();
+            //print("<pre>" . print_r($distribusiInsert, true) . "</pre>");
+            Distribusi::insert($distribusiInsert);
+
+            $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
+            $msglog2 = ' campaign ' . $getfileexcel->kode;
+            $msglogFileexcel = $getfileexcel->kode;
+
+            $getUser = User::firstWhere('id', $request->user_id)->name;
+            $msg = '
+        Sukses reload  data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span>';
+            $msglog = 'Sukses reload data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
         } else {
             $msg = 'Proses tidak ada';
+            $msglog = 'Proses tidak ada';
         }
+        $logInsert = [
+            'tipe' => $request->tipe,
+            'kode' => $msglogFileexcel,
+            'provider' => $request->provider,
+            'nama_sales' => $getUser,
+            'deskripsi' => $msglog,
+            'total' => $request->total,
+            'user_id' => auth()->user()->id,
+            'created_at' => now(),
+        ];
+        Log_distribusi::create($logInsert);
         $oldData = ['tipe' => $request->tipe, 'fileexcel_id' => $request->fileexcel_id, 'provider' => $request->provider];
         return back()->with(['msg' => $msg])->with(['oldData' => $oldData]);
+    }
+    //**Tabel Log Distribusi */
+    public function logDistribusi(Request $request)
+    {
+
+        $data = Log_distribusi::select(
+            'log_distribusis.*',
+            'sales.name as salesnama',
+        )
+            ->join('users as sales', 'sales.id', '=', 'log_distribusis.user_id')
+            ->orderby('created_at', 'desc');
+        if (auth()->user()->roleuser_id != '1') {
+            $data = $data->where('user_id', auth()->user()->cabang_id);
+        }
+        return DataTables::of($data)
+            ->addIndexColumn()
+            ->editColumn('created_at', '{{{date("Y-m-d H:i:s",strtotime($created_at));}}}')
+            ->make(true);
+    }
+    public function viewlogDistribusi()
+    {
+        return view('admin.pages.customer.logdistribusi', [
+            'title' => 'History Distribusi',
+            'active' => 'logdistribusi',
+            'active_sub' => 'logdistribusi',
+            "data" => '',
+            //"category" => User::all(),
+        ]);
     }
     public function viewCekdbr()
     {

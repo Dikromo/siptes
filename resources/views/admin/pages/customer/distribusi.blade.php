@@ -107,7 +107,11 @@
                                 </div>
                             @endif
                             <?php
-                            $arrayTipe = ['DISTRIBUSI', 'TARIK DATA'];
+                            if (count($fileExceldata) == '0') {
+                                $arrayTipe = ['DISTRIBUSI', 'TARIK DATA'];
+                            } else {
+                                $arrayTipe = ['DISTRIBUSI', 'TARIK DATA', 'RELOAD'];
+                            }
                             ?>
                             <div class="form-group">
                                 <label for="tipe">Tipe</label>
@@ -288,7 +292,7 @@
         var rolecek = '{{ auth()->user()->roleuser_id }}';
         $('.select2').select2()
         $('#formDistribusi').submit(function() {
-            if ($('#tipe').val() == 'DISTRIBUSI') {
+            if ($('#tipe').val() == 'DISTRIBUSI' || $('#tipe').val() == 'RELOAD') {
                 if (fromTabel != 0 && $('#total').val() != '0' && $('#total').val() <= fromTabel) {
                     $('#modal-overlay').modal({
                         backdrop: 'static',
@@ -313,25 +317,32 @@
         $(document).ready(function() {
             setTimeout(() => {
                 if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
-                    '') {
+                    '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             }, 2000);
             $("#produk_id").change(function() {
                 if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
-                    '') {
+                    '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
             $("#fileexcel_id").change(function() {
                 if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
-                    '') {
+                    '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
             $("#provider").change(function() {
                 if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
-                    '') {
+                    '' && $("#tipe").val() != '') {
+                    dataTablesfrom();
+                }
+            });
+
+            $("#tipe").change(function() {
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                    '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
@@ -376,6 +387,7 @@
                         produk_id: $("#produk_id").val(),
                         fileexcel_id: $("#fileexcel_id").val(),
                         provider: $("#provider").val(),
+                        tipe: $("#tipe").val(),
                     }
                 },
                 columns: [{

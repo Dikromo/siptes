@@ -90,6 +90,16 @@
                             </a>
                         </li>
                         <li class="nav-item">
+                            <a href="/customer/logdistribusi"
+                                class="nav-link {{ $active === 'logdistribusi' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-database"></i>
+                                <p>
+                                    Distribusi History
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
                             <a href="/call" class="nav-link {{ $active === 'call' ? 'active' : '' }}">
                                 <i class="nav-icon fas fa-headset"></i>
                                 <p>

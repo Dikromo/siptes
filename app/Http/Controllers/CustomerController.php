@@ -133,9 +133,11 @@ class CustomerController extends Controller
                                     ->orwhereDate('b.distribusi_at', $tanggal);
                             });
                     })
+                    // jika local status nya 4 dan 5
+                    // jika server status nya 12 dan 13
                     ->where(function ($query) {
-                        $query->where('distribusis.status', '4')
-                            ->orWhere('distribusis.status', '5');
+                        $query->where('distribusis.status', '12')
+                            ->orWhere('distribusis.status', '13');
                     })
                     ->whereDate('distribusis.distribusi_at', '<>', $tanggal)
                     ->where('distribusis.produk_id', $produk_id)
@@ -325,9 +327,11 @@ class CustomerController extends Controller
                                 ->orwhereDate('b.distribusi_at', $tanggal);
                         });
                 })
+                // jika local status nya 4 dan 5
+                // jika server status nya 12 dan 13
                 ->where(function ($query) {
-                    $query->where('distribusis.status', '4')
-                        ->orWhere('distribusis.status', '5');
+                    $query->where('distribusis.status', '12')
+                        ->orWhere('distribusis.status', '13');
                 })
                 ->whereDate('distribusis.distribusi_at', '<>', $tanggal)
                 ->where('distribusis.produk_id', $produk_id)

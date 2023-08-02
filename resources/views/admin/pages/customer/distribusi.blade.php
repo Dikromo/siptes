@@ -397,13 +397,13 @@
                     searchable: false
                 }, {
                     data: 'nama',
-                    name: 'nama'
+                    name: 'customers.nama'
                 }, {
                     data: 'no_telp',
-                    name: 'no_telp'
+                    name: 'customers.no_telp'
                 }, {
                     data: 'provider',
-                    name: 'provider'
+                    name: 'customers.provider'
                 }]
             });
             // Untuk export datatables

@@ -159,6 +159,8 @@
                                         @if (session('oldData') != '')
                                             @if (session('oldData')['fileexcel_id'] == $item->id)
                                                 <option value="{{ $item->id }}" selected>{{ $item->kode }}</option>
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->kode }}</option>
                                             @endif
                                         @else
                                             <option value="{{ $item->id }}">{{ $item->kode }}</option>

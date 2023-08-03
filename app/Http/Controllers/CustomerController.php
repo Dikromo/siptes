@@ -375,7 +375,7 @@ class CustomerController extends Controller
             ->join('users as sales', 'sales.id', '=', 'log_distribusis.user_id')
             ->orderby('created_at', 'desc');
         if (auth()->user()->roleuser_id != '1') {
-            $data = $data->where('user_id', auth()->user()->cabang_id);
+            $data = $data->where('user_id', auth()->user()->id);
         }
         return DataTables::of($data)
             ->addIndexColumn()

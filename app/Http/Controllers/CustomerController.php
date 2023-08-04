@@ -97,6 +97,7 @@ class CustomerController extends Controller
         $produkSelect = Produk::where('status', '1')
             ->get();
         $fileExcel = Fileexcel::where('user_id', auth()->user()->id)
+            ->orderby('id', 'desc')
             ->without("Customer")
             ->get();
         return view('admin.pages.customer.distribusi', [
@@ -186,14 +187,24 @@ class CustomerController extends Controller
     //**Tabel To pada page distribusi */
     public function customerDistribusito(Request $request)
     {
-        $data = Distribusi::where('user_id', $request->user_id)
+        $data = Distribusi::select(
+            'customers.nama',
+            'customers.no_telp',
+            'customers.provider',
+            'fileexcels.kode',
+        )
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+            ->where('distribusis.user_id', $request->user_id)
             ->where(function ($query) {
-                $query->where('status', '0')
-                    ->orWhere('status', null);
-            });
+                $query->where('distribusis.status', '0')
+                    ->orWhere('distribusis.status', null);
+            })
+            ->without("Customer")
+            ->without("User");
         return DataTables::of($data)
             ->addIndexColumn()
-            ->editColumn('customer.no_telp', '{{{substr($customer[\'no_telp\'], 0, 6)}}}xxxx')
+            ->editColumn('no_telp', '{{{substr($no_telp, 0, 6)}}}xxxx')
             ->make(true);
     }
     //** Proses distribusi */

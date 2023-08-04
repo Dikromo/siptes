@@ -259,6 +259,9 @@
                                         <th>Nama</th>
                                         <th>Telp</th>
                                         <th>Provider</th>
+                                        @if (count($fileExceldata) != '0')
+                                            <th>Campaign</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -289,6 +292,7 @@
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script> --}}
     <script>
+        var totalFileexcel = '{{ count($fileExceldata) }}';
         var fromTabel = 0;
         var toTabel = 0;
         var rolecek = '{{ auth()->user()->roleuser_id }}';
@@ -416,6 +420,42 @@
             //     }, ]
             // }).buttons().container().appendTo('#dataTables1_wrapper .col-md-6:eq(0)');
         }
+        if (totalFileexcel != 0) {
+            $paramColumnto = [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
+            }, {
+                data: 'nama',
+                name: 'nama'
+            }, {
+                data: 'no_telp',
+                name: 'no_telp'
+            }, {
+                data: 'provider',
+                name: 'provider'
+            }, {
+                data: 'kode',
+                name: 'kode'
+            }, ];
+        } else {
+            $paramColumnto = [{
+                data: 'DT_RowIndex',
+                name: 'DT_RowIndex',
+                orderable: false,
+                searchable: false
+            }, {
+                data: 'nama',
+                name: 'nama'
+            }, {
+                data: 'no_telp',
+                name: 'no_telp'
+            }, {
+                data: 'provider',
+                name: 'provider'
+            }, ];
+        }
 
         function dataTablesto(select) {
             $('#dataTables2').DataTable({
@@ -435,21 +475,7 @@
                         user_id: select,
                     }
                 },
-                columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    orderable: false,
-                    searchable: false
-                }, {
-                    data: 'customer.nama',
-                    name: 'customer.nama'
-                }, {
-                    data: 'customer.no_telp',
-                    name: 'customer.no_telp'
-                }, {
-                    data: 'customer.provider',
-                    name: 'customer.provider'
-                }]
+                columns: $paramColumnto
             });
         }
 

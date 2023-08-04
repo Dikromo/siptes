@@ -260,7 +260,7 @@
                                         <th>Telp</th>
                                         <th>Provider</th>
                                         @if (count($fileExceldata) != '0')
-                                            <th>Campaign</th>
+                                            <th>Kode</th>
                                         @endif
                                     </tr>
                                 </thead>

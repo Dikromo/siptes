@@ -14,7 +14,8 @@ use Maatwebsite\Excel\Concerns\WithValidation;
 use Maatwebsite\Excel\Concerns\WithBatchInserts;
 use Maatwebsite\Excel\Concerns\WithChunkReading;
 
-class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, WithValidation, SkipsOnFailure, WithBatchInserts, WithChunkReading
+//class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, WithValidation, SkipsOnFailure, WithBatchInserts, WithChunkReading
+class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsOnFailure, WithBatchInserts, WithChunkReading
 {
     /**
      * @param array $row
@@ -84,13 +85,13 @@ class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, WithValid
     {
         return $this->total;
     }
-    public function rules(): array
-    {
-        return [
-            // Above is alias for as it always validates in batches
-            'no_telp' => ['unique:customers'],
-        ];
-    }
+    // public function rules(): array
+    // {
+    //     return [
+    //         // Above is alias for as it always validates in batches
+    //         'no_telp' => ['unique:customers'],
+    //     ];
+    // }
     public function batchSize(): int
     {
         return 1000;

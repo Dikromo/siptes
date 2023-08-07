@@ -172,7 +172,11 @@
                                 @enderror
                             </div>
                             <?php
-                            $arrayProvider = ['SIMPATI', 'INDOSAT', 'XL', 'AXIS', 'THREE', 'SMART'];
+                            if (count($fileExceldata) == '0') {
+                                $arrayProvider = ['SIMPATI', 'INDOSAT', 'XL', 'AXIS', 'THREE', 'SMART'];
+                            } else {
+                                $arrayProvider = ['SIMPATI', 'INDOSAT', 'XL', 'AXIS', 'THREE', 'SMART', 'NON-SIMPATI'];
+                            }
                             ?>
                             <div class="form-group">
                                 <label for="provider">Provider</label>

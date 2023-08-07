@@ -142,8 +142,12 @@ class CustomerController extends Controller
                     })
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
                     ->where('b.produk_id', $produk_id)
-                    ->where('customers.fileexcel_id', $request->fileexcel_id)
-                    ->where('customers.provider', $request->provider);
+                    ->where('customers.fileexcel_id', $request->fileexcel_id);
+                if ($request->provider == 'NON-SIMPATI') {
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                } else {
+                    $data =   $data->where('customers.provider', $request->provider);
+                }
 
                 return DataTables::of($data)
                     ->addIndexColumn()
@@ -156,9 +160,13 @@ class CustomerController extends Controller
                             $query->where('distribusis.produk_id', '=', $produk_id)
                                 ->orwhereDate('distribusis.distribusi_at', $tanggal);
                         });
-                })
-                    ->where('provider', $request->provider)
-                    ->where('customers.fileexcel_id', $request->fileexcel_id)
+                });
+                if ($request->provider == 'NON-SIMPATI') {
+                    $data =   $data->where('provider', '<>', 'SIMPATI');
+                } else {
+                    $data =   $data->where('provider', $request->provider);
+                }
+                $data = $data->where('customers.fileexcel_id', $request->fileexcel_id)
                     ->where('distribusis.produk_id', null);
 
                 return DataTables::of($data->get())
@@ -173,8 +181,14 @@ class CustomerController extends Controller
                     $query->where('distribusis.status', '0')
                         ->orWhere('distribusis.status', null);
                 })
-                ->where('distribusis.produk_id', $produk_id)
-                ->where('customers.provider', $request->provider);
+                ->where('distribusis.produk_id', $produk_id);
+            if ($request->provider == 'NON-SIMPATI') {
+                $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+            } else {
+                $data =   $data->where('customers.provider', $request->provider);
+            }
+            $data = $data->without("Customer")
+                ->without("User");
 
             return DataTables::of($data)
                 ->addIndexColumn()
@@ -233,9 +247,13 @@ class CustomerController extends Controller
                     ->where(function ($query) {
                         $query->where('distribusis.status', '0')
                             ->orWhere('distribusis.status', null);
-                    })
-                    ->where('customers.provider', $request->provider)
-                    ->limit($request->total)
+                    });
+                if ($request->provider == 'NON-SIMPATI') {
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                } else {
+                    $data =   $data->where('customers.provider', $request->provider);
+                }
+                $data = $data->limit($request->total)
                     ->get();
                 foreach ($data as $item) {
                     DB::table('distribusis')
@@ -261,9 +279,13 @@ class CustomerController extends Controller
                             });
                     })
                     ->where('customers.fileexcel_id', $request->fileexcel_id)
-                    ->where('distribusis.produk_id', null)
-                    ->where('customers.provider', $request->provider)
-                    ->limit($request->total)
+                    ->where('distribusis.produk_id', null);
+                if ($request->provider == 'NON-SIMPATI') {
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                } else {
+                    $data =   $data->where('customers.provider', $request->provider);
+                }
+                $data = $data->limit($request->total)
                     ->get();
 
                 foreach ($data as $item) {
@@ -302,9 +324,13 @@ class CustomerController extends Controller
                 ->where(function ($query) {
                     $query->where('distribusis.status', '0')
                         ->orWhere('distribusis.status', null);
-                })
-                ->where('customers.provider', $request->provider)
-                ->limit($request->total)
+                });
+            if ($request->provider == 'NON-SIMPATI') {
+                $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+            } else {
+                $data =   $data->where('customers.provider', $request->provider);
+            }
+            $data = $data->limit($request->total)
                 ->get();
             foreach ($data as $item) {
                 # code...
@@ -341,9 +367,13 @@ class CustomerController extends Controller
                 })
                 ->whereDate('b.distribusi_at', '<>', $tanggal)
                 ->where('b.produk_id', $produk_id)
-                ->where('customers.fileexcel_id', $request->fileexcel_id)
-                ->where('customers.provider', $request->provider)
-                ->limit($request->total)
+                ->where('customers.fileexcel_id', $request->fileexcel_id);
+            if ($request->provider == 'NON-SIMPATI') {
+                $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+            } else {
+                $data =   $data->where('customers.provider', $request->provider);
+            }
+            $data = $data->limit($request->total)
                 ->get();
             $distribusiInsert = $data->toArray();
             $distribusiInsert = json_decode(json_encode($distribusiInsert), true);

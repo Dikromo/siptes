@@ -17,17 +17,32 @@ class CallpagesController extends Controller
         //$hariini = date('Y-m-d', strtotime('2023-07-21'));
         $data = Distribusi::where('user_id', auth()->user()->id)
             ->where('status', 0)
+            ->without("Customer")
+            ->without("User")
             ->limit(1)
             ->get();
         $dataall = Distribusi::where('user_id', auth()->user()->id)
             ->where('status', 0)
+            ->without("Customer")
+            ->without("User")
             ->get();
-
+        // Get Data jenis 2
+        $dataCall = Distribusi::where('user_id', auth()->user()->id)
+            ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->where('distribusis.status', '<>', 0)
+            ->where('statuscalls.jenis', '2')
+            ->whereDate('distribusis.updated_at', $hariini)
+            ->without("Customer")
+            ->without("User")
+            ->get();
+        // Get Data jenis 1
         $dataCallout = Distribusi::where('user_id', auth()->user()->id)
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->where('distribusis.status', '<>', 0)
             ->where('statuscalls.jenis', '1')
             ->whereDate('distribusis.updated_at', $hariini)
+            ->without("Customer")
+            ->without("User")
             ->get();
         return view('sales.pages.call.index', [
             'title' => 'Call Page',
@@ -35,6 +50,7 @@ class CallpagesController extends Controller
             'active_sub' => 'call',
             "data" => $data,
             "data_total" => $dataall,
+            "dataCall" => $dataCall->count(),
             "dataCallout" => $dataCallout->count(),
             //"category" => User::all(),
         ]);

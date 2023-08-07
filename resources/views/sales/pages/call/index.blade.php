@@ -43,8 +43,33 @@
                                     </div>
                                 </div>
                             </div>
-                            <a class="btn"><i class="nav-icon fas fa-database"></i>
-                                Total Data : {{ count($data_total) }}</a>
+                            <div class="row justify-content-md-center">
+                                <div class="col-md-3 col-sm-6 col-12">
+                                    <div class="info-box">
+                                        <span class="info-box-icon bg-info"><i class="fas fa-database"></i></span>
+                                        <div class="info-box-content">
+                                            <div class="row">
+                                                <div class="col-md-4 col-12">
+                                                    <span class="info-box-text">Total Data</span>
+                                                    <span
+                                                        class="info-box-number">{{ (int) count($data_total) + (int) $dataCall + (int) $dataCallout }}</span>
+                                                </div>
+                                                <div class="col-md-4 col-12">
+                                                    <span class="info-box-text">Sudah Di Telepon</span>
+                                                    <span
+                                                        class="info-box-number">{{ (int) $dataCall + (int) $dataCallout }}</span>
+                                                </div>
+                                                <div class="col-md-4 col-12">
+                                                    <span class="info-box-text">Belum Di Telepon</span>
+                                                    <span class="info-box-number">{{ count($data_total) }}</span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            {{-- <a class="btn"><i class="nav-icon fas fa-database"></i>
+                                Total Data : {{ count($data_total) }}</a> --}}
                             @foreach ($data as $item)
                                 <a href="/call/detail/{{ encrypt($item->id) }}"
                                     class="btn btn-primary btn-lg border_white"><i class="nav-icon fas fa-headset"></i>

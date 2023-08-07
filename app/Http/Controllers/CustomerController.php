@@ -187,8 +187,6 @@ class CustomerController extends Controller
             } else {
                 $data =   $data->where('customers.provider', $request->provider);
             }
-            $data = $data->without("Customer")
-                ->without("User");
 
             return DataTables::of($data)
                 ->addIndexColumn()

@@ -183,7 +183,7 @@ class DashboardController extends Controller
             ->groupBy(DB::raw('1,2'));
         return DataTables::of($data->get())
             ->addIndexColumn()
-            ->editColumn('total_data_today', '{{{$total_call_today+$total_nocall_today}}}')
+            ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->make(true);
     }
     public function getSalescall2_detail(Request $request)

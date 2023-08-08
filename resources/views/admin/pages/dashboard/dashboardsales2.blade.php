@@ -155,8 +155,8 @@
                 data: 'total_call_today',
                 name: 'total_call_today',
             }, {
-                data: 'total_nocall_today',
-                name: 'total_nocall_today',
+                data: 'total_nocall',
+                name: 'total_nocall',
             }, {
                 data: 'total_callout_today',
                 name: 'total_callout_today',

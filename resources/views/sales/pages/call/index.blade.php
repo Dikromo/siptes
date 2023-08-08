@@ -52,7 +52,7 @@
                                                 <div class="col-md-4 col-12">
                                                     <span class="info-box-text">Total Data</span>
                                                     <span
-                                                        class="info-box-number">{{ (int) count($data_total) + (int) $dataCall + (int) $dataCallout }}</span>
+                                                        class="info-box-number">{{ (int) $data_total + (int) $dataCall + (int) $dataCallout - (int) $data_total_today . ' + ' . (int) $data_total_today }}</span>
                                                 </div>
                                                 <div class="col-md-4 col-12">
                                                     <span class="info-box-text">Sudah Di Telepon</span>
@@ -61,7 +61,7 @@
                                                 </div>
                                                 <div class="col-md-4 col-12">
                                                     <span class="info-box-text">Belum Di Telepon</span>
-                                                    <span class="info-box-number">{{ count($data_total) }}</span>
+                                                    <span class="info-box-number">{{ (int) $data_total }}</span>
                                                 </div>
                                             </div>
                                         </div>

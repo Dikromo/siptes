@@ -60,6 +60,18 @@
                             </p>
                         </a>
                     </li>
+                    @if (auth()->user()->roleuser_id == '1' || (auth()->user()->roleuser_id == '2' && auth()->user()->cabang_id == '4'))
+                        <li class="nav-item">
+                            <a href="/dashboard/sales2"
+                                class="nav-link {{ $active === 'dashboardsales2' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-chart-column"></i>
+                                <p>
+                                    Dashboard Sales 2
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                    @endif
                     <li class="nav-item">
                         <a href="/user" class="nav-link {{ $active === 'user' ? 'active' : '' }}">
                             <i class="nav-icon fas fa-user"></i>

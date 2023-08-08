@@ -21,6 +21,12 @@ class CallpagesController extends Controller
             ->without("User")
             ->limit(1)
             ->get();
+
+        $dataalltoday = Distribusi::where('user_id', auth()->user()->id)
+            ->whereDate('distribusis.distribusi_at', $hariini)
+            ->without("Customer")
+            ->without("User")
+            ->get();
         $dataall = Distribusi::where('user_id', auth()->user()->id)
             ->where('status', 0)
             ->without("Customer")
@@ -49,8 +55,10 @@ class CallpagesController extends Controller
             'active' => 'call',
             'active_sub' => 'call',
             "data" => $data,
-            "data_total" => $dataall,
+            "data_total" => $dataall->count(),
+            "data_total_today" => $dataalltoday->count(),
             "dataCall" => $dataCall->count(),
+            "dataCallout" => $dataCallout->count(),
             "dataCallout" => $dataCallout->count(),
             //"category" => User::all(),
         ]);

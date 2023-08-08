@@ -255,9 +255,9 @@ class DashboardController extends Controller
             <td></td>
             <td>' . $i . '</td>
             <td>' . $item->kode . '</td>
-            <td>' . $item->total_call_today + $item->total_nocall_today . '</td>
+            <td>' . $item->total_call_today + $item->total_nocall . '</td>
             <td>' . $item->total_call_today . '</td>
-            <td>' . $item->total_nocall_today . '</td>
+            <td>' . $item->total_nocall . '</td>
             <td>' . $item->total_callout_today . '</td>
             <td>' . $item->total_data_2 . '</td>
             <td>' . $item->total_call_2 . '</td>

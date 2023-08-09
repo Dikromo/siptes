@@ -143,6 +143,9 @@ class CustomerController extends Controller
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
                     ->where('b.produk_id', $produk_id)
                     ->where('customers.fileexcel_id', $request->fileexcel_id);
+                if (isset($request->user_id)) {
+                    $data =   $data->whereNotIn('b.user_id', $request->user_id);
+                }
                 if ($request->provider == 'NON-SIMPATI') {
                     $data =   $data->where('customers.provider', '<>', 'SIMPATI');
                 } else if ($request->provider == 'ALL-PROVIDER') {
@@ -210,7 +213,8 @@ class CustomerController extends Controller
         )
             ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
             ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
-            ->where('distribusis.user_id', $request->user_id)
+            ->whereIn('distribusis.user_id',  $request->user_id)
+            //->where('distribusis.user_id', $request->user_id)
             ->where(function ($query) {
                 $query->where('distribusis.status', '0')
                     ->orWhere('distribusis.status', null);
@@ -227,24 +231,106 @@ class CustomerController extends Controller
     {
         $produk_id = auth()->user()->roleuser_id == '2' ? auth()->user()->produk_id : $request->produk_id;
         $tanggal = date('Y-m-d');
+        $msg = '';
         $msglog = '';
         $msglog2 = '';
         $getUser = '';
         $msglogFileexcel = 'today';
         // $tanggal = date('Y-m-d', strtotime('-5 days'));
-        if ($request->tipe == 'DISTRIBUSI') {
-            if ($request->fileexcel_id == 'today') {
+        foreach ($request->user_id as $user_id) {
+
+            if ($request->tipe == 'DISTRIBUSI') {
+                if ($request->fileexcel_id == 'today') {
+                    $data = Distribusi::inRandomOrder()
+                        ->select(
+                            'distribusis.id as distribusi_id',
+                            DB::raw('CONCAT("' . $user_id . '") as user_id'),
+                            DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
+                            DB::raw('CONCAT("1") as bank_id'),
+                            DB::raw('CONCAT("0") as status'),
+                            DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
+                        )
+                        ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+                        ->where('distribusis.user_id', auth()->user()->id)
+                        ->where(function ($query) {
+                            $query->where('distribusis.status', '0')
+                                ->orWhere('distribusis.status', null);
+                        });
+                    if ($request->provider == 'NON-SIMPATI') {
+                        $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                    } else if ($request->provider == 'ALL-PROVIDER') {
+                    } else {
+                        $data =   $data->where('customers.provider', $request->provider);
+                    }
+                    $data = $data->limit($request->total)
+                        ->get();
+                    foreach ($data as $item) {
+                        DB::table('distribusis')
+                            ->where('id', $item->distribusi_id)
+                            ->update(['user_id' => $user_id, 'updated_at' => now(), 'distribusi_at' => now()]);
+                    }
+                    $msglog2 = '';
+                } else {
+                    $data = Customer::inRandomOrder()
+                        ->select(
+                            'customers.id as customer_id',
+                            DB::raw('CONCAT("' . $user_id . '") as user_id'),
+                            DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
+                            DB::raw('CONCAT("1") as bank_id'),
+                            DB::raw('CONCAT("0") as status'),
+                            DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
+                        )
+                        ->leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
+                            $join->on('customers.id', '=', 'distribusis.customer_id')
+                                ->where(function ($query)  use ($produk_id, $tanggal) {
+                                    $query->where('distribusis.produk_id', '=', $produk_id)
+                                        ->orwhereDate('distribusis.distribusi_at', $tanggal);
+                                });
+                        })
+                        ->where('customers.fileexcel_id', $request->fileexcel_id)
+                        ->where('distribusis.produk_id', null);
+                    if ($request->provider == 'NON-SIMPATI') {
+                        $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                    } else if ($request->provider == 'ALL-PROVIDER') {
+                    } else {
+                        $data =   $data->where('customers.provider', $request->provider);
+                    }
+                    $data = $data->limit($request->total)
+                        ->get();
+
+                    foreach ($data as $item) {
+                        # code...
+                        DB::table('customers')
+                            ->where('id', $item->customer_id)
+                            ->update(['status' => 1, 'updated_at' => now()]);
+                    }
+
+                    $distribusiInsert = $data->toArray();
+                    Distribusi::insert($distribusiInsert);
+
+                    $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
+                    $msglog2 = ' campaign ' . $getfileexcel->kode;
+                    $msglogFileexcel = $getfileexcel->kode;
+                }
+                // $data->update(['status' => 1]);
+                $getUser = User::firstWhere('id', $user_id)->name;
+                $msg .= '
+        Sukses mendistribusi data kepada <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>
+        ';
+
+                $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
+            } else if ($request->tipe == 'TARIK DATA') {
                 $data = Distribusi::inRandomOrder()
                     ->select(
                         'distribusis.id as distribusi_id',
-                        DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
+                        DB::raw('CONCAT("' . auth()->user()->id . '") as user_id'),
                         DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
                         DB::raw('CONCAT("1") as bank_id'),
                         DB::raw('CONCAT("0") as status'),
                         DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
                     )
                     ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-                    ->where('distribusis.user_id', auth()->user()->id)
+                    ->where('distribusis.user_id', $user_id)
                     ->where(function ($query) {
                         $query->where('distribusis.status', '0')
                             ->orWhere('distribusis.status', null);
@@ -258,30 +344,44 @@ class CustomerController extends Controller
                 $data = $data->limit($request->total)
                     ->get();
                 foreach ($data as $item) {
+                    # code...
                     DB::table('distribusis')
                         ->where('id', $item->distribusi_id)
-                        ->update(['user_id' => $request->user_id, 'updated_at' => now(), 'distribusi_at' => now()]);
+                        ->update(['user_id' => auth()->user()->id, 'updated_at' => now()]);
                 }
-                $msglog2 = '';
-            } else {
-                $data = Customer::inRandomOrder()
+                $getUser = User::firstWhere('id', $user_id)->name;
+                $msg .= '
+        Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>';
+                $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
+            } else if ($request->tipe == 'RELOAD') {
+                $lastDistribusi = DB::table('distribusis')
+                    ->select('customer_id', DB::raw('MAX(id) as id'))
+                    ->where('produk_id', $produk_id)
+                    ->groupBy('customer_id');
+
+                $data = DB::table($lastDistribusi, 'a')
                     ->select(
-                        'customers.id as customer_id',
-                        DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
+                        'b.customer_id',
+                        DB::raw('CONCAT("' . $user_id . '") as user_id'),
                         DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
                         DB::raw('CONCAT("1") as bank_id'),
                         DB::raw('CONCAT("0") as status'),
                         DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
                     )
-                    ->leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
-                        $join->on('customers.id', '=', 'distribusis.customer_id')
-                            ->where(function ($query)  use ($produk_id, $tanggal) {
-                                $query->where('distribusis.produk_id', '=', $produk_id)
-                                    ->orwhereDate('distribusis.distribusi_at', $tanggal);
-                            });
+                    ->join('customers', 'customers.id', '=', 'a.customer_id')
+                    ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
+                    // jika local status nya 4 dan 5
+                    // jika server status nya 12 dan 13
+                    ->where(function ($query) {
+                        $query->where('b.status', '12')
+                            ->orWhere('b.status', '13');
                     })
-                    ->where('customers.fileexcel_id', $request->fileexcel_id)
-                    ->where('distribusis.produk_id', null);
+                    ->whereDate('b.distribusi_at', '<>', $tanggal)
+                    ->where('b.produk_id', $produk_id)
+                    ->where('customers.fileexcel_id', $request->fileexcel_id);
+                if (isset($request->user_id)) {
+                    $data =   $data->whereNotIn('b.user_id', $request->user_id);
+                }
                 if ($request->provider == 'NON-SIMPATI') {
                     $data =   $data->where('customers.provider', '<>', 'SIMPATI');
                 } else if ($request->provider == 'ALL-PROVIDER') {
@@ -290,123 +390,34 @@ class CustomerController extends Controller
                 }
                 $data = $data->limit($request->total)
                     ->get();
-
-                foreach ($data as $item) {
-                    # code...
-                    DB::table('customers')
-                        ->where('id', $item->customer_id)
-                        ->update(['status' => 1, 'updated_at' => now()]);
-                }
-
                 $distribusiInsert = $data->toArray();
+                $distribusiInsert = json_decode(json_encode($distribusiInsert), true);
                 Distribusi::insert($distribusiInsert);
 
                 $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
                 $msglog2 = ' campaign ' . $getfileexcel->kode;
                 $msglogFileexcel = $getfileexcel->kode;
-            }
-            // $data->update(['status' => 1]);
-            $getUser = User::firstWhere('id', $request->user_id)->name;
-            $msg = '
-        Sukses mendistribusi data kepada <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span>
-        ';
 
-            $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
-        } else if ($request->tipe == 'TARIK DATA') {
-            $data = Distribusi::inRandomOrder()
-                ->select(
-                    'distribusis.id as distribusi_id',
-                    DB::raw('CONCAT("' . auth()->user()->id . '") as user_id'),
-                    DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
-                    DB::raw('CONCAT("1") as bank_id'),
-                    DB::raw('CONCAT("0") as status'),
-                    DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
-                )
-                ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-                ->where('distribusis.user_id', $request->user_id)
-                ->where(function ($query) {
-                    $query->where('distribusis.status', '0')
-                        ->orWhere('distribusis.status', null);
-                });
-            if ($request->provider == 'NON-SIMPATI') {
-                $data =   $data->where('customers.provider', '<>', 'SIMPATI');
-            } else if ($request->provider == 'ALL-PROVIDER') {
+                $getUser = User::firstWhere('id', $user_id)->name;
+                $msg .= '
+        Sukses reload  data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>';
+                $msglog = 'Sukses reload data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
             } else {
-                $data =   $data->where('customers.provider', $request->provider);
+                $msg = 'Proses tidak ada';
+                $msglog = 'Proses tidak ada';
             }
-            $data = $data->limit($request->total)
-                ->get();
-            foreach ($data as $item) {
-                # code...
-                DB::table('distribusis')
-                    ->where('id', $item->distribusi_id)
-                    ->update(['user_id' => auth()->user()->id, 'updated_at' => now()]);
-            }
-            $getUser = User::firstWhere('id', $request->user_id)->name;
-            $msg = '
-        Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span>';
-            $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
-        } else if ($request->tipe == 'RELOAD') {
-            $lastDistribusi = DB::table('distribusis')
-                ->select('customer_id', DB::raw('MAX(id) as id'))
-                ->where('produk_id', $produk_id)
-                ->groupBy('customer_id');
-
-            $data = DB::table($lastDistribusi, 'a')
-                ->select(
-                    'b.customer_id',
-                    DB::raw('CONCAT("' . $request->user_id . '") as user_id'),
-                    DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
-                    DB::raw('CONCAT("1") as bank_id'),
-                    DB::raw('CONCAT("0") as status'),
-                    DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
-                )
-                ->join('customers', 'customers.id', '=', 'a.customer_id')
-                ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
-                // jika local status nya 4 dan 5
-                // jika server status nya 12 dan 13
-                ->where(function ($query) {
-                    $query->where('b.status', '12')
-                        ->orWhere('b.status', '13');
-                })
-                ->whereDate('b.distribusi_at', '<>', $tanggal)
-                ->where('b.produk_id', $produk_id)
-                ->where('customers.fileexcel_id', $request->fileexcel_id);
-            if ($request->provider == 'NON-SIMPATI') {
-                $data =   $data->where('customers.provider', '<>', 'SIMPATI');
-            } else if ($request->provider == 'ALL-PROVIDER') {
-            } else {
-                $data =   $data->where('customers.provider', $request->provider);
-            }
-            $data = $data->limit($request->total)
-                ->get();
-            $distribusiInsert = $data->toArray();
-            $distribusiInsert = json_decode(json_encode($distribusiInsert), true);
-            Distribusi::insert($distribusiInsert);
-
-            $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
-            $msglog2 = ' campaign ' . $getfileexcel->kode;
-            $msglogFileexcel = $getfileexcel->kode;
-
-            $getUser = User::firstWhere('id', $request->user_id)->name;
-            $msg = '
-        Sukses reload  data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span>';
-            $msglog = 'Sukses reload data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
-        } else {
-            $msg = 'Proses tidak ada';
-            $msglog = 'Proses tidak ada';
+            $logInsert = [
+                'tipe' => $request->tipe,
+                'kode' => $msglogFileexcel,
+                'provider' => $request->provider,
+                'nama_sales' => $getUser,
+                'deskripsi' => $msglog,
+                'total' => $request->total,
+                'user_id' => auth()->user()->id,
+                'created_at' => now(),
+            ];
+            Log_distribusi::create($logInsert);
         }
-        $logInsert = [
-            'tipe' => $request->tipe,
-            'kode' => $msglogFileexcel,
-            'provider' => $request->provider,
-            'nama_sales' => $getUser,
-            'deskripsi' => $msglog,
-            'total' => $request->total,
-            'user_id' => auth()->user()->id,
-            'created_at' => now(),
-        ];
-        Log_distribusi::create($logInsert);
         $oldData = ['tipe' => $request->tipe, 'fileexcel_id' => $request->fileexcel_id, 'provider' => $request->provider];
         return back()->with(['msg' => $msg])->with(['oldData' => $oldData]);
     }

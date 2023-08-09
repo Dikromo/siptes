@@ -122,6 +122,8 @@
 
     <script>
         $('.select2').select2();
+        var roleuser_id = "<?php echo auth()->user()->roleuser_id; ?>";
+        var cabang_id = "<?php echo auth()->user()->cabang_id; ?>";
         var hari = "<?php echo date('Y-m-d'); ?>";
         renderTable(hari);
 
@@ -274,8 +276,10 @@
                     tr.removeClass('shown');
                 } else {
                     // Open this row
-                    row.child(format(row.data())).show();
-                    tr.addClass('shown');
+                    if (roleuser_id == '1' || roleuser_id == '4' || (roleuser_id == '2' && cabang_id == '4')) {
+                        row.child(format(row.data())).show();
+                        tr.addClass('shown');
+                    }
                 }
             });
             tables1.buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');

@@ -32,8 +32,7 @@ class UserController extends Controller
             'users.*',
             'roleusers.nama as roletext',
         )
-            ->join('roleusers', 'roleusers.id', '=', 'users.roleuser_id')
-            ->where('users.status', '1');
+            ->join('roleusers', 'roleusers.id', '=', 'users.roleuser_id');
         switch (auth()->user()->roleuser_id) {
             case '1':
                 $data = $data->orderby('users.created_at', 'desc');
@@ -156,6 +155,7 @@ class UserController extends Controller
             'name'      => ['required'],
             'username'  => ['required'],
             'email'     => ['required'],
+            'status'    => ['required'],
         ];
         if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
 
@@ -202,7 +202,14 @@ class UserController extends Controller
             $rules['username'] = 'required|unique:users';
         }
         $validateData = $request->validate($rules);
-
+        switch ($validateData['status']) {
+            case 'Active':
+                $validateData['status'] = '1';
+                break;
+            default:
+                $validateData['status'] = '0';
+                break;
+        }
         if (!isset($user->id)) {
             $validateData['password'] = Hash::make($validateData['password']);
         }

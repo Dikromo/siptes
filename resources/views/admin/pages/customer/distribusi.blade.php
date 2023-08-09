@@ -1,6 +1,11 @@
 @extends('admin.layouts.main')
 
 @section('container')
+    <style>
+        .select2-selection__choice {
+            color: #000 !important;
+        }
+    </style>
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
@@ -205,9 +210,9 @@
                             </div>
                             <div class="form-group">
                                 <label for="user_id">Sales</label>
-                                <select name="user_id" class="form-control select2 @error('user_id') is-invalid @enderror  "
-                                    id="user_id" required>
-                                    <option value="">-- Pilih --</option>
+                                <select multiple name="user_id[]"
+                                    class="form-control select2 @error('user_id') is-invalid @enderror  " id="user_id"
+                                    required>
                                     @foreach ($userData as $item)
                                         @if ($data != '')
                                             @if ($data->user_id == $item->id)
@@ -221,6 +226,11 @@
                                 @error('user_id')
                                     <span id="user_id" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
+                                @if (auth()->user()->roleuser_id == '1' ||
+                                        (auth()->user()->roleuser_id == '2' && auth()->user()->cabang_id == '4') ||
+                                        (auth()->user()->roleuser_id == '4' && auth()->user()->cabang_id == '4'))
+                                    <input type="checkbox" class="checkbox">Select All
+                                @endif
                             </div>
                             <div class="form-group">
                                 <label for="total">Total</label>
@@ -300,10 +310,29 @@
         var fromTabel = 0;
         var toTabel = 0;
         var rolecek = '{{ auth()->user()->roleuser_id }}';
-        $('.select2').select2()
+        $('.select2').select2();
+        $('#user_id').select2({
+            allowClear: true,
+            placeholder: 'select..'
+        }).on("select2:unselecting", function(e) {
+            $(this).data('state', 'unselected');
+        }).on("select2:open", function(e) {
+            if ($(this).data('state') === 'unselected') {
+                $(this).removeData('state');
+
+                var self = $(this);
+                setTimeout(function() {
+                    self.select2('close');
+
+                    $(".checkbox").prop('checked', false);
+                }, 1);
+            }
+        });
         $('#formDistribusi').submit(function() {
+
             if ($('#tipe').val() == 'DISTRIBUSI' || $('#tipe').val() == 'RELOAD') {
-                if (fromTabel != 0 && $('#total').val() != '0' && $('#total').val() <= fromTabel) {
+                var totLimit = parseInt($('#user_id').val().length) * parseInt($('#total').val())
+                if (fromTabel != 0 && $('#total').val() != '0' && totLimit <= fromTabel) {
                     $('#modal-overlay').modal({
                         backdrop: 'static',
                         keyboard: false
@@ -325,6 +354,19 @@
             return false;
         });
         $(document).ready(function() {
+            $(".checkbox").click(function() {
+                if ($(".checkbox").is(':checked')) {
+                    $(this).parent().find('option').prop("selected", "selected");
+                    $("#user_id").trigger("change");
+                    $("#user_id").click();
+
+                } else {
+                    console.log('aaa');
+                    $(this).parent().find('option').removeAttr("selected", "selected");
+                    $("#user_id").trigger("change");
+                    $("#user_id").click();
+                }
+            });
             $(document).on('select2:open', () => {
                 document.querySelector('.select2-search__field').focus();
             });
@@ -360,10 +402,19 @@
                 }
             });
             $("#user_id").change(function() {
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                    '' && $("#tipe").val() != '') {
+                    dataTablesfrom();
+                }
                 if (rolecek != '2') {
                     getProduk($("#user_id").val());
                 }
-                dataTablesto(this.value);
+                if ($("#user_id").val().length > 0) {
+                    dataTablesto($("#user_id").val());
+                } else {
+                    $('#dataTables2').DataTable().destroy();
+                    $('#dataTables2 tbody').empty();
+                }
             });
             $('#dataTables1').DataTable({
                 processing: true,
@@ -401,6 +452,7 @@
                         fileexcel_id: $("#fileexcel_id").val(),
                         provider: $("#provider").val(),
                         tipe: $("#tipe").val(),
+                        user_id: $("#user_id").val(),
                     }
                 },
                 columns: [{

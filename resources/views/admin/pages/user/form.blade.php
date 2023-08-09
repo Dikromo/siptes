@@ -74,6 +74,44 @@
                                     <span id="password" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+                            <?php
+                            $arrayStatus = ['Active', 'Not Active'];
+                            ?>
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select name="status" class="form-control select2 @error('status') is-invalid @enderror  "
+                                    id="status">
+                                    <option value="">-- Pilih --</option>
+                                    @foreach ($arrayStatus as $item)
+                                        @if ($data != '')
+                                            <?php
+                                            switch ($data->status) {
+                                                case '1':
+                                                    $statusUser = 'Active';
+                                                    break;
+                                                default:
+                                                    $statusUser = 'Not Active';
+                                                    break;
+                                            }
+                                            ?>
+                                            @if (old('status') == $item || $statusUser == $item)
+                                                <option value="{{ $item }}" selected>{{ $item }}</option>
+                                            @else
+                                                <option value="{{ $item }}">
+                                                    {{ $item }}
+                                                </option>
+                                            @endif
+                                        @else
+                                            <option value="{{ $item }}">
+                                                {{ $item }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                @error('status')
+                                    <span id="status" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
                             {{-- hidden input --}}
                             @if (auth()->user()->roleuser_id == '2')
                                 <input type="hidden" id="hroleuser_id" name="roleuser_id"
@@ -102,6 +140,9 @@
                             @endif
                             {{-- End hidden input --}}
                             @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5')
+                                <input type="hidden" id="hproduk_id" name="produk_id"
+                                    class="form-control @error('produk_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('produk_id') : old('produk_id', $data->produk_id) }}">
                                 <div class="form-group">
                                     <label for="roleuser_id">Role User</label>
                                     <select name="roleuser_id"

@@ -199,13 +199,13 @@ class DashboardController extends Controller
             ->addIndexColumn()
             ->addColumn('today', function ($data) {
                 $vtdt = $data->total_nocall + $data->total_call_today;
-                $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . ')</span>';
+                $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb7904">' . $data->total_call_today . '</span>';
+                $vToday .= '<span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb0423">' . $data->total_nocall . '</span>';
+                $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#009b05">' . $data->total_callout_today . '</span>';
+                $vToday .= '<span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span>';
                 //$vToday = '<span style="color:#a30">' . $vtdt . '</span>';
                 // $vToday = '{{\'<span style="color:#a30">\'.$data->total_nocall + $data->total_call_today.\'(\'.$total_nocall-$total_nocall_today.\' + \'.$total_nocall_today.\')</span>
                 //     | \'.$total_call_today.\' | \'.$total_nocall.\' | \'.$total_callout_today}}';
@@ -307,13 +307,20 @@ class DashboardController extends Controller
             //     <td>' . $item->total_callout_3 . '</td>
             // </tr>';
             $vtdt = $item->total_nocall + $item->total_call_today;
-            $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . ')</span>';
+            $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . '</span>)</span>';
             $vToday .= ' | ';
-            $vToday .= '<span style="color:#eb7904">' . $item->total_call_today . '</span>';
+            $vToday .= '<span style="color:#eb7904" title="total telepon hari ini">' . $item->total_call_today . '</span>';
             $vToday .= ' | ';
-            $vToday .= '<span style="color:#eb0423">' . $item->total_nocall . '</span>';
+            $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $item->total_nocall . '</span>';
             $vToday .= ' | ';
-            $vToday .= '<span style="color:#009b05">' . $item->total_callout_today . '</span>';
+            $vToday .= '<span style="color:#009b05" title="total diangkat hari ini">' . $item->total_callout_today . '</span>';
+            // $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . ')</span>';
+            // $vToday .= ' | ';
+            // $vToday .= '<span style="color:#eb7904">' . $item->total_call_today . '</span>';
+            // $vToday .= ' | ';
+            // $vToday .= '<span style="color:#eb0423">' . $item->total_nocall . '</span>';
+            // $vToday .= ' | ';
+            // $vToday .= '<span style="color:#009b05">' . $item->total_callout_today . '</span>';
             $hasil .= '<tr>
             <td></td>
             <td>' . $i . '</td>

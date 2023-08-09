@@ -60,9 +60,7 @@
                             </p>
                         </a>
                     </li>
-                    @if (auth()->user()->roleuser_id == '1' ||
-                            (auth()->user()->roleuser_id == '2' && auth()->user()->cabang_id == '4') ||
-                            (auth()->user()->roleuser_id == '4' && auth()->user()->cabang_id == '4'))
+                    @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2')
                         <li class="nav-item">
                             <a href="/dashboard/sales2"
                                 class="nav-link {{ $active === 'dashboardsales2' ? 'active' : '' }}">

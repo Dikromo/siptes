@@ -325,6 +325,9 @@
             return false;
         });
         $(document).ready(function() {
+            $(document).on('select2:open', () => {
+                document.querySelector('.select2-search__field').focus();
+            });
             setTimeout(() => {
                 if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
                     '' && $("#tipe").val() != '') {

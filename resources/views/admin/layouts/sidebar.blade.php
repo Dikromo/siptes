@@ -60,7 +60,9 @@
                             </p>
                         </a>
                     </li>
-                    @if (auth()->user()->roleuser_id == '1' || (auth()->user()->roleuser_id == '2' && auth()->user()->cabang_id == '4'))
+                    @if (auth()->user()->roleuser_id == '1' ||
+                            (auth()->user()->roleuser_id == '2' && auth()->user()->cabang_id == '4') ||
+                            (auth()->user()->roleuser_id == '4' && auth()->user()->cabang_id == '4'))
                         <li class="nav-item">
                             <a href="/dashboard/sales2"
                                 class="nav-link {{ $active === 'dashboardsales2' ? 'active' : '' }}">
@@ -133,42 +135,44 @@
                     </li>
                 @endif
                 @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
-                    <li class="nav-item">
-                        <a href="/customer/cekdbr" class="nav-link {{ $active === 'cekdbr' ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-database"></i>
-                            <p>
-                                Cek DBR
-                                <!--span class="right badge badge-danger">New</span-->
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/mutasi" class="nav-link {{ $active === 'mutasi' ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-address-card"></i>
-                            <p>
-                                Mutasi
-                                <!--span class="right badge badge-danger">New</span-->
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/jmosip" class="nav-link {{ $active === 'jmosip' ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-address-card"></i>
-                            <p>
-                                JMO
-                                <!--span class="right badge badge-danger">New</span-->
-                            </p>
-                        </a>
-                    </li>
-                    <li class="nav-item">
-                        <a href="/statuscall" class="nav-link {{ $active === 'statuscall' ? 'active' : '' }}">
-                            <i class="nav-icon fas fa-database"></i>
-                            <p>
-                                Status Call
-                                <!--span class="right badge badge-danger">New</span-->
-                            </p>
-                        </a>
-                    </li>
+                    @if (auth()->user()->cabang_id != '4')
+                        <li class="nav-item">
+                            <a href="/customer/cekdbr" class="nav-link {{ $active === 'cekdbr' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-database"></i>
+                                <p>
+                                    Cek DBR
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/mutasi" class="nav-link {{ $active === 'mutasi' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-address-card"></i>
+                                <p>
+                                    Mutasi
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/jmosip" class="nav-link {{ $active === 'jmosip' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-address-card"></i>
+                                <p>
+                                    JMO
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a href="/statuscall" class="nav-link {{ $active === 'statuscall' ? 'active' : '' }}">
+                                <i class="nav-icon fas fa-database"></i>
+                                <p>
+                                    Status Call
+                                    <!--span class="right badge badge-danger">New</span-->
+                                </p>
+                            </a>
+                        </li>
+                    @endif
                 @endif
                 {{-- <li class="nav-item {{ $active === 'menu1' ? 'menu-open' : '' }}">
                     <a href="#" class="nav-link {{ $active === 'menu1' ? 'active' : '' }}">

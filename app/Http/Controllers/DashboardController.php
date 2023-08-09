@@ -188,8 +188,10 @@ class DashboardController extends Controller
             })
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->where('users.roleuser_id', '3');
-        if (auth()->user()->roleuser_id != '1') {
+        if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('users.parentuser_id', auth()->user()->id);
+        } else if (auth()->user()->roleuser_id == '4') {
+            $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
         }
         $data = $data->orderby('users.parentuser_id', 'asc')
             ->groupBy(DB::raw('1,2'));
@@ -252,16 +254,19 @@ class DashboardController extends Controller
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, NULL)) AS total_callout'),
-            DB::raw('COUNT(IF(distribusis.status = "0",1, NULL)) AS total_data_today'),
+            DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $today . '",1, NULL)) AS total_data_today'),
             DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_call_today'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today . '" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_call_distoday'),
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today . '", 1, NULL)) AS total_nocall_today'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_callout_today'),
             DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today2 . '",1, NULL)) AS total_data_2'),
             DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_2'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_dis2'),
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '", 1, NULL)) AS total_nocall_2'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_callout_2'),
             DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today3 . '",1, NULL)) AS total_data_3'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_3'),
+            DB::raw('COUNT(IF(distribusis.status <> "0"  AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_3'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_dis3'),
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '", 1, NULL)) AS total_nocall_3'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_callout_3'),
         )
@@ -301,8 +306,8 @@ class DashboardController extends Controller
             //     <td>' . $item->total_nocall_3 . '</td>
             //     <td>' . $item->total_callout_3 . '</td>
             // </tr>';
-
-            $vToday = '<span style="color:#009b9b">' . $item->total_call_today + $item->total_nocall . '(' . $item->total_nocall - $item->total_nocall_today . ' + ' . +$item->total_call_today + $item->total_nocall_today . ')</span>';
+            $vtdt = $item->total_nocall + $item->total_call_today;
+            $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . ')</span>';
             $vToday .= ' | ';
             $vToday .= '<span style="color:#eb7904">' . $item->total_call_today . '</span>';
             $vToday .= ' | ';
@@ -314,8 +319,8 @@ class DashboardController extends Controller
             <td>' . $i . '</td>
             <td>' . $item->kode . '</td>
             <td>' . $vToday . '</td>
-            <td>' . $item->total_data_2 . ' | ' . $item->total_callout_2 . '</td>
-            <td>' . $item->total_data_3 . ' | ' . $item->total_callout_3 . '</td>
+            <td>' . $item->total_call_2 . ' | ' . $item->total_callout_2 . '</td>
+            <td>' . $item->total_call_3 . ' | ' . $item->total_callout_3 . '</td>
         </tr>';
         }
         $hasil .= '</tbody></table>';

@@ -168,11 +168,11 @@ class DashboardController extends Controller
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today . '", 1, NULL)) AS total_nocall_today'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_callout_today'),
             DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today2 . '",1, NULL)) AS total_data_2'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_2'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_2'),
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '", 1, NULL)) AS total_nocall_2'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_callout_2'),
             DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today3 . '",1, NULL)) AS total_data_3'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_3'),
+            DB::raw('COUNT(IF(distribusis.status <> "0"  AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_3'),
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '", 1, NULL)) AS total_nocall_3'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_callout_3'),
         )
@@ -194,7 +194,7 @@ class DashboardController extends Controller
             ->addIndexColumn()
             ->addColumn('today', function ($data) {
                 $vtdt = $data->total_nocall + $data->total_call_today;
-                $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $data->total_nocall - $data->total_nocall_today . ' + ' . $data->total_nocall_today . ')</span>';
+                $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $data->total_nocall - $data->total_nocall_today . ' + ' . $data->total_call_today + $data->total_nocall_today . ')</span>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#eb7904">' . $data->total_call_today . '</span>';
                 $vToday .= ' | ';
@@ -206,8 +206,8 @@ class DashboardController extends Controller
                 //     | \'.$total_call_today.\' | \'.$total_nocall.\' | \'.$total_callout_today}}';
                 return $vToday;
             })
-            ->addColumn('h2', '{{$total_data_2.\' | \'.$total_callout_2}}')
-            ->addColumn('h3', '{{$total_data_3.\' | \'.$total_callout_3}}')
+            ->addColumn('h2', '{{$total_call_2.\' | \'.$total_callout_2}}')
+            ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->rawColumns(['today'])

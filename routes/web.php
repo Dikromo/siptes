@@ -95,6 +95,8 @@ Route::get('/dashboard/sales2', [DashboardController::class, 'salescall2'])->mid
 Route::post('/dashboard/ajaxsalescall', [DashboardController::class, 'getSalescall'])->middleware('auth');
 Route::post('/dashboard/ajaxsalescall2', [DashboardController::class, 'getSalescall2'])->middleware('auth');
 Route::post('/dashboard/ajaxsalescall2/detail', [DashboardController::class, 'getSalescall2_detail'])->middleware('auth');
+Route::post('/dashboard/ajaxcampaigncall', [DashboardController::class, 'getCampaigncall'])->middleware('auth');
+Route::post('/dashboard/ajaxcampaigncall/detail', [DashboardController::class, 'getCampaigncall_detail'])->middleware('auth');
 
 Route::get('/admin', function () {
     if (auth()->user()->roleuser_id == '3') {

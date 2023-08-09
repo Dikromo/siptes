@@ -145,6 +145,7 @@ class CustomerController extends Controller
                     ->where('customers.fileexcel_id', $request->fileexcel_id);
                 if ($request->provider == 'NON-SIMPATI') {
                     $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                } else if ($request->provider == 'ALL-PROVIDER') {
                 } else {
                     $data =   $data->where('customers.provider', $request->provider);
                 }
@@ -163,6 +164,7 @@ class CustomerController extends Controller
                 });
                 if ($request->provider == 'NON-SIMPATI') {
                     $data =   $data->where('provider', '<>', 'SIMPATI');
+                } else if ($request->provider == 'ALL-PROVIDER') {
                 } else {
                     $data =   $data->where('provider', $request->provider);
                 }
@@ -184,6 +186,7 @@ class CustomerController extends Controller
                 ->where('distribusis.produk_id', $produk_id);
             if ($request->provider == 'NON-SIMPATI') {
                 $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+            } else if ($request->provider == 'ALL-PROVIDER') {
             } else {
                 $data =   $data->where('customers.provider', $request->provider);
             }
@@ -248,6 +251,7 @@ class CustomerController extends Controller
                     });
                 if ($request->provider == 'NON-SIMPATI') {
                     $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                } else if ($request->provider == 'ALL-PROVIDER') {
                 } else {
                     $data =   $data->where('customers.provider', $request->provider);
                 }
@@ -280,6 +284,7 @@ class CustomerController extends Controller
                     ->where('distribusis.produk_id', null);
                 if ($request->provider == 'NON-SIMPATI') {
                     $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                } else if ($request->provider == 'ALL-PROVIDER') {
                 } else {
                     $data =   $data->where('customers.provider', $request->provider);
                 }
@@ -325,6 +330,7 @@ class CustomerController extends Controller
                 });
             if ($request->provider == 'NON-SIMPATI') {
                 $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+            } else if ($request->provider == 'ALL-PROVIDER') {
             } else {
                 $data =   $data->where('customers.provider', $request->provider);
             }
@@ -368,6 +374,7 @@ class CustomerController extends Controller
                 ->where('customers.fileexcel_id', $request->fileexcel_id);
             if ($request->provider == 'NON-SIMPATI') {
                 $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+            } else if ($request->provider == 'ALL-PROVIDER') {
             } else {
                 $data =   $data->where('customers.provider', $request->provider);
             }

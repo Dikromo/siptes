@@ -79,7 +79,7 @@
                         <table class="table table-head-fixed text-nowrap dataTables" id="dataTables">
                             <thead>
                                 <tr>
-                                    <th></th>
+                                    {{-- <th></th>
                                     <th>NO</th>
                                     <th>Nama</th>
                                     <th>Tanggal Data</th>
@@ -87,13 +87,15 @@
                                     <th>Tanggal Belum Di Telepon</th>
                                     <th>Tanggal Call Out</th>
                                     <th>H-1 Data</th>
-                                    <th>H-1 Sudah Di Telepon</th>
-                                    <th>H-1 Belum Di Telepon</th>
                                     <th>H-1 Call Out</th>
                                     <th>H-2 Data</th>
-                                    <th>H-2 Sudah Di Telepon</th>
-                                    <th>H-2 Belum Di Telepon</th>
-                                    <th>H-2 Call Out</th>
+                                    <th>H-2 Call Out</th> --}}
+                                    <th></th>
+                                    <th>NO</th>
+                                    <th>Nama</th>
+                                    <th>Tanggal Data</th>
+                                    <th>H-1 Data</th>
+                                    <th>H-2 Data</th>
                                 </tr>
                             </thead>
                         </table>
@@ -135,6 +137,56 @@
 
 
         function renderTable(param) {
+            // paramColumn = [{
+            //     className: 'dt-control',
+            //     orderable: false,
+            //     data: null,
+            //     defaultContent: ''
+            // }, {
+            //     data: 'DT_RowIndex',
+            //     name: 'DT_RowIndex',
+            //     orderable: false,
+            //     searchable: false
+            // }, {
+            //     data: 'name',
+            //     name: 'name'
+            // }, {
+            //     data: 'total_data_today',
+            //     name: 'total_data_today',
+            // }, {
+            //     data: 'total_call_today',
+            //     name: 'total_call_today',
+            // }, {
+            //     data: 'total_nocall',
+            //     name: 'total_nocall',
+            // }, {
+            //     data: 'total_callout_today',
+            //     name: 'total_callout_today',
+            // }, {
+            //     data: 'total_data_2',
+            //     name: 'total_data_2',
+            // }, {
+            //     data: 'total_call_2',
+            //     name: 'total_call_2',
+            // }, {
+            //     data: 'total_nocall_2',
+            //     name: 'total_nocall_2',
+            // }, {
+            //     data: 'total_callout_2',
+            //     name: 'total_callout_2',
+            // }, {
+            //     data: 'total_data_3',
+            //     name: 'total_data_3',
+            // }, {
+            //     data: 'total_call_3',
+            //     name: 'total_call_3',
+            // }, {
+            //     data: 'total_nocall_3',
+            //     name: 'total_nocall_3',
+            // }, {
+            //     data: 'total_callout_3',
+            //     name: 'total_callout_3',
+            // }];
             paramColumn = [{
                 className: 'dt-control',
                 orderable: false,
@@ -149,41 +201,29 @@
                 data: 'name',
                 name: 'name'
             }, {
-                data: 'total_data_today',
-                name: 'total_data_today',
+                data: null,
+                name: null,
+                render: {
+                    _: "total_data_today",
+                    filter: "total_data_today",
+                    display: "today"
+                }
             }, {
-                data: 'total_call_today',
-                name: 'total_call_today',
+                data: null,
+                name: null,
+                render: {
+                    _: "total_data_2",
+                    filter: "total_data_2",
+                    display: "h2"
+                }
             }, {
-                data: 'total_nocall',
-                name: 'total_nocall',
-            }, {
-                data: 'total_callout_today',
-                name: 'total_callout_today',
-            }, {
-                data: 'total_data_2',
-                name: 'total_data_2',
-            }, {
-                data: 'total_call_2',
-                name: 'total_call_2',
-            }, {
-                data: 'total_nocall_2',
-                name: 'total_nocall_2',
-            }, {
-                data: 'total_callout_2',
-                name: 'total_callout_2',
-            }, {
-                data: 'total_data_3',
-                name: 'total_data_3',
-            }, {
-                data: 'total_call_3',
-                name: 'total_call_3',
-            }, {
-                data: 'total_nocall_3',
-                name: 'total_nocall_3',
-            }, {
-                data: 'total_callout_3',
-                name: 'total_callout_3',
+                data: null,
+                name: null,
+                render: {
+                    _: "total_data_3",
+                    filter: "total_data_3",
+                    display: "h3"
+                }
             }];
             var tables1 = new $('#dataTables').DataTable({
                 autoWidth: false,

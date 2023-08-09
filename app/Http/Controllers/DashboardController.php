@@ -197,7 +197,7 @@ class DashboardController extends Controller
             ->addIndexColumn()
             ->addColumn('today', function ($data) {
                 $vtdt = $data->total_nocall + $data->total_call_today;
-                $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $data->total_nocall - $data->total_nocall_today + $data->total_call_distoday . ' + ' . $data->total_call_today + $data->total_nocall_today - $data->total_call_distoday . ')</span>';
+                $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $data->total_nocall - $data->total_nocall_today - $data->total_call_distoday . ' + ' . $data->total_call_today + $data->total_nocall_today + $data->total_call_distoday . ')</span>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#eb7904">' . $data->total_call_today . '</span>';
                 $vToday .= ' | ';

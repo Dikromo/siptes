@@ -179,7 +179,7 @@
                     name: 'updated_at'
                 }];
             } else {
-                sortPos = 7;
+                sortPos = 6;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',

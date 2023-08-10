@@ -139,6 +139,9 @@
                 text: 'Export Excel',
                 filename: 'export_logdistribusi_' + hari
             }, ],
+            order: [
+                [4, 'desc']
+            ],
             processing: true,
             serverSide: true
         }).buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');

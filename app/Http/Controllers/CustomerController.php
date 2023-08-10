@@ -429,8 +429,7 @@ class CustomerController extends Controller
             'log_distribusis.*',
             'sales.name as salesnama',
         )
-            ->join('users as sales', 'sales.id', '=', 'log_distribusis.user_id')
-            ->orderby('created_at', 'desc');
+            ->join('users as sales', 'sales.id', '=', 'log_distribusis.user_id');
         if (auth()->user()->roleuser_id != '1') {
             $data = $data->where('user_id', auth()->user()->id);
         }
@@ -512,7 +511,6 @@ class CustomerController extends Controller
         }
         $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
             ->whereDate('distribusis.updated_at', '<=', $request->totanggal)
-            ->orderby('distribusis.updated_at', 'desc')
             ->without("Customer")
             ->without("User");
         //echo $data;

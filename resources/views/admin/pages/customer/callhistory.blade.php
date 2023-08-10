@@ -235,6 +235,9 @@
                     text: 'Export Excel',
                     filename: 'export_callhistory_' + hari
                 }, ],
+                order: [
+                    [8, 'desc']
+                ],
                 processing: true,
                 serverSide: true
             }).buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');

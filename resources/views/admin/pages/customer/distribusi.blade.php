@@ -314,9 +314,9 @@
         $('#user_id').select2({
             allowClear: true,
             placeholder: 'select..'
-        }).on("select2:unselecting", function(e) {
+        }).on("#user_id select2:unselecting", function(e) {
             $(this).data('state', 'unselected');
-        }).on("select2:open", function(e) {
+        }).on("#user_id select2:open", function(e) {
             if ($(this).data('state') === 'unselected') {
                 $(this).removeData('state');
 
@@ -367,8 +367,11 @@
                     $("#user_id").click();
                 }
             });
-            $(document).on('select2:open', () => {
-                document.querySelector('.select2-search__field').focus();
+            $(document).on('select2:open', e => {
+                const select2 = $(e.target).data('select2');
+                if (!select2.options.get('multiple')) {
+                    select2.dropdown.$search.get(0).focus();
+                }
             });
             setTimeout(() => {
                 if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=

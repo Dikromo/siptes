@@ -98,7 +98,8 @@ class CallpagesController extends Controller
         } else {
             $data = $data->where('status', $request->status);
         }
-        $data = $data->limit(500);
+        $data = $data->orderby('id', 'desc')
+            ->limit(500);
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('statusText', function ($data) {

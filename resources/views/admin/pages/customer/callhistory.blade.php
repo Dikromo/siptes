@@ -147,6 +147,7 @@
 
         function renderTable(param1, param2) {
             if (cabangs == '4') {
+                sortPos = 8;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -178,6 +179,7 @@
                     name: 'updated_at'
                 }];
             } else {
+                sortPos = 7;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -236,7 +238,7 @@
                     filename: 'export_callhistory_' + hari
                 }, ],
                 order: [
-                    [8, 'desc']
+                    [sortPos, 'desc']
                 ],
                 processing: true,
                 serverSide: true

@@ -510,7 +510,8 @@ class CustomerController extends Controller
         if (auth()->user()->roleuser_id != '1') {
             $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
         }
-        $data = $data
+        $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
+            ->whereDate('distribusis.updated_at', '<=', $request->totanggal)
             ->orderby('distribusis.updated_at', 'desc')
             ->without("Customer")
             ->without("User");

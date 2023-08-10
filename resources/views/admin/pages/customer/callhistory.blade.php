@@ -8,6 +8,37 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
+                <div class="card card-primary card-outline">
+                    <div class="card-body">
+                        <div class="form-group">
+                            <label for="fromTanggal">Dari Tanggal</label>
+                            <input type="date" id="fromTanggal" name="fromTanggal"
+                                class="form-control @error('fromTanggal') is-invalid @enderror"
+                                value="{{ old('fromTanggal', date('Y-m-d', strtotime('-7 days'))) }}" required>
+                            @error('fromTanggal')
+                                <span id="fromTanggal" class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                            <label for="toTanggal">Sampai Tanggal</label>
+                            <input type="date" id="toTanggal" name="toTanggal"
+                                class="form-control @error('toTanggal') is-invalid @enderror"
+                                value="{{ old('toTanggal', date('Y-m-d')) }}" required>
+                            @error('toTanggal')
+                                <span id="toTanggal" class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
+                    </div>
+                    <div class="card-footer">
+
+                        <div class="row">
+                            <!-- /.col -->
+                            <div class="col-8">
+                            </div>
+                            <div class="col-4">
+                                <a class="btn btn-primary btn-block" onclick="proses()">Proses</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">{{ $title }} Table </h3>
@@ -97,96 +128,117 @@
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     <script type="text/javascript">
         // $(document).ready(function() {
+        var fromTanggal = "<?php echo date('Y-m-d', strtotime('-7 days')); ?>";
+        var toTanggal = "<?php echo date('Y-m-d'); ?>";
         var hari = "<?php echo date('Y-m-d'); ?>";
         var cabangs = "<?php echo auth()->user()->cabang_id; ?>";
-        if (cabangs == '4') {
-            $paramColumn = [{
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
-                orderable: false,
-                searchable: false
-            }, {
-                data: 'salesnama',
-                name: 'sales.name as salesnama'
-            }, {
-                data: 'nama',
-                name: 'customers.nama',
-            }, {
-                data: 'kode',
-                name: 'fileexcels.kode',
-            }, {
-                data: 'no_telp',
-                name: 'customers.no_telp',
-            }, {
-                data: 'provider',
-                name: 'customers.provider',
-            }, {
-                data: 'statustext',
-                name: 'statuscalls.nama as statustext'
-            }, {
-                data: 'call_time',
-                name: 'call_time'
-            }, {
-                data: 'updated_at',
-                name: 'updated_at'
-            }];
-        } else {
-            $paramColumn = [{
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
-                orderable: false,
-                searchable: false
-            }, {
-                data: 'salesnama',
-                name: 'sales.name as salesnama'
-            }, {
-                data: 'nama',
-                name: 'customers.nama',
-            }, {
-                data: 'provider',
-                name: 'customers.provider',
-            }, {
-                data: 'statustext',
-                name: 'statuscalls.nama as statustext'
-            }, {
-                data: 'call_time',
-                name: 'call_time'
-            }, {
-                data: 'updated_at',
-                name: 'updated_at'
-            }];
+
+        renderTable(fromTanggal, toTanggal);
+
+        function proses() {
+            $("#dataTables").DataTable().off('click');
+            $("#dataTables").DataTable().clear().destroy();
+            if ($('#fromTanggal').val() != '' && $('#toTanggal').val() != '') {
+                renderTable($('#fromTanggal').val(), $('#toTanggal').val());
+            } else {
+                alert('Tidak dapat melakukan proses!');
+            }
         }
-        $('#dataTables').DataTable({
-            autoWidth: false,
-            bDestroy: true,
-            initComplete: function(settings, json) {
-                fromTabel = this.api().data().length;
-            },
-            ajax: {
-                type: 'POST',
-                url: '/customer/ajax/callhistory',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                }
-            },
-            lengthMenu: [
-                [10, 50, 100, 200, 500, -1],
-                [10, 50, 100, 200, 500, "All"]
-            ],
-            columns: $paramColumn,
-            columnDefs: [{
-                targets: 0,
-                className: "text-center",
-            }],
-            dom: 'lBfrtip',
-            buttons: [{
-                extend: 'excel',
-                text: 'Export Excel',
-                filename: 'export_callhistory_' + hari
-            }, ],
-            processing: true,
-            serverSide: true
-        }).buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');
+
+        function renderTable(param1, param2) {
+            if (cabangs == '4') {
+                paramColumn = [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                }, {
+                    data: 'salesnama',
+                    name: 'sales.name as salesnama'
+                }, {
+                    data: 'nama',
+                    name: 'customers.nama',
+                }, {
+                    data: 'kode',
+                    name: 'fileexcels.kode',
+                }, {
+                    data: 'no_telp',
+                    name: 'customers.no_telp',
+                }, {
+                    data: 'provider',
+                    name: 'customers.provider',
+                }, {
+                    data: 'statustext',
+                    name: 'statuscalls.nama as statustext'
+                }, {
+                    data: 'call_time',
+                    name: 'call_time'
+                }, {
+                    data: 'updated_at',
+                    name: 'updated_at'
+                }];
+            } else {
+                paramColumn = [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                }, {
+                    data: 'salesnama',
+                    name: 'sales.name as salesnama'
+                }, {
+                    data: 'nama',
+                    name: 'customers.nama',
+                }, {
+                    data: 'provider',
+                    name: 'customers.provider',
+                }, {
+                    data: 'statustext',
+                    name: 'statuscalls.nama as statustext'
+                }, {
+                    data: 'call_time',
+                    name: 'call_time'
+                }, {
+                    data: 'updated_at',
+                    name: 'updated_at'
+                }];
+            }
+            $('#dataTables').DataTable({
+                autoWidth: false,
+                bDestroy: true,
+                initComplete: function(settings, json) {
+                    fromTabel = this.api().data().length;
+                },
+                ajax: {
+                    type: 'POST',
+                    url: '/customer/ajax/callhistory',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        fromtanggal: param1,
+                        totanggal: param2,
+                    }
+                },
+
+                deferRender: true,
+                lengthMenu: [
+                    [10, 50, 100, 200, 500, -1],
+                    [10, 50, 100, 200, 500, "All"]
+                ],
+                columns: paramColumn,
+                columnDefs: [{
+                    targets: 0,
+                    className: "text-center",
+                }],
+                dom: 'lBfrtip',
+                buttons: [{
+                    extend: 'excel',
+                    text: 'Export Excel',
+                    filename: 'export_callhistory_' + hari
+                }, ],
+                processing: true,
+                serverSide: true
+            }).buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');
+        }
         // })
     </script>
 @endsection

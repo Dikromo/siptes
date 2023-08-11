@@ -125,37 +125,48 @@ class DashboardController extends Controller
             ]
         );
     }
-    private function checkDay($param)
+    private function checkDay($param, $param2)
     {
         $hasil = '';
-        switch (date('l', strtotime($param))) {
-            case 'Saturday':
-                $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
-                break;
+        if ($param2 == 'today') {
+            switch (date('l', strtotime($param))) {
+                case 'Sunday':
+                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    break;
+                default:
+                    $hasil = $param;
+                    break;
+            }
+        } else {
+            switch (date('l', strtotime($param))) {
+                case 'Saturday':
+                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    break;
 
-            case 'Sunday':
-                $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
-                break;
-            default:
-                $hasil = $param;
-                break;
+                case 'Sunday':
+                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    break;
+                default:
+                    $hasil = $param;
+                    break;
+            }
         }
         return $hasil;
     }
     public function getSalescall2_header(Request $request)
     {
         $result = [];
-        $result['today'] = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)));
-        $result['h1'] = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($result['today']))));
-        $result['h2'] = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($result['today']))));
+        $result['today'] = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
+        $result['h1'] = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($result['today']))), '');
+        $result['h2'] = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($result['today']))), '');
 
         return $result;
     }
     public function getSalescall2(Request $request)
     {
-        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)));
-        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))));
-        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))));
+        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
+        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
+        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
         $data = User::select(
             'users.id',
             'users.name',
@@ -221,9 +232,9 @@ class DashboardController extends Controller
     public function getSalescall2_detail(Request $request)
     {
 
-        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)));
-        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))));
-        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))));
+        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
+        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
+        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
 
         $hasil = '<table class="table table-head-fixed text-nowrap text-center">
         <thead>
@@ -335,9 +346,9 @@ class DashboardController extends Controller
     }
     public function getCampaigncall(Request $request)
     {
-        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)));
-        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))));
-        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))));
+        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
+        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
+        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
         $data = Fileexcel::select(
             'fileexcels.id',
             'fileexcels.kode',
@@ -404,9 +415,9 @@ class DashboardController extends Controller
             </tr>
         </thead>
         <tbody>';
-        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)));
-        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))));
-        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))));
+        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
+        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
+        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
         $data = User::select(
             'users.id',
             'users.name',

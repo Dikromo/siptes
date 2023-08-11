@@ -130,11 +130,11 @@ class DashboardController extends Controller
         $hasil = '';
         switch (date('l', strtotime($param))) {
             case 'Saturday':
-                $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
+                $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
                 break;
 
             case 'Sunday':
-                $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
+                $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
                 break;
             default:
                 $hasil = $param;

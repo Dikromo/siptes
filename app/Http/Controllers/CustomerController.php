@@ -131,8 +131,10 @@ class CustomerController extends Controller
                         'customers.nama',
                         'customers.no_telp',
                         'customers.provider',
+                        'fileexcels.kode',
                     )
                     ->join('customers', 'customers.id', '=', 'a.customer_id')
+                    ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
                     ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                     // jika local status nya 4 dan 5
                     // jika server status nya 12 dan 13
@@ -158,13 +160,20 @@ class CustomerController extends Controller
                     ->editColumn('no_telp', '{{{substr($no_telp, 0, 6)}}}xxxx')
                     ->make(true);
             } else {
-                $data = Customer::leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
+                $data = Customer::select(
+                    'customers.nama',
+                    'customers.no_telp',
+                    'customers.provider',
+                    'fileexcels.kode',
+                )->leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
                     $join->on('customers.id', '=', 'distribusis.customer_id')
                         ->where(function ($query)  use ($produk_id, $tanggal) {
                             $query->where('distribusis.produk_id', '=', $produk_id)
                                 ->orwhereDate('distribusis.distribusi_at', $tanggal);
                         });
-                });
+                })
+                    ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id');
+
                 if ($request->provider == 'NON-SIMPATI') {
                     $data =   $data->where('provider', '<>', 'SIMPATI');
                 } else if ($request->provider == 'ALL-PROVIDER') {
@@ -180,8 +189,15 @@ class CustomerController extends Controller
                     ->make(true);
             }
         } else {
-            $data = Distribusi::join('customers', 'customers.id', '=', 'distribusis.customer_id')
-                ->where('user_id', auth()->user()->id)
+            $data = Distribusi::select(
+                'customers.nama',
+                'customers.no_telp',
+                'customers.provider',
+                'fileexcels.kode',
+            )
+                ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+                ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+                ->where('distribusis.user_id', auth()->user()->id)
                 ->where(function ($query) {
                     $query->where('distribusis.status', '0')
                         ->orWhere('distribusis.status', null);
@@ -194,11 +210,11 @@ class CustomerController extends Controller
                 $data =   $data->where('customers.provider', $request->provider);
             }
 
+            $data = $data->without("Customer")
+                ->without("User");
             return DataTables::of($data)
                 ->addIndexColumn()
-                ->addColumn('nama', '{{$customer[\'nama\']}}')
-                ->addColumn('no_telp', '{{{substr($customer[\'no_telp\'], 0, 6)}}}xxxx')
-                ->addColumn('perusahaan', '{{$customer[\'perusahaan\']}}')
+                ->editColumn('no_telp', '{{substr($no_telp, 0, 6)}}xxxx')
                 ->make(true);
         }
     }
@@ -347,12 +363,19 @@ class CustomerController extends Controller
                 $data = $data
                     ->limit($request->total)
                     ->get();
-                foreach ($data as $item) {
-                    # code...
-                    DB::table('distribusis')
-                        ->where('id', $item->distribusi_id)
-                        ->update(['user_id' => auth()->user()->id, 'updated_at' => now()]);
+                if ($request->fileexcel_id == 'today') {
+                    foreach ($data as $item) {
+                        # code...
+                        DB::table('distribusis')
+                            ->where('id', $item->distribusi_id)
+                            ->update(['user_id' => auth()->user()->id, 'updated_at' => now()]);
+                    }
+                } else {
+                    foreach ($data as $item) {
+                        DB::table('distribusis')->where('id', $item->distribusi_id)->delete();
+                    }
                 }
+
                 $getUser = User::firstWhere('id', $user_id)->name;
                 $msg .= '
         Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>';

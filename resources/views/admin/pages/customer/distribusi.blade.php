@@ -53,6 +53,9 @@
                                         <th>Nama</th>
                                         <th>Telp</th>
                                         <th>Provider</th>
+                                        @if (count($fileExceldata) != '0')
+                                            <th>Kode</th>
+                                        @endif
                                     </tr>
                                 </thead>
                                 <tbody>
@@ -230,6 +233,7 @@
                                         (auth()->user()->roleuser_id == '2' && auth()->user()->cabang_id == '4') ||
                                         (auth()->user()->roleuser_id == '4' && auth()->user()->cabang_id == '4'))
                                     <input type="checkbox" class="checkbox">Select All
+                                    <p class="totSales"></p>
                                 @endif
                             </div>
                             <div class="form-group">
@@ -316,6 +320,8 @@
             placeholder: 'select..'
         }).on("#user_id select2:unselecting", function(e) {
             $(this).data('state', 'unselected');
+
+            $('.totSales').html('Total Sales di pilih :' + parseInt($('#user_id').val().length));
         }).on("#user_id select2:open", function(e) {
             if ($(this).data('state') === 'unselected') {
                 $(this).removeData('state');
@@ -326,32 +332,56 @@
 
                     $(".checkbox").prop('checked', false);
                 }, 1);
+
+                $('.totSales').html('Total Sales di pilih :' + parseInt($('#user_id').val().length));
             }
         });
         $('#formDistribusi').submit(function() {
-
-            if ($('#tipe').val() == 'DISTRIBUSI' || $('#tipe').val() == 'RELOAD') {
-                var totLimit = parseInt($('#user_id').val().length) * parseInt($('#total').val())
-                if (fromTabel != 0 && $('#total').val() != '0' && totLimit <= fromTabel) {
-                    $('#modal-overlay').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    return true;
-                }
+            let prosesData = '';
+            switch ($('#tipe').val()) {
+                case 'DISTRIBUSI':
+                    prosesData = 'mendistribusikan';
+                    break;
+                case 'TARIK DATA':
+                    prosesData = 'menarik';
+                    break;
+                case 'RELOAD':
+                    prosesData = 'mereload';
+                    break;
+                default:
+                    prosesData = 'mendistribusikan';
+                    break;
             }
-
-            if ($('#tipe').val() == 'TARIK DATA') {
-                if (toTabel != 0 && $('#total').val() != '0' && $('#total').val() <= toTabel) {
-                    $('#modal-overlay').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    return true;
+            let totData = (parseInt($('#total').val()) * parseInt($('#user_id').val().length));
+            let text = "Apakah anda yakin, Akan " + prosesData + " ke " + parseInt($('#user_id').val().length) +
+                " sales @" + parseInt($('#total').val()) + " total " + (parseInt($('#total').val()) * parseInt($(
+                    '#user_id').val().length)) + "?";
+            if (confirm(text) == true) {
+                if ($('#tipe').val() == 'DISTRIBUSI' || $('#tipe').val() == 'RELOAD') {
+                    var totLimit = parseInt($('#user_id').val().length) * parseInt($('#total').val())
+                    if (fromTabel != 0 && $('#total').val() != '0' && totLimit <= fromTabel) {
+                        $('#modal-overlay').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        return true;
+                    }
                 }
+
+                if ($('#tipe').val() == 'TARIK DATA') {
+                    if (toTabel != 0 && $('#total').val() != '0' && $('#total').val() <= toTabel) {
+                        $('#modal-overlay').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        return true;
+                    }
+                }
+                alert('Tidak dapat melakukan proses!');
+                return false;
+            } else {
+                return false;
             }
-            alert('Tidak dapat melakukan proses!');
-            return false;
         });
         $(document).ready(function() {
             $(".checkbox").click(function() {
@@ -359,12 +389,13 @@
                     $(this).parent().find('option').prop("selected", "selected");
                     $("#user_id").trigger("change");
                     $("#user_id").click();
-
+                    $('.totSales').html('Total Sales di pilih :' + parseInt($('#user_id').val().length));
                 } else {
                     console.log('aaa');
                     $(this).parent().find('option').removeAttr("selected", "selected");
                     $("#user_id").trigger("change");
                     $("#user_id").click();
+                    $('.totSales').html('Total Sales di pilih :' + parseInt($('#user_id').val().length));
                 }
             });
             $(document).on('select2:open', e => {
@@ -374,38 +405,46 @@
                 }
             });
             setTimeout(() => {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                    .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             }, 2000);
             $("#produk_id").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                    .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
             $("#fileexcel_id").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                    .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
             $("#provider").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                    .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
 
             $("#tipe").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                    .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
             $("#user_id").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider").val() !=
+
+                $('.totSales').html('Total Sales di pilih :' + parseInt($('#user_id').val().length));
+                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                    .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
@@ -433,55 +472,6 @@
                 searching: false,
             });
         })
-
-        function dataTablesfrom(select) {
-            var hari = "<?php echo date('Y-m-d'); ?>";
-            $('#dataTables1').DataTable({
-                processing: true,
-                serverSide: true,
-                autoWidth: false,
-                bDestroy: true,
-                initComplete: function(settings, json) {
-                    fromTabel = this.api().page.info().recordsTotal;
-
-                    console.log(fromTabel);
-                },
-                ajax: {
-                    type: 'POST',
-                    url: '/customer/ajax/from',
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        produk_id: $("#produk_id").val(),
-                        fileexcel_id: $("#fileexcel_id").val(),
-                        provider: $("#provider").val(),
-                        tipe: $("#tipe").val(),
-                        user_id: $("#user_id").val(),
-                    }
-                },
-                columns: [{
-                    data: 'DT_RowIndex',
-                    name: 'DT_RowIndex',
-                    orderable: false,
-                    searchable: false
-                }, {
-                    data: 'nama',
-                    name: 'customers.nama'
-                }, {
-                    data: 'no_telp',
-                    name: 'customers.no_telp'
-                }, {
-                    data: 'provider',
-                    name: 'customers.provider'
-                }]
-            });
-            // Untuk export datatables
-            //     dom: 'Bfrtip',
-            //     buttons: [{
-            //         extend: 'excel',
-            //         filename: 'export_' + hari
-            //     }, ]
-            // }).buttons().container().appendTo('#dataTables1_wrapper .col-md-6:eq(0)');
-        }
         if (totalFileexcel != 0) {
             $paramColumnto = [{
                 data: 'DT_RowIndex',
@@ -517,6 +507,41 @@
                 data: 'provider',
                 name: 'provider'
             }, ];
+        }
+
+        function dataTablesfrom(select) {
+            var hari = "<?php echo date('Y-m-d'); ?>";
+            $('#dataTables1').DataTable({
+                processing: true,
+                serverSide: true,
+                autoWidth: false,
+                bDestroy: true,
+                initComplete: function(settings, json) {
+                    fromTabel = this.api().page.info().recordsTotal;
+
+                    console.log(fromTabel);
+                },
+                ajax: {
+                    type: 'POST',
+                    url: '/customer/ajax/from',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        produk_id: $("#produk_id").val(),
+                        fileexcel_id: $("#fileexcel_id").val(),
+                        provider: $("#provider").val(),
+                        tipe: $("#tipe").val(),
+                        user_id: $("#user_id").val(),
+                    }
+                },
+                columns: $paramColumnto
+            });
+            // Untuk export datatables
+            //     dom: 'Bfrtip',
+            //     buttons: [{
+            //         extend: 'excel',
+            //         filename: 'export_' + hari
+            //     }, ]
+            // }).buttons().container().appendTo('#dataTables1_wrapper .col-md-6:eq(0)');
         }
 
         function dataTablesto(select) {

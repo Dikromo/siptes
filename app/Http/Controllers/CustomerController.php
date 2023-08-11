@@ -341,7 +341,9 @@ class CustomerController extends Controller
                 } else {
                     $data =   $data->where('customers.provider', $request->provider);
                 }
-                $data = $data->limit($request->total)
+                $data = $data
+                    ->where('customers.fileexcel_id', $request->fileexcel_id)
+                    ->limit($request->total)
                     ->get();
                 foreach ($data as $item) {
                     # code...
@@ -352,7 +354,7 @@ class CustomerController extends Controller
                 $getUser = User::firstWhere('id', $user_id)->name;
                 $msg .= '
         Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>';
-                $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
+                $msglog = 'Sukses menarik data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
             } else if ($request->tipe == 'RELOAD') {
                 $lastDistribusi = DB::table('distribusis')
                     ->select('customer_id', DB::raw('MAX(id) as id'))

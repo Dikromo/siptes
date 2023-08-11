@@ -341,8 +341,10 @@ class CustomerController extends Controller
                 } else {
                     $data =   $data->where('customers.provider', $request->provider);
                 }
+                if ($request->fileexcel_id != 'today') {
+                    $data = $data->where('customers.fileexcel_id', $request->fileexcel_id);
+                }
                 $data = $data
-                    ->where('customers.fileexcel_id', $request->fileexcel_id)
                     ->limit($request->total)
                     ->get();
                 foreach ($data as $item) {

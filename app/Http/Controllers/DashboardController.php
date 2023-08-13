@@ -42,6 +42,10 @@ class DashboardController extends Controller
     {
         $dataStatuscall = Statuscall::orderby('jenis', 'asc')
             ->orderby('id', 'asc');
+        if (auth()->user()->cabang_id == '4' || auth()->user()->roleuser_id == '1') {
+        } else {
+            $dataStatuscall = $dataStatuscall->where('cabang_id', '0');
+        }
         $result = [];
         $result['salescall'] = [];
         $result['statuscall'] = (isset($request->date_by) && $request->date_by == 'updated_at') ? [] : ['Total Data', 'Belum Ditelfon'];

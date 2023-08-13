@@ -39,6 +39,7 @@
                                 <tr>
                                     <th>NO</th>
                                     <th>Nama</th>
+                                    <th>Site</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
                                 </tr>
@@ -105,6 +106,9 @@
             }, {
                 data: 'nama',
                 name: 'nama'
+            }, {
+                data: 'nama_cabang',
+                name: 'nama_cabang'
             }, {
                 data: 'action',
                 name: 'action',

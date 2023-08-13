@@ -77,21 +77,31 @@
                             @endforeach
                         </div>
                         <hr>
-
-                        <h3 class="profile-username text-left pl-2"><i class="nav-icon fas fa-headset"></i> List Call Back
-                        </h3>
-                        <div class="col-12 table-responsive">
-                            <table class="table table-head-fixed text-nowrap" id="dataTables1">
-                                <thead>
-                                    <tr>
-                                        <th>NO</th>
-                                        <th>Nama</th>
-                                        <th>Status</th>
-                                        <th>Remarks</th>
-                                        <th>Action</th>
-                                    </tr>
-                                </thead>
-                                {{-- <tbody>
+                        <div class="text-center">
+                            <a onclick="renderTable('List Pengajuan','1');" class="btn btn-primary btn-sm border_white m-1">
+                                Show List Pengajuan</a>
+                            <a onclick="renderTable('List Prospek','3');" class="btn btn-primary btn-sm border_white m-1">
+                                Show List Prospek</a>
+                            <a onclick="renderTable('List Call Back','2');" class="btn btn-primary btn-sm border_white m-1">
+                                Show List Call Back</a>
+                        </div>
+                        <div class='cTable' style="display:none">
+                            <h3 class="profile-username text-left pl-2 jTable"><i class="nav-icon fas fa-headset"></i> List
+                                Call
+                                Back
+                            </h3>
+                            <div class="col-12 table-responsive">
+                                <table class="table table-head-fixed text-nowrap" id="dataTables1">
+                                    <thead>
+                                        <tr>
+                                            <th>NO</th>
+                                            <th>Nama</th>
+                                            <th>Status</th>
+                                            <th>Remarks</th>
+                                            <th>Action</th>
+                                        </tr>
+                                    </thead>
+                                    {{-- <tbody>
                                     <tr>
                                         <td>1</td>
                                         <td>Budi Hartanto</td>
@@ -99,9 +109,10 @@
                                         <td></td>
                                     </tr>
                                 </tbody> --}}
-                            </table>
+                                </table>
+                            </div>
                         </div>
-                        <hr>
+                        {{-- <hr>
 
                         <h3 class="profile-username text-left pl-2"><i class="nav-icon fas fa-headset"></i> List Apply
                         </h3>
@@ -116,16 +127,16 @@
                                         <th>Action</th>
                                     </tr>
                                 </thead>
-                                {{-- <tbody>
+                                <tbody>
                                     <tr>
                                         <td>1</td>
                                         <td>Budi Hartanto</td>
                                         <td>Call Lagi</td>
                                         <td></td>
                                     </tr>
-                                </tbody> --}}
+                                </tbody>
                             </table>
-                        </div>
+                        </div> --}}
                         {{-- <a href="#" class="btn btn-primary btn-block"><b>Follow</b></a> --}}
                     </div>
                     <!-- /.card-body -->
@@ -150,87 +161,90 @@
     <script src="{{ asset('adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>
-        $('#dataTables1').DataTable({
-            processing: true,
-            serverside: true,
-            autoWidth: false,
-            bDestroy: true,
-            initComplete: function(settings, json) {
-                //fromTabel = this.api().data().length;
-            },
-            ajax: {
-                type: 'POST',
-                url: '/call/ajax',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    user_id: '{{ auth()->user()->id }}',
-                    status: '2',
-                }
-            },
-            columns: [{
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
-            }, {
-                data: 'customer.nama',
-                name: 'customer.nama'
-            }, {
-                data: 'statusText',
-                name: 'statusText'
-            }, {
-                data: 'deskripsi',
-                name: 'deskripsi'
-            }, {
-                data: 'action',
-                name: 'action',
-                orderable: false,
-                searchable: false,
-            }],
-            columnDefs: [{
-                targets: 4,
-                className: "text-center",
-            }]
-        });
-
-        $('#dataTables2').DataTable({
-            processing: true,
-            serverside: true,
-            autoWidth: false,
-            bDestroy: true,
-            initComplete: function(settings, json) {
-                //fromTabel = this.api().data().length;
-            },
-            ajax: {
-                type: 'POST',
-                url: '/call/ajax',
-                data: {
-                    _token: '{{ csrf_token() }}',
-                    user_id: '{{ auth()->user()->id }}',
-                    status: '1',
-                }
-            },
-            columns: [{
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
-            }, {
-                data: 'customer.nama',
-                name: 'customer.nama'
-            }, {
-                data: 'statusText',
-                name: 'statusText'
-            }, {
-                data: 'deskripsi',
-                name: 'deskripsi'
-            }, {
-                data: 'action',
-                name: 'action',
-                orderable: false,
-                searchable: false,
-            }],
-            columnDefs: [{
-                targets: 4,
-                className: "text-center",
-            }]
-        });
+        function renderTable(judul, param) {
+            $('.cTable').css('display', 'block')
+            $('.jTable').html(judul);
+            $('#dataTables1').DataTable({
+                processing: true,
+                serverside: true,
+                autoWidth: false,
+                bDestroy: true,
+                initComplete: function(settings, json) {
+                    //fromTabel = this.api().data().length;
+                },
+                ajax: {
+                    type: 'POST',
+                    url: '/call/ajax',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        user_id: '{{ auth()->user()->id }}',
+                        status: param,
+                    }
+                },
+                columns: [{
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                }, {
+                    data: 'nama',
+                    name: 'nama'
+                }, {
+                    data: 'statusText',
+                    name: 'statusText'
+                }, {
+                    data: 'deskripsi',
+                    name: 'deskripsi'
+                }, {
+                    data: 'action',
+                    name: 'action',
+                    orderable: false,
+                    searchable: false,
+                }],
+                columnDefs: [{
+                    targets: 4,
+                    className: "text-center",
+                }]
+            });
+        }
+        // $('#dataTables2').DataTable({
+        //     processing: true,
+        //     serverside: true,
+        //     autoWidth: false,
+        //     bDestroy: true,
+        //     initComplete: function(settings, json) {
+        //         //fromTabel = this.api().data().length;
+        //     },
+        //     ajax: {
+        //         type: 'POST',
+        //         url: '/call/ajax',
+        //         data: {
+        //             _token: '{{ csrf_token() }}',
+        //             user_id: '{{ auth()->user()->id }}',
+        //             status: '1',
+        //         }
+        //     },
+        //     columns: [{
+        //         data: 'DT_RowIndex',
+        //         name: 'DT_RowIndex',
+        //     }, {
+        //         data: 'nama',
+        //         name: 'nama'
+        //     }, {
+        //         data: 'statusText',
+        //         name: 'statusText'
+        //     }, {
+        //         data: 'deskripsi',
+        //         name: 'deskripsi'
+        //     }, {
+        //         data: 'action',
+        //         name: 'action',
+        //         orderable: false,
+        //         searchable: false,
+        //     }],
+        //     columnDefs: [{
+        //         targets: 4,
+        //         className: "text-center",
+        //     }]
+        // });
         $('#formImport').submit(function() {
             $('#modal-overlay').modal({
                 backdrop: 'static',

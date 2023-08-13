@@ -48,6 +48,32 @@
                                     <span id="nama" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+                            <div class="form-group">
+                                <label for="cabang_id">Site</label>
+                                <select name="cabang_id"
+                                    class="form-control select2 @error('cabang_id') is-invalid @enderror  " id="cabang_id"
+                                    required>
+                                    <option value="">-- Pilih --</option>
+                                    @foreach ($cabangSelect as $item)
+                                        @if ($data != '')
+                                            @if (old('cabang_id') == $item->id || $data->cabang_id == $item->id)
+                                                <option value="{{ $item->id }}" selected>
+                                                    {{ $item->nama }}
+                                                </option>
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->nama }}
+                                                </option>
+                                            @endif
+                                        @else
+                                            <option value="{{ $item->id }}">{{ $item->nama }}
+                                            </option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                @error('cabang_id')
+                                    <span id="cabang_id" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
                         </div>
                         <!-- /.card-body -->
                         <div class="card-footer">

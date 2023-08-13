@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cabang;
 use App\Models\Statuscall;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
@@ -23,7 +24,9 @@ class StatuscallController extends Controller
     }
     public function dataTables()
     {
-        $data = Statuscall::latest();
+        $data = Statuscall::select('statuscalls.*', 'cabangs.nama as nama_cabang')
+            ->leftjoin('cabangs', 'cabangs.id', '=', 'statuscalls.cabang_id')
+            ->latest();
         // switch (auth()->user()->roleuser_id) {
         //     case '1':
         //         $data = $data->latest();
@@ -59,22 +62,28 @@ class StatuscallController extends Controller
     public function statuscallFormadd()
     {
         //dd($userSelect);
+        $cabangSelect = Cabang::where('status', '1')
+            ->get();
         return view('admin.pages.config.statuscall.form', [
             'title' => 'Status Call',
             'active' => 'statuscall',
             'active_sub' => '',
             "data" => '',
+            "cabangSelect" => $cabangSelect,
         ]);
     }
     public function statuscallEdit($id)
     {
         $id = decrypt($id);
+        $cabangSelect = Cabang::where('status', '1')
+            ->get();
         $statuscall = Statuscall::firstWhere('id', $id);
         return view('admin.pages.config.statuscall.form', [
             'title' => 'Status Call',
             'active' => 'statuscall',
             'active_sub' => '',
             "data" => $statuscall,
+            "cabangSelect" => $cabangSelect,
         ]);
     }
 
@@ -85,7 +94,8 @@ class StatuscallController extends Controller
         $checkdata = ['id' => $statuscall->id];
 
         $rules = [
-            'nama'      => ['required'],
+            'nama'           => ['required'],
+            'cabang_id'      => ['required'],
         ];
 
         $validateData = $request->validate($rules);

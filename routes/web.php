@@ -10,7 +10,6 @@ use App\Http\Controllers\MutasiController;
 use App\Http\Controllers\SelectController;
 use App\Http\Controllers\StatuscallController;
 use App\Http\Controllers\UserController;
-use App\Models\Statuscall;
 
 /*
 |--------------------------------------------------------------------------
@@ -85,6 +84,7 @@ Route::post('/statuscall/ajax', [StatuscallController::class, 'dataTables'])->mi
 Route::get('/statuscall/create', [StatuscallController::class, 'statuscallFormadd'])->middleware('auth');
 Route::post('/statuscall', [StatuscallController::class, 'statuscallStore'])->middleware('auth');
 Route::put('/statuscall/{statuscallid}', [StatuscallController::class, 'statuscallStore'])->middleware('auth');
+Route::get('/statuscall/{id}/edit', [StatuscallController::class, 'statuscallEdit'])->middleware('auth');
 
 
 Route::post('/cek/produkspv', [SelectController::class, 'getProdukspv'])->middleware('auth');

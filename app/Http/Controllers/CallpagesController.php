@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Distribusi;
 use App\Models\Statuscall;
+use App\Models\Subproduk;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
@@ -69,61 +70,94 @@ class CallpagesController extends Controller
         $id = decrypt($id);
 
         //dd($upData);
-        /** Update Call start time */
-        Distribusi::where('id', $id)
-            ->Update($upData);
-        $statusSelect = Statuscall::where('status', '1')
-            ->orderby('jenis', 'asc')
+
+        $statusSelect = Statuscall::where('status', '1');
+        if (auth()->user()->cabang_id == '4') {
+            $statusSelect = $statusSelect->where('cabang_id', auth()->user()->cabang_id);
+        } else {
+            $statusSelect = $statusSelect->where('cabang_id', '0');
+        }
+        $statusSelect = $statusSelect->orderby('jenis', 'asc')
             ->orderby('id', 'asc')
             ->get();
 
-        $distribusi = Distribusi::firstWhere('id', $id);
+        $subprodukSelect = Subproduk::where('status', '1')
+            ->where('produk_id', auth()->user()->produk_id)
+            ->get();
+        $statusSelect1 = Statuscall::where('status', '1')
+            ->where('jenis', '1')
+            ->where('id', '<>', '15')
+            ->where('id', '<>', '34')
+            ->where('parentstatus_id', '0')
+            ->where('cabang_id', auth()->user()->cabang_id)
+            ->get();
+        $statusSelect2 = Statuscall::where('status', '1')
+            ->where('jenis', '2')
+            ->where('cabang_id', auth()->user()->cabang_id)
+            ->get();
+        $statusSelect3 = Statuscall::where('status', '1')
+            ->where('jenis', '1')
+            ->where('parentstatus_id', '29')
+            ->where('cabang_id', auth()->user()->cabang_id)
+            ->get();
+
+        $distribusi = Distribusi::select(
+            'distribusis.*',
+            'customers.nama',
+            'customers.no_telp',
+            'statuscalls.jenis as jenisstatus',
+            'statuscalls.parentstatus_id',
+        )
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->firstWhere('distribusis.id', $id);
+
+
+        /** Update Call start time */
+        if ($distribusi->status == '0') {
+            Distribusi::where('id', $id)
+                ->Update($upData);
+        }
         return view('sales.pages.call.detail', [
             'title' => 'Call Page',
             'active' => 'call',
             'active_sub' => 'call',
             "data" => $distribusi,
-            "statusSelect" => $statusSelect
+            "subprodukSelect" => $subprodukSelect,
+            "statusSelect" => $statusSelect,
+            "statusSelect1" => $statusSelect1,
+            "statusSelect2" => $statusSelect2,
+            "statusSelect3" => $statusSelect3
         ]);
     }
     public function salesCallback(Request $request)
     {
-        $data = Distribusi::where('user_id', $request->user_id);
-        if ($request->status != '1') {
-            $data = $data->where(function ($query) {
-                $query->where('status', '2')
-                    ->orWhere('status', '3')
-                    ->orWhere('status', '14');
-            });
+        $data = Distribusi::select(
+            'distribusis.*',
+            'customers.nama',
+            'customers.no_telp',
+            'statuscalls.nama as statusText',
+            'distribusis.deskripsi',
+        )
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->where('distribusis.user_id', $request->user_id);
+        if ($request->status == '2') {
+            $data = $data->whereIn('distribusis.status', ['3', '14', '16']);
+        } else if ($request->status == '1') {
+            $data = $data->whereIn('distribusis.status', ['1', '15']);
         } else {
-            $data = $data->where('status', $request->status);
+            $data = $data->whereIn('distribusis.status', ['2', '34']);
         }
-        $data = $data->orderby('id', 'desc')
+        $data = $data->orderby('distribusis.updated_at', 'desc')
             ->limit(500);
         return DataTables::of($data->get())
             ->addIndexColumn()
-            ->addColumn('statusText', function ($data) {
-                switch ($data->status) {
-                    case '1':
-                        $statusText = 'Apply';
-                        break;
-                    case '2':
-                        $statusText = 'Prospek';
-                        break;
-                    case '3':
-                        $statusText = 'Call Back';
-                        break;
-                    case '14':
-                        $statusText = 'Lanjut WA';
-                        break;
-                }
-                return $statusText;
-            })
             ->addColumn('action', function ($data) {
                 return view('admin.layouts.buttonActiontables')
                     ->with(['data' => $data, 'links' => 'call/detail', 'type' => 'sales']);
             })
-            ->editColumn('customer.no_telp', '{{{substr($customer[\'no_telp\'], 0, 6)}}}xxxx')
+            ->editColumn('customer.no_telp', '{{{substr($no_telp, 0, 6)}}}xxxx')
             ->make(true);
     }
     public function salescallStore(Request $request, $id)
@@ -131,10 +165,65 @@ class CallpagesController extends Controller
         $id = decrypt($id);
         $checkdata = ['id' => $id];
 
-        $rules = [
-            'status'     => ['required'],
-            'deskripsi'  => ['required'],
-        ];
+        // $rules = [
+        //     'status'     => ['required'],
+        //     'deskripsi'  => ['required'],
+        // ];
+        $custommessage = [];
+        if (auth()->user()->cabang_id == '4') {
+            $custommessage['subproduk_id.required'] = 'Mohon pilih produk';
+            $custommessage['rbutton.required'] = 'Mohon pilih status call';
+            $custommessage['status.required'] = 'Mohon pilih pengajuan';
+            $custommessage['status1.required'] = 'Mohon pilih Alasan';
+            $custommessage['status2.required'] = 'Mohon pilih Alasan';
+            $custommessage['status3.required'] = 'Mohon pilih Detail Alasan';
+            $custommessage['deskripsi.required'] = 'Mohon isikan remarks';
+            if ($request->rbutton == '1') {
+                if ($request->status == 'Ya') {
+                    $rules = [
+                        'rbutton'       => ['required'],
+                        'status'        => ['required'],
+                        'subproduk_id'     => ['required'],
+                    ];
+                } else if ($request->status == 'Pikir - Pikir') {
+                    $rules = [
+                        'rbutton'       => ['required'],
+                        'status'        => ['required'],
+                        'deskripsi'     => ['required'],
+                    ];
+                } else {
+                    if ($request->status1 == '29') {
+                        $rules = [
+                            'rbutton'     => ['required'],
+                            'status'        => ['required'],
+                            'status3'     => ['required'],
+                        ];
+                    } else if ($request->status1 == '30') {
+                        $rules = [
+                            'rbutton'       => ['required'],
+                            'status'        => ['required'],
+                            'status1'       => ['required'],
+                            'deskripsi'     => ['required'],
+                        ];
+                    } else {
+                        $rules = [
+                            'rbutton'       => ['required'],
+                            'status'        => ['required'],
+                            'status1'       => ['required'],
+                        ];
+                    }
+                }
+            } else {
+                $rules = [
+                    'rbutton'     => ['required'],
+                    'status2'     => ['required'],
+                ];
+            }
+        } else {
+            $rules = [
+                'status'     => ['required'],
+            ];
+        }
         if ($request->tipeproses == 'VIP') {
             $rules['tipeproses'] = 'required';
             $rules['nik'] = 'required';
@@ -150,8 +239,31 @@ class CallpagesController extends Controller
             $rules['dob'] = 'required';
         }
 
-        $validateData = $request->validate($rules);
-
+        $validateData = $request->validate($rules, $custommessage);
+        if (auth()->user()->cabang_id == '4') {
+            unset($validateData['rbutton']);
+            if ($request->rbutton == '1') {
+                if ($request->status == 'Ya') {
+                    unset($validateData['status']);
+                    $validateData['status'] = '15';
+                } else if ($request->status == 'Pikir - Pikir') {
+                    unset($validateData['status']);
+                    $validateData['status'] = '34';
+                } else {
+                    if ($request->status1 == '29') {
+                        unset($validateData['status3']);
+                        $validateData['status'] = $request->status3;
+                    } else {
+                        unset($validateData['status1']);
+                        $validateData['status'] = $request->status1;
+                    }
+                }
+            } else {
+                unset($validateData['status2']);
+                $validateData['status'] = $request->status2;
+            }
+        }
+        $validateData['deskripsi'] = $request->deskripsi;
         if (!isset($request->tipeproses)) {
             $validateData['end_call_time'] =  now();
             $validateData['updated_at'] =  now();

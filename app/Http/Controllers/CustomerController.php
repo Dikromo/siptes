@@ -138,10 +138,7 @@ class CustomerController extends Controller
                     ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                     // jika local status nya 4 dan 5
                     // jika server status nya 12 dan 13
-                    ->where(function ($query) {
-                        $query->where('b.status', '12')
-                            ->orWhere('b.status', '13');
-                    })
+                    ->whereIn('b.status', ['12', '13'])
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
                     ->where('b.produk_id', $produk_id)
                     ->where('customers.fileexcel_id', $request->fileexcel_id);
@@ -399,10 +396,11 @@ class CustomerController extends Controller
                     ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                     // jika local status nya 4 dan 5
                     // jika server status nya 12 dan 13
-                    ->where(function ($query) {
-                        $query->where('b.status', '12')
-                            ->orWhere('b.status', '13');
-                    })
+                    // ->where(function ($query) {
+                    //     $query->where('b.status', '12')
+                    //         ->orWhere('b.status', '13');
+                    // })
+                    ->whereIn('b.status', ['12', '13'])
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
                     ->where('b.produk_id', $produk_id)
                     ->where('customers.fileexcel_id', $request->fileexcel_id);

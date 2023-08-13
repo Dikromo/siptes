@@ -131,7 +131,6 @@
                                             if ($data == '') {
                                             } else {
                                                 if ($data->status == '0') {
-                                                    $vpegajuan = 'Ya';
                                                 } else {
                                                     if (old('status') == 'Ya' || old('status', $data->status) == '15') {
                                                         $vpengajuan = 'Ya';
@@ -197,7 +196,7 @@
                                                 @enderror
                                             </div>
                                             <div class="fstatus1 form-group"
-                                                {{ $data == '' ? 'style=display:none;' : (old('status', $vpengajuan) != 'Ya' && old('status', $vpengajuan) != 'Pikir - Pikir' ? 'style=display:block;' : 'style=display:none;') }}>
+                                                {{ $data == '' ? 'style=display:none;' : (old('status', $vpengajuan) == 'Tidak' ? 'style=display:block;' : 'style=display:none;') }}>
                                                 <label for="status1">Alasan</label>
                                                 <select name="status1"
                                                     class="form-control select2 @error('status1') is-invalid @enderror  "

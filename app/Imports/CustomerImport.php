@@ -77,6 +77,8 @@ class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsOnFa
             'nama'          => $row['nama'],
             'no_telp'       => $row['no_telp'],
             'perusahaan'    => $row['perusahaan'] == null ? '' : $row['perusahaan'],
+            'kota'          => $row['kota'] == null ? '' : $row['kota'],
+            'zipcode'       => $row['zipcode'] == null ? '' : $row['zipcode'],
             'provider'      => $dataProvider,
             'fileexcel_id'  => $this->id,
         ]);

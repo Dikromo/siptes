@@ -20,7 +20,7 @@ class DashboardController extends Controller
         if (auth()->user()->roleuser_id == '2') {
             $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
                 ->where('roleuser_id', '3');
-        } else if (auth()->user()->roleuser_id == '5') {
+        } else if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
             $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
                 ->Where('roleuser_id', '3');
         } else {
@@ -174,6 +174,7 @@ class DashboardController extends Controller
         $data = User::select(
             'users.id',
             'users.name',
+            'parentuser.name as spvname',
             DB::raw('COUNT(distribusis.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
@@ -197,10 +198,11 @@ class DashboardController extends Controller
             ->join('distribusis', function ($join) use ($today, $today2, $today3) {
                 $join->on('distribusis.user_id', '=', 'users.id')
                     ->where(function ($query)  use ($today, $today2, $today3) {
-                        $query->whereDate('distribusis.distribusi_at', '>=', $today3)
-                            ->whereDate('distribusis.distribusi_at', '<=', $today);
+                        $query->whereDate('distribusis.updated_at', '>=', $today3)
+                            ->whereDate('distribusis.updated_at', '<=', $today);
                     });
             })
+            ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->where('users.roleuser_id', '3');
         if (auth()->user()->roleuser_id == '2') {
@@ -209,10 +211,10 @@ class DashboardController extends Controller
             $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
         }
         $data = $data->orderby('users.parentuser_id', 'asc')
-            ->groupBy(DB::raw('1,2'));
+            ->groupBy(DB::raw('1,2,3'));
         return DataTables::of($data->get())
             ->addIndexColumn()
-            ->addColumn('today', function ($data) {
+            ->addColumn('today', function ($data) use ($today) {
                 $vtdt = $data->total_nocall + $data->total_call_today;
                 $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
                 $vToday .= ' | ';
@@ -221,6 +223,16 @@ class DashboardController extends Controller
                 $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span>';
+
+                // $vtdt = $data->total_nocall + $data->total_call_today;
+                // $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
+                // $vToday .= ' | ';
+                // $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
+                // $vToday .= ' | ';
+                // $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
+                // $vToday .= ' | ';
+                // $vToday .= '<span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span>';
+
                 //$vToday = '<span style="color:#a30">' . $vtdt . '</span>';
                 // $vToday = '{{\'<span style="color:#a30">\'.$data->total_nocall + $data->total_call_today.\'(\'.$total_nocall-$total_nocall_today.\' + \'.$total_nocall_today.\')</span>
                 //     | \'.$total_call_today.\' | \'.$total_nocall.\' | \'.$total_callout_today}}';
@@ -230,6 +242,7 @@ class DashboardController extends Controller
             ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
+            ->editColumn('name', '{{{$name}}} ({{{$spvname}}})')
             ->rawColumns(['today'])
             ->make(true);
     }

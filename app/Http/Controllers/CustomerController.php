@@ -138,7 +138,7 @@ class CustomerController extends Controller
                     ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                     // jika local status nya 4 dan 5
                     // jika server status nya 12 dan 13
-                    ->whereIn('b.status', ['12', '13'])
+                    ->whereIn('b.status', ['12', '13', '18', '26'])
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
                     ->where('b.produk_id', $produk_id)
                     ->where('customers.fileexcel_id', $request->fileexcel_id);
@@ -400,7 +400,7 @@ class CustomerController extends Controller
                     //     $query->where('b.status', '12')
                     //         ->orWhere('b.status', '13');
                     // })
-                    ->whereIn('b.status', ['12', '13'])
+                    ->whereIn('b.status', ['12', '13', '18', '26'])
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
                     ->where('b.produk_id', $produk_id)
                     ->where('customers.fileexcel_id', $request->fileexcel_id);
@@ -503,18 +503,31 @@ class CustomerController extends Controller
             ->editColumn('jmoasli', '{{{number_format($jmoasli, 2, ",", ".")}}}')
             ->make(true);
     }
-    public function viewCallhistory()
+    public function viewCallhistory(Request $request)
     {
+        $userSelect = User::where('status', '1');
+        if (auth()->user()->roleuser_id == '2') {
+            $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
+                ->where('roleuser_id', '3');
+        } else if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
+            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
+                ->Where('roleuser_id', '3');
+        } else {
+            $userSelect = $userSelect->where('roleuser_id', '3');
+        }
         return view('admin.pages.customer.callhistory', [
             'title' => 'Call History',
             'active' => 'callhistory',
             'active_sub' => 'callhistory',
             "data" => '',
+            "get" => isset($request) ? $request : '',
+            "userSelect" => $userSelect->get(),
             //"category" => User::all(),
         ]);
     }
     public function callhistory(Request $request)
     {
+        $paramStatus = $request->status != '' ? (string)decrypt($request->status) : '';
         $data = Distribusi::select(
             'distribusis.*',
             'customers.nama as nama',
@@ -522,12 +535,19 @@ class CustomerController extends Controller
             'customers.provider as provider',
             'sales.name as salesnama',
             'statuscalls.nama as statustext',
-            'fileexcels.kode as kode'
+            'fileexcels.kode as kode',
+            DB::raw('timediff(distribusis.updated_at,distribusis.call_time) as selisih')
         )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
-            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-            ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+            ->leftjoin('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
             ->where('distribusis.status', '<>', '0');
+        if ($request->user_id != '') {
+            $data = $data->where('sales.id', $request->user_id);
+            if ($paramStatus == '1') {
+                $data = $data->where('statuscalls.jenis', $paramStatus);
+            }
+        }
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
         }

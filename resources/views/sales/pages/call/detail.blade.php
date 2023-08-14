@@ -11,8 +11,7 @@
                                 <img class="img-fluid" src="{{ asset('assets/img/logo.png') }}" alt="Photo">
                             </div>
                             <br>
-                            <a href="tel:{{ $data->no_telp }}" class="btn btn-info btn-lg mx-2"> <i
-                                    class="fa fa-mobile-alt"></i>
+                            <a onclick="testCall()" class="btn btn-info btn-lg mx-2"> <i class="fa fa-mobile-alt"></i>
                                 Call</a>
                             <a href="https://wa.me/+62{!! substr(strip_tags($data->no_telp), 1, 20) !!}" class="btn btn-success btn-lg mx-2"> <i
                                     class="fab fa-whatsapp" aria-hidden="true"></i>
@@ -34,7 +33,7 @@
                         </div>
                         <br>
                         <div class="col-12">
-                            <form action="/call/detail/{{ encrypt($data->id) }}" method="POST">
+                            <form action="/call/detail/{{ encrypt($data->id) }}" method="POST" id='formImport'>
                                 @if ($data != '')
                                     @method('put')
                                 @endif
@@ -57,7 +56,18 @@
                                     </div>
                                     <!-- /.card-header -->
                                     <div class="card-body ">
-                                        <div class="form-group">
+                                        <div>
+                                            <h4 style="font-weight:bold">
+                                                {{ $data == '' ? old('name') : old('name', $data->nama) }}</h4>
+                                            <h6>{{ $data == '' ? old('no_telp') : old('no_telp', substr($data->no_telp, 0, 6) . 'xx-xxxx') }}
+                                                -
+                                                {{ $data == '' ? old('perusahaan') : old('perusahaan', $data->perusahaan) }}
+                                            </h6>
+                                            <h6>
+                                                {{ $data == '' ? old('kota') : old('kota', $data->kota) }}
+                                            </h6>
+                                        </div>
+                                        {{-- <div class="form-group">
                                             <label for="nama">Nama</label>
                                             <input type="text" id="name" name="nama"
                                                 class="form-control @error('name') is-invalid @enderror"
@@ -75,7 +85,7 @@
                                             @error('no_telp')
                                                 <span id="no_telp" class="error invalid-feedback">{{ $message }}</span>
                                             @enderror
-                                        </div>
+                                        </div> --}}
                                         @if (auth()->user()->cabang_id != '4')
                                             <div class="form-group">
                                                 <label for="status">Status Data</label>
@@ -132,12 +142,14 @@
                                             } else {
                                                 if ($data->status == '0') {
                                                 } else {
-                                                    if (old('status') == 'Ya' || old('status', $data->status) == '15') {
+                                                    if (old('status') == 'Ya' || (old('status', $data->status) == '15' && $data->jenisstatus == '1')) {
                                                         $vpengajuan = 'Ya';
-                                                    } elseif (old('status') == 'Pikir - Pikir' || old('status', $data->status) == '34') {
+                                                    } elseif (old('status') == 'Pikir - Pikir' || (old('status', $data->status) == '34' && $data->jenisstatus == '1')) {
                                                         $vpengajuan = 'Pikir - Pikir';
                                                     } else {
-                                                        $vpengajuan = 'Tidak';
+                                                        if ($data->jenisstatus == '1') {
+                                                            $vpengajuan = 'Tidak';
+                                                        }
                                                     }
                                                 }
                                             }
@@ -232,7 +244,7 @@
                                                     <option value="">-- Pilih --</option>
                                                     @foreach ($statusSelect2 as $item)
                                                         @if ($data != '')
-                                                            @if (old('status2') == $item->id || $data->parentstatus_id == $item->id)
+                                                            @if (old('status2') == $item->id || $data->status == $item->id)
                                                                 <option value="{{ $item->id }}" selected>
                                                                     {{ $item->nama }}
                                                                 </option>
@@ -410,7 +422,11 @@
 @section('addScript')
     <script>
         var cabang_id = '{{ auth()->user()->cabang_id }}';
+        var tesCall = 0;
         if (cabang_id == '4') {
+            function testCall() {
+                tesCall = parseInt(tesCall) + 1;
+            }
             $("#status").change(function() {
                 if (this.value == 'Ya') {
                     $('#status1').val('');
@@ -470,11 +486,32 @@
             }
         }
         $('#formImport').submit(function() {
-            $('#modal-overlay').modal({
-                backdrop: 'static',
-                keyboard: false
-            });
-            return true;
+            if (cabang_id == '4') {
+                if ($("#status2").val() == '26') {
+                    if (tesCall == '2') {
+                        $('#modal-overlay').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        return true;
+                    } else {
+                        alert('Tidak dapat melakukan proses, Mohon di coba call 1x lagi!');
+                        return false;
+                    }
+                } else {
+                    $('#modal-overlay').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    return true;
+                }
+            } else {
+                $('#modal-overlay').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                return true;
+            }
         });
     </script>
 @endsection

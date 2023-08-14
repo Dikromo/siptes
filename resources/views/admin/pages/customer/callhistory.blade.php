@@ -4,24 +4,52 @@
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
 
     <div class="container-fluid">
         <div class="row">
             <div class="col-12">
                 <div class="card card-primary card-outline">
                     <div class="card-body">
+
+                        <?php
+                        $vUserid = $get->id != '' ? decrypt($get->id) : '';
+                        $vTanggal = $get->tanggal != '' ? decrypt($get->tanggal) : '';
+                        ?>
+                        <div class="form-group">
+                            <label for="user_id">Sales</label>
+                            <select name="user_id" class="form-control select2 @error('user_id') is-invalid @enderror  "
+                                id="user_id">
+                                <option value="">-- Pilih --</option>
+                                @foreach ($userSelect as $item)
+                                    @if ($get != '')
+                                        @if ($vUserid == $item->id)
+                                            <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
+                                        @else
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endif
+                                    @else
+                                        <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            @error('user_id')
+                                <span id="user_id" class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <div class="form-group">
                             <label for="fromTanggal">Dari Tanggal</label>
                             <input type="date" id="fromTanggal" name="fromTanggal"
                                 class="form-control @error('fromTanggal') is-invalid @enderror"
-                                value="{{ old('fromTanggal', date('Y-m-d', strtotime('-7 days'))) }}" required>
+                                value="{{ $vTanggal == '' ? old('fromTanggal', date('Y-m-d', strtotime('-7 days'))) : $vTanggal }}"
+                                required>
                             @error('fromTanggal')
                                 <span id="fromTanggal" class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                             <label for="toTanggal">Sampai Tanggal</label>
                             <input type="date" id="toTanggal" name="toTanggal"
                                 class="form-control @error('toTanggal') is-invalid @enderror"
-                                value="{{ old('toTanggal', date('Y-m-d')) }}" required>
+                                value="{{ $vTanggal == '' ? old('toTanggal', date('Y-m-d')) : $vTanggal }}" required>
                             @error('toTanggal')
                                 <span id="toTanggal" class="error invalid-feedback">{{ $message }}</span>
                             @enderror
@@ -63,7 +91,7 @@
                                     <th>NO</th>
                                     <th>Sales</th>
                                     <th>Nama</th>
-                                    @if (auth()->user()->cabang_id == '4')
+                                    @if (auth()->user()->cabang_id == '4' || auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
                                         <th>Campaign</th>
                                         <th>4 Digit No Telp</th>
                                     @endif
@@ -71,6 +99,7 @@
                                     <th>Status</th>
                                     <th>Start Call</th>
                                     <th>End Call</th>
+                                    <th>Interval</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
                                 </tr>
@@ -126,12 +155,16 @@
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
     <script type="text/javascript">
+        $('.select2').select2()
         // $(document).ready(function() {
-        var fromTanggal = "<?php echo date('Y-m-d', strtotime('-7 days')); ?>";
-        var toTanggal = "<?php echo date('Y-m-d'); ?>";
+        var fromTanggal = $('#fromTanggal').val();
+        var toTanggal = $('#toTanggal').val();
         var hari = "<?php echo date('Y-m-d'); ?>";
         var cabangs = "<?php echo auth()->user()->cabang_id; ?>";
+        var roleuser_id = "<?php echo auth()->user()->roleuser_id; ?>";
+        var paramHistory = "<?php echo $get->param; ?>";
 
         renderTable(fromTanggal, toTanggal);
 
@@ -146,7 +179,7 @@
         }
 
         function renderTable(param1, param2) {
-            if (cabangs == '4') {
+            if (cabangs == '4' || roleuser_id == '1' || roleuser_id == '4') {
                 sortPos = 8;
                 paramColumn = [{
                     data: 'DT_RowIndex',
@@ -177,6 +210,10 @@
                 }, {
                     data: 'updated_at',
                     name: 'updated_at'
+                }, {
+                    data: 'selisih',
+                    name: 'selisih',
+                    searchable: false
                 }];
             } else {
                 sortPos = 6;
@@ -203,6 +240,10 @@
                 }, {
                     data: 'updated_at',
                     name: 'updated_at'
+                }, {
+                    data: 'selisih',
+                    name: 'selisih',
+                    searchable: false
                 }];
             }
             $('#dataTables').DataTable({
@@ -218,6 +259,8 @@
                         _token: '{{ csrf_token() }}',
                         fromtanggal: param1,
                         totanggal: param2,
+                        user_id: $('#user_id').val(),
+                        status: paramHistory,
                     }
                 },
 

@@ -105,6 +105,8 @@ class CallpagesController extends Controller
             'distribusis.*',
             'customers.nama',
             'customers.no_telp',
+            'customers.perusahaan',
+            'customers.kota',
             'statuscalls.jenis as jenisstatus',
             'statuscalls.parentstatus_id',
         )

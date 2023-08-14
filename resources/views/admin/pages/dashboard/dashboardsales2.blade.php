@@ -11,6 +11,34 @@
             <div class="col-12">
                 <div class="card card-primary card-outline">
                     <div class="card-body">
+                        <?php
+                        $arrayTipe = ['Sudah di Telepon', 'Sisah Data', 'Telepon Di Angkat'];
+                        ?>
+                        <div class="form-group">
+                            <label for="tipe">Sort By</label>
+                            <select name="tipe" class="form-control select2 @error('tipe') is-invalid @enderror  "
+                                id="tipe">
+                                <option value="">-- Pilih --</option>
+                                @foreach ($arrayTipe as $item)
+                                    @if (session('oldData') != '')
+                                        @if (session('oldData')['tipe'] == $item)
+                                            <option value="{{ $item }}" selected>{{ $item }}</option>
+                                        @else
+                                            <option value="{{ $item }}">
+                                                {{ $item }}
+                                            </option>
+                                        @endif
+                                    @else
+                                        <option value="{{ $item }}">
+                                            {{ $item }}
+                                        </option>
+                                    @endif
+                                @endforeach
+                            </select>
+                            @error('tipe')
+                                <span id="tipe" class="error invalid-feedback">{{ $message }}</span>
+                            @enderror
+                        </div>
                         <div class="form-group">
                             <label for="tanggal">Tanggal</label>
                             <input type="date" id="tanggal" name="tanggal"
@@ -93,6 +121,9 @@
                                     <th></th>
                                     <th>NO</th>
                                     <th>Nama</th>
+                                    <th>Today Call</th>
+                                    <th>Today Sisah Data</th>
+                                    <th>Today Call Out</th>
                                     <th>Tanggal Data</th>
                                     <th>H-1 Data</th>
                                     <th>H-2 Data</th>
@@ -139,56 +170,28 @@
 
 
         function renderTable(param) {
-            // paramColumn = [{
-            //     className: 'dt-control',
-            //     orderable: false,
-            //     data: null,
-            //     defaultContent: ''
-            // }, {
-            //     data: 'DT_RowIndex',
-            //     name: 'DT_RowIndex',
-            //     orderable: false,
-            //     searchable: false
-            // }, {
-            //     data: 'name',
-            //     name: 'name'
-            // }, {
-            //     data: 'total_data_today',
-            //     name: 'total_data_today',
-            // }, {
-            //     data: 'total_call_today',
-            //     name: 'total_call_today',
-            // }, {
-            //     data: 'total_nocall',
-            //     name: 'total_nocall',
-            // }, {
-            //     data: 'total_callout_today',
-            //     name: 'total_callout_today',
-            // }, {
-            //     data: 'total_data_2',
-            //     name: 'total_data_2',
-            // }, {
-            //     data: 'total_call_2',
-            //     name: 'total_call_2',
-            // }, {
-            //     data: 'total_nocall_2',
-            //     name: 'total_nocall_2',
-            // }, {
-            //     data: 'total_callout_2',
-            //     name: 'total_callout_2',
-            // }, {
-            //     data: 'total_data_3',
-            //     name: 'total_data_3',
-            // }, {
-            //     data: 'total_call_3',
-            //     name: 'total_call_3',
-            // }, {
-            //     data: 'total_nocall_3',
-            //     name: 'total_nocall_3',
-            // }, {
-            //     data: 'total_callout_3',
-            //     name: 'total_callout_3',
-            // }];
+            switch ($('#tipe').val()) {
+                case 'Sudah di Telepon':
+                    paramSort = [
+                        [3, 'desc']
+                    ]
+                    break;
+                case 'Sisah Data':
+                    paramSort = [
+                        [4, 'desc']
+                    ]
+                    break;
+                case 'Telepon Di Angkat':
+                    paramSort = [
+                        [5, 'desc']
+                    ]
+                    break;
+                default:
+                    paramSort = [
+                        [1, 'asc']
+                    ]
+                    break;
+            }
             paramColumn = [{
                 className: 'dt-control',
                 orderable: false,
@@ -202,6 +205,21 @@
             }, {
                 data: 'name',
                 name: 'name'
+            }, {
+                data: 'total_call_today',
+                name: 'total_call_today',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_nocall',
+                name: 'total_nocall',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_callout_today',
+                name: 'total_callout_today',
+                visible: false,
+                searchable: false
             }, {
                 data: null,
                 name: null,
@@ -261,9 +279,7 @@
                 // }, ],
                 processing: false,
                 serverSide: false,
-                order: [
-                    [1, 'asc']
-                ]
+                order: paramSort
             });
 
             tables1.on('click', 'td.dt-control', function() {

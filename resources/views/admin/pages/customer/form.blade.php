@@ -5,7 +5,7 @@
         <div class="row">
             <div class="col-12">
                 <div class="float-sm-left">
-                    <a class="btn btn-info btn-sm" href="{{ url('/') . '/assets/template/importcustomer.xlsx' }}">
+                    <a class="btn btn-info btn-sm" href="{{ url('/') . '/assets/template/importcustomer_rev1.xlsx' }}">
                         <i class="fas fa-file-excel">
                         </i>
                         Download Format

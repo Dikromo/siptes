@@ -211,15 +211,20 @@
                                     <span id="provider" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+                            <?php
+                            $vUserid = $get->id != '' ? decrypt($get->id) : '';
+                            ?>
                             <div class="form-group">
                                 <label for="user_id">Sales</label>
                                 <select multiple name="user_id[]"
                                     class="form-control select2 @error('user_id') is-invalid @enderror  " id="user_id"
                                     required>
                                     @foreach ($userData as $item)
-                                        @if ($data != '')
-                                            @if ($data->user_id == $item->id)
+                                        @if ($get != '')
+                                            @if ($vUserid == $item->id)
                                                 <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endif
                                         @else
                                             <option value="{{ $item->id }}">{{ $item->name }}</option>
@@ -384,6 +389,13 @@
             }
         });
         $(document).ready(function() {
+            var gUserid = '{{ $get->id != '' ? decrypt($get->id) : '' }}'
+            if (gUserid != '') {
+                getProduk($("#user_id").val());
+                setTimeout(() => {
+                    dataTablesto($("#user_id").val());
+                }, 1000);
+            }
             $(".checkbox").click(function() {
                 if ($(".checkbox").is(':checked')) {
                     $(this).parent().find('option').prop("selected", "selected");

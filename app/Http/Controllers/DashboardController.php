@@ -204,6 +204,7 @@ class DashboardController extends Controller
             })
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
+            ->where('users.status', '1')
             ->where('users.roleuser_id', '3');
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('users.parentuser_id', auth()->user()->id);
@@ -218,11 +219,15 @@ class DashboardController extends Controller
                 $vtdt = $data->total_nocall + $data->total_call_today;
                 $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '" target="_blank"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
+                if (auth()->user()->roleuser_id == '4') {
+                    $vToday .= '<span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
+                } else {
+                    $vToday .= '<a href="/customer/distribusi?id=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span></a>';
+                }
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '" target="_blank"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span></a>';
 
                 // $vtdt = $data->total_nocall + $data->total_call_today;
                 // $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
@@ -238,6 +243,9 @@ class DashboardController extends Controller
                 //     | \'.$total_call_today.\' | \'.$total_nocall.\' | \'.$total_callout_today}}';
                 return $vToday;
             })
+            ->addColumn('totData', '{{($total_nocall + $total_call_today)}}')
+            ->addColumn('totSisah', '{{($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today}}')
+            ->addColumn('totToday', '{{($total_nocall + $total_call_today)-(($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today)}}')
             ->addColumn('h2', '{{$total_call_2.\' | \'.$total_callout_2}}')
             ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
@@ -316,7 +324,6 @@ class DashboardController extends Controller
 
         $i = 0;
         foreach ($data->get() as $item) {
-            $i++;
             //     $hasil .= '<tr>
             //     <td></td>
             //     <td>' . $i . '</td>
@@ -334,22 +341,26 @@ class DashboardController extends Controller
             //     <td>' . $item->total_nocall_3 . '</td>
             //     <td>' . $item->total_callout_3 . '</td>
             // </tr>';
+
             $vtdt = $item->total_nocall + $item->total_call_today;
-            $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . '</span>)</span>';
-            $vToday .= ' | ';
-            $vToday .= '<span style="color:#eb7904" title="total telepon hari ini">' . $item->total_call_today . '</span>';
-            $vToday .= ' | ';
-            $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $item->total_nocall . '</span>';
-            $vToday .= ' | ';
-            $vToday .= '<span style="color:#009b05" title="total diangkat hari ini">' . $item->total_callout_today . '</span>';
-            // $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . ')</span>';
-            // $vToday .= ' | ';
-            // $vToday .= '<span style="color:#eb7904">' . $item->total_call_today . '</span>';
-            // $vToday .= ' | ';
-            // $vToday .= '<span style="color:#eb0423">' . $item->total_nocall . '</span>';
-            // $vToday .= ' | ';
-            // $vToday .= '<span style="color:#009b05">' . $item->total_callout_today . '</span>';
-            $hasil .= '<tr>
+            $cvtdt = $vtdt + $item->total_call_2 + $item->total_callout_2 + $item->total_call_3 + $item->total_callout_3;
+            if ($cvtdt > '0') {
+                $i++;
+                $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . '</span>)</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#eb7904" title="total telepon hari ini">' . $item->total_call_today . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $item->total_nocall . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#009b05" title="total diangkat hari ini">' . $item->total_callout_today . '</span>';
+                // $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . ')</span>';
+                // $vToday .= ' | ';
+                // $vToday .= '<span style="color:#eb7904">' . $item->total_call_today . '</span>';
+                // $vToday .= ' | ';
+                // $vToday .= '<span style="color:#eb0423">' . $item->total_nocall . '</span>';
+                // $vToday .= ' | ';
+                // $vToday .= '<span style="color:#009b05">' . $item->total_callout_today . '</span>';
+                $hasil .= '<tr>
             <td></td>
             <td>' . $i . '</td>
             <td>' . $item->kode . '</td>
@@ -357,6 +368,7 @@ class DashboardController extends Controller
             <td>' . $item->total_call_2 . ' | ' . $item->total_callout_2 . '</td>
             <td>' . $item->total_call_3 . ' | ' . $item->total_callout_3 . '</td>
         </tr>';
+            }
         }
         $hasil .= '</tbody></table>';
         return json_encode($hasil);

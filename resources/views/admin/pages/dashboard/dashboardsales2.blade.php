@@ -12,7 +12,7 @@
                 <div class="card card-primary card-outline">
                     <div class="card-body">
                         <?php
-                        $arrayTipe = ['Sudah di Telepon', 'Sisah Data', 'Telepon Di Angkat'];
+                        $arrayTipe = ['Total Data', 'Sisah Data Sebelumnya', 'Distribusi Hari Ini', 'Sudah di Telepon', 'Sisah Data', 'Telepon Di Angkat'];
                         ?>
                         <div class="form-group">
                             <label for="tipe">Sort By</label>
@@ -121,6 +121,9 @@
                                     <th></th>
                                     <th>NO</th>
                                     <th>Nama</th>
+                                    <th>Distribusi</th>
+                                    <th>Sisah Data</th>
+                                    <th>Total Data</th>
                                     <th>Today Call</th>
                                     <th>Today Sisah Data</th>
                                     <th>Today Call Out</th>
@@ -171,19 +174,34 @@
 
         function renderTable(param) {
             switch ($('#tipe').val()) {
-                case 'Sudah di Telepon':
+                case 'Total Data':
                     paramSort = [
                         [3, 'desc']
                     ]
                     break;
-                case 'Sisah Data':
+                case 'Sisah Data Sebelumnya':
                     paramSort = [
                         [4, 'desc']
                     ]
                     break;
-                case 'Telepon Di Angkat':
+                case 'Distribusi Hari Ini':
                     paramSort = [
                         [5, 'desc']
+                    ]
+                    break;
+                case 'Sudah di Telepon':
+                    paramSort = [
+                        [6, 'desc']
+                    ]
+                    break;
+                case 'Sisah Data':
+                    paramSort = [
+                        [7, 'desc']
+                    ]
+                    break;
+                case 'Telepon Di Angkat':
+                    paramSort = [
+                        [8, 'desc']
                     ]
                     break;
                 default:
@@ -205,6 +223,21 @@
             }, {
                 data: 'name',
                 name: 'name'
+            }, {
+                data: 'totData',
+                name: 'totData',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'totSisah',
+                name: 'totSisah',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'totToday',
+                name: 'totToday',
+                visible: false,
+                searchable: false
             }, {
                 data: 'total_call_today',
                 name: 'total_call_today',

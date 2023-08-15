@@ -71,7 +71,7 @@ class CustomerController extends Controller
             return back()->withErrors(['msg' => $msg]);
         }
     }
-    public function customerDistribusi()
+    public function customerDistribusi(Request $request)
     {
         $userSelect = User::where('status', '1');
         if (auth()->user()->roleuser_id == '2') {
@@ -108,6 +108,7 @@ class CustomerController extends Controller
             "fileExceldata" => $fileExcel,
             "produkSelect" => $produkSelect,
             "data" => '',
+            "get" => isset($request) ? $request : '',
             //"category" => User::all(),
         ]);
     }

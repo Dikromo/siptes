@@ -198,8 +198,8 @@ class DashboardController extends Controller
             ->join('distribusis', function ($join) use ($today, $today2, $today3) {
                 $join->on('distribusis.user_id', '=', 'users.id')
                     ->where(function ($query)  use ($today, $today2, $today3) {
-                        $query->whereDate('distribusis.updated_at', '>=', $today3)
-                            ->whereDate('distribusis.updated_at', '<=', $today);
+                        $query->whereDate('distribusis.distribusi_at', '>=', $today3)
+                            ->whereDate('distribusis.distribusi_at', '<=', $today);
                     });
             })
             ->join('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')

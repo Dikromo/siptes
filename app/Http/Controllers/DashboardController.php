@@ -220,7 +220,7 @@ class DashboardController extends Controller
                 $vToday .= ' | ';
                 $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
+                $vToday .= '<span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
                 $vToday .= ' | ';
                 $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span></a>';
 

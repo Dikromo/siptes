@@ -202,8 +202,8 @@ class DashboardController extends Controller
                             ->whereDate('distribusis.updated_at', '<=', $today);
                     });
             })
-            ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
-            ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->join('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
+            ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->where('users.roleuser_id', '3');
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('users.parentuser_id', auth()->user()->id);

@@ -218,11 +218,11 @@ class DashboardController extends Controller
                 $vtdt = $data->total_nocall + $data->total_call_today;
                 $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span>';
+                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span>';
+                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span></a>';
 
                 // $vtdt = $data->total_nocall + $data->total_call_today;
                 // $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
@@ -373,16 +373,19 @@ class DashboardController extends Controller
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, NULL)) AS total_callout'),
-            DB::raw('COUNT(IF(distribusis.status = "0",1, NULL)) AS total_data_today'),
+            DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $today . '",1, NULL)) AS total_data_today'),
             DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_call_today'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today . '" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_call_distoday'),
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today . '", 1, NULL)) AS total_nocall_today'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_callout_today'),
             DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today2 . '",1, NULL)) AS total_data_2'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_2'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_2'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_dis2'),
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '", 1, NULL)) AS total_nocall_2'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_callout_2'),
             DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today3 . '",1, NULL)) AS total_data_3'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_3'),
+            DB::raw('COUNT(IF(distribusis.status <> "0"  AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_3'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_dis3'),
             DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '", 1, NULL)) AS total_nocall_3'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_callout_3'),
         )

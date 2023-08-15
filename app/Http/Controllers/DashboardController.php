@@ -202,8 +202,8 @@ class DashboardController extends Controller
                 //         ->whereDate('distribusis.distribusi_at', '<=', $today);
                 // });
             })
-            ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
-            ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
+            ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->join('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
             ->where('users.roleuser_id', '3');
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('users.parentuser_id', auth()->user()->id);
@@ -302,9 +302,9 @@ class DashboardController extends Controller
             ->leftjoin('distribusis', function ($join) use ($today, $today2, $today3, $request) {
                 $join->on('distribusis.customer_id', '=', 'customers.id')
                     ->where(function ($query)  use ($today, $today2, $today3, $request) {
-                        $query->where('distribusis.user_id',  $request->user_id)
-                            ->whereDate('distribusis.distribusi_at', '>=', $today3)
-                            ->whereDate('distribusis.distribusi_at', '<=', $today);
+                        $query->where('distribusis.user_id',  $request->user_id);
+                        // ->whereDate('distribusis.distribusi_at', '>=', $today3)
+                        // ->whereDate('distribusis.distribusi_at', '<=', $today);
                     });
             })
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')

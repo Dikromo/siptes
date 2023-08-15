@@ -11,7 +11,8 @@
                                 <img class="img-fluid" src="{{ asset('assets/img/logo.png') }}" alt="Photo">
                             </div>
                             <br>
-                            <a onclick="testCall()" class="btn btn-info btn-lg mx-2"> <i class="fa fa-mobile-alt"></i>
+                            <a href="tel:{{ $data->no_telp }}" onclick="testCall()" class="btn btn-info btn-lg mx-2"> <i
+                                    class="fa fa-mobile-alt"></i>
                                 Call</a>
                             <a href="https://wa.me/+62{!! substr(strip_tags($data->no_telp), 1, 20) !!}" class="btn btn-success btn-lg mx-2"> <i
                                     class="fab fa-whatsapp" aria-hidden="true"></i>

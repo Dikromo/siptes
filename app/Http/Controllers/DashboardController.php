@@ -196,11 +196,11 @@ class DashboardController extends Controller
             DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_callout_3'),
         )
             ->join('distribusis', function ($join) use ($today, $today2, $today3) {
-                $join->on('distribusis.user_id', '=', 'users.id')
-                    ->where(function ($query)  use ($today, $today2, $today3) {
-                        $query->whereDate('distribusis.distribusi_at', '>=', $today3)
-                            ->whereDate('distribusis.distribusi_at', '<=', $today);
-                    });
+                $join->on('distribusis.user_id', '=', 'users.id');
+                // ->where(function ($query)  use ($today, $today2, $today3) {
+                //     $query->whereDate('distribusis.distribusi_at', '>=', $today3)
+                //         ->whereDate('distribusis.distribusi_at', '<=', $today);
+                // });
             })
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')

@@ -489,16 +489,21 @@
         $('#formImport').submit(function() {
             if (cabang_id == '4') {
                 if ($("#status2").val() == '26') {
-                    if (tesCall == '2') {
-                        $('#modal-overlay').modal({
-                            backdrop: 'static',
-                            keyboard: false
-                        });
-                        return true;
-                    } else {
-                        alert('Tidak dapat melakukan proses, Mohon di coba call 1x lagi!');
-                        return false;
-                    }
+                    // if (tesCall == '2') {
+                    //     $('#modal-overlay').modal({
+                    //         backdrop: 'static',
+                    //         keyboard: false
+                    //     });
+                    //     return true;
+                    // } else {
+                    //     alert('Tidak dapat melakukan proses, Mohon di coba call 1x lagi!');
+                    //     return false;
+                    // }
+                    $('#modal-overlay').modal({
+                        backdrop: 'static',
+                        keyboard: false
+                    });
+                    return true;
                 } else {
                     $('#modal-overlay').modal({
                         backdrop: 'static',

@@ -97,6 +97,7 @@
                                     @endif
                                     <th>Provider</th>
                                     <th>Status</th>
+                                    <th>Deskripsi</th>
                                     <th>Start Call</th>
                                     <th>End Call</th>
                                     <th>Interval</th>
@@ -205,6 +206,9 @@
                     data: 'statustext',
                     name: 'statuscalls.nama as statustext'
                 }, {
+                    data: 'deskripsi',
+                    name: 'deskripsi'
+                }, {
                     data: 'call_time',
                     name: 'call_time'
                 }, {
@@ -246,6 +250,17 @@
                     searchable: false
                 }];
             }
+            if (paramHistory != '') {
+                paramLength = [
+                    [-1],
+                    ["All"]
+                ];
+            } else {
+                paramLength = [
+                    [10, 50, 100, 200, 500, -1],
+                    [10, 50, 100, 200, 500, "All"]
+                ];
+            }
             $('#dataTables').DataTable({
                 autoWidth: false,
                 bDestroy: true,
@@ -265,10 +280,7 @@
                 },
 
                 deferRender: true,
-                lengthMenu: [
-                    [10, 50, 100, 200, 500, -1],
-                    [10, 50, 100, 200, 500, "All"]
-                ],
+                lengthMenu: paramLength,
                 columns: paramColumn,
                 columnDefs: [{
                     targets: 0,

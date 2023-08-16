@@ -195,11 +195,20 @@ class CallpagesController extends Controller
                     ];
                 } else {
                     if ($request->status1 == '29') {
-                        $rules = [
-                            'rbutton'     => ['required'],
-                            'status'        => ['required'],
-                            'status3'     => ['required'],
-                        ];
+                        if ($request->status3 == '41') {
+                            $rules = [
+                                'rbutton'       => ['required'],
+                                'status'        => ['required'],
+                                'status1'       => ['required'],
+                                'deskripsi'     => ['required'],
+                            ];
+                        } else {
+                            $rules = [
+                                'rbutton'     => ['required'],
+                                'status'        => ['required'],
+                                'status3'     => ['required'],
+                            ];
+                        }
                     } else if ($request->status1 == '30') {
                         $rules = [
                             'rbutton'       => ['required'],

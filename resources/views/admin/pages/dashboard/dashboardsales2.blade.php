@@ -132,6 +132,22 @@
                                     <th>H-2 Data</th>
                                 </tr>
                             </thead>
+                            <tfoot>
+                                <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
                         </table>
                     </div>
                 </div>
@@ -153,6 +169,7 @@
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
+    <script src="https://cdn.datatables.net/plug-ins/1.10.20/api/sum().js"></script>
 
     <script>
         $('.select2').select2();
@@ -310,6 +327,68 @@
                 //     text: 'Export Excel',
                 //     filename: 'export_callhistory_' + hari
                 // }, ],
+                footerCallback: function(row, data, start, end, display) {
+                    let api = this.api();
+
+                    // Remove the formatting to get integer data for summation
+                    let intVal = function(i) {
+                        return typeof i === 'string' ?
+                            i.replace(/[\$,]/g, '') * 1 :
+                            typeof i === 'number' ?
+                            i :
+                            0;
+                    };
+
+                    // Total over all pages
+                    total = api
+                        .column(4)
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+
+                    // Total over this page
+                    gtotalDistribusi = api
+                        .column(3, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalSisahdatakemarin = api
+                        .column(4, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalDishariini = api
+                        .column(5, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalCallhariini = api
+                        .column(6, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalSisahdatahariini = api
+                        .column(7, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalCallouthariini = api
+                        .column(8, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+
+                    // Update footer
+                    api.column(9).footer().innerHTML =
+                        gtotalDistribusi + ' ( ' + gtotalSisahdatakemarin + ' + ' + gtotalDishariini +
+                        ') ' + gtotalCallhariini + ' | ' + gtotalSisahdatahariini + ' | ' +
+                        gtotalCallouthariini;
+                },
                 processing: false,
                 serverSide: false,
                 order: paramSort

@@ -536,16 +536,22 @@ class CustomerController extends Controller
             'customers.no_telp as no_telp',
             'customers.provider as provider',
             'sales.name as salesnama',
+            'parentuser.name as spvnama',
+            DB::raw('CONCAT(sales.name," (",parentuser.name,") ") AS csalesnama'),
             'statuscalls.nama as statustext',
             'fileexcels.kode as kode',
             DB::raw('timediff(distribusis.updated_at,distribusis.call_time) as selisih')
-        )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
+        )
+            ->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
+            ->join('users as parentuser', 'parentuser.id', '=', 'sales.parentuser_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->leftjoin('customers', 'customers.id', '=', 'distribusis.customer_id')
             ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
             ->where('distribusis.status', '<>', '0');
-        if ($request->user_id != '') {
-            $data = $data->where('sales.id', $request->user_id);
+        if ($request->user_id != '' || ($request->user_id == '' && $paramStatus != '')) {
+            if ($request->user_id != '') {
+                $data = $data->where('sales.id', $request->user_id);
+            }
             if ($paramStatus == '1') {
                 $data = $data->where('statuscalls.jenis', $paramStatus);
             }

@@ -329,6 +329,15 @@
                 // }, ],
                 footerCallback: function(row, data, start, end, display) {
                     let api = this.api();
+                    let vLink = '';
+                    let vLink1 = '';
+                    if (typeof data[0] === "undefined") {} else {
+                        vLink = data[0]['linkTotal'];
+                        vLink1 = data[0]['linkTotal1'];
+                    }
+
+
+                    let sBox = $('.dataTables_filter input').val();
 
                     // Remove the formatting to get integer data for summation
                     let intVal = function(i) {
@@ -385,9 +394,14 @@
 
                     // Update footer
                     api.column(9).footer().innerHTML =
-                        gtotalDistribusi + ' ( ' + gtotalSisahdatakemarin + ' + ' + gtotalDishariini +
-                        ') ' + gtotalCallhariini + ' | ' + gtotalSisahdatahariini + ' | ' +
-                        gtotalCallouthariini;
+                        gtotalDistribusi + ' (' +
+                        gtotalSisahdatakemarin +
+                        '</a> + ' +
+                        gtotalDishariini +
+                        ') <a href="' + vLink + '&search=' + sBox + '" target="_blank"> ' + gtotalCallhariini +
+                        '</a> | ' + gtotalSisahdatahariini +
+                        ' | <a href="' + vLink1 + '&search=' + sBox + '" target="_blank"> ' +
+                        gtotalCallouthariini + '</a>';
                 },
                 processing: false,
                 serverSide: false,
@@ -472,5 +486,10 @@
                 // );
             }
         }
+        $('#dataTables').on('search.dt', function() {
+            var value = $('.dataTables_filter input').val();
+            $('.linkD').html(value);
+            // console.log(value); // <-- the value
+        });
     </script>
 @endsection

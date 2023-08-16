@@ -101,6 +101,8 @@
                                     <th>Start Call</th>
                                     <th>End Call</th>
                                     <th>Interval</th>
+                                    <th>Sales</th>
+                                    <th>spv</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
                                 </tr>
@@ -166,6 +168,7 @@
         var cabangs = "<?php echo auth()->user()->cabang_id; ?>";
         var roleuser_id = "<?php echo auth()->user()->roleuser_id; ?>";
         var paramHistory = "<?php echo $get->param; ?>";
+        var searchHistory = "<?php echo $get->search; ?>";
 
         renderTable(fromTanggal, toTanggal);
 
@@ -188,8 +191,9 @@
                     orderable: false,
                     searchable: false
                 }, {
-                    data: 'salesnama',
-                    name: 'sales.name as salesnama'
+                    data: 'csalesnama',
+                    name: 'csalesnama',
+                    searchable: false
                 }, {
                     data: 'nama',
                     name: 'customers.nama',
@@ -218,6 +222,14 @@
                     data: 'selisih',
                     name: 'selisih',
                     searchable: false
+                }, {
+                    data: 'salesnama',
+                    name: 'sales.name as salesnama',
+                    visible: false
+                }, {
+                    data: 'spvnama',
+                    name: 'parentuser.name as spvnama',
+                    visible: false
                 }];
             } else {
                 sortPos = 6;
@@ -227,8 +239,9 @@
                     orderable: false,
                     searchable: false
                 }, {
-                    data: 'salesnama',
-                    name: 'sales.name as salesnama'
+                    data: 'csalesnama',
+                    name: 'csalesnama',
+                    searchable: false
                 }, {
                     data: 'nama',
                     name: 'customers.nama',
@@ -248,6 +261,14 @@
                     data: 'selisih',
                     name: 'selisih',
                     searchable: false
+                }, {
+                    data: 'salesnama',
+                    name: 'sales.name as salesnama',
+                    visible: false
+                }, {
+                    data: 'spvnama',
+                    name: 'parentuser.name as spvnama',
+                    visible: false
                 }];
             }
             if (paramHistory != '') {
@@ -264,6 +285,9 @@
             $('#dataTables').DataTable({
                 autoWidth: false,
                 bDestroy: true,
+                oSearch: {
+                    "sSearch": searchHistory
+                },
                 initComplete: function(settings, json) {
                     fromTabel = this.api().data().length;
                 },

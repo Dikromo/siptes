@@ -243,6 +243,8 @@ class DashboardController extends Controller
                 //     | \'.$total_call_today.\' | \'.$total_nocall.\' | \'.$total_callout_today}}';
                 return $vToday;
             })
+            ->addColumn('linkTotal', '/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today))
+            ->addColumn('linkTotal1', '/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today))
             ->addColumn('totData', '{{($total_nocall + $total_call_today)}}')
             ->addColumn('totSisah', '{{($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today}}')
             ->addColumn('totToday', '{{($total_nocall + $total_call_today)-(($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today)}}')

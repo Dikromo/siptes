@@ -296,7 +296,7 @@
                                             </div>
                                             <div class="form-group fLoan_apply fPikir"
                                                 {{ $data == '' ? 'style=display:none;' : (old('status', $vpengajuan) == 'Pikir - Pikir' || old('status', $vpengajuan) == 'Ya' ? 'style=display:block;' : 'style=display:none;') }}>
-                                                <label for="loan_apply">Pengajuan Pinjaman</label>
+                                                <label for="loan_apply">Pengajuan Pinjaman </label>
                                                 <input type="text" id="loan_apply" name="loan_apply"
                                                     class="form-control @error('loan_apply') is-invalid @enderror"
                                                     value="{{ $data == '' ? old('loan_apply') : old('loan_apply', $data->loan_apply) }}"

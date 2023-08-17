@@ -159,6 +159,8 @@
                                             <div class="fstatus form-group"
                                                 {{ $data == '' ? 'style=display:none;' : (old('rbutton', $data->jenisstatus) == '1' ? 'style=display:block;' : 'style=display:none;') }}>
                                                 <label for="status">Pengajuan?</label>
+                                                <input type="hidden" id="tipe" name="tipe"
+                                                    value="{{ ($data == '' ? '' : $data->status == '1' || $data->status == '15') ? 'apply' : '' }}">
                                                 <select name="status"
                                                     class="form-control select2 @error('status') is-invalid @enderror  "
                                                     id="status">
@@ -292,6 +294,83 @@
                                                         class="error invalid-feedback">{{ $message }}</span>
                                                 @enderror
                                             </div>
+                                            <div class="form-group fLoan_apply fPikir"
+                                                {{ $data == '' ? 'style=display:none;' : (old('status', $vpengajuan) == 'Pikir - Pikir' || old('status', $vpengajuan) == 'Ya' ? 'style=display:block;' : 'style=display:none;') }}>
+                                                <label for="loan_apply">Pengajuan Pinjaman</label>
+                                                <input type="text" id="loan_apply" name="loan_apply"
+                                                    class="form-control @error('loan_apply') is-invalid @enderror"
+                                                    value="{{ $data == '' ? old('loan_apply') : old('loan_apply', $data->loan_apply) }}"
+                                                    data-inputmask="'alias': 'currency', 'placeholder': '', 'digits': '0','digitsOptional':'!1', 
+                                                    'rightAlign':'false', 'allowMinus': 'false', 'showMaskOnFocus': 'false', 
+                                                    'showMaskOnHover': 'false','groupSeparator':'.','removeMaskOnSubmit': 'true'"
+                                                    data-mask>
+                                                @error('loan_apply')
+                                                    <span id="loan_apply"
+                                                        class="error invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group fBank_penerbit fPikir"
+                                                {{ $data == ''
+                                                    ? 'style=display:none;'
+                                                    : (old('status', $vpengajuan) == 'Pikir - Pikir' ||
+                                                    old('status', $vpengajuan) == 'Ya' ||
+                                                    (old('status3', $data->status) == '21') |
+                                                        (old('status3', $data->status) == '22') |
+                                                        (old('status3', $data->status) == '38')
+                                                        ? 'style=display:block;'
+                                                        : 'style=display:none;') }}>
+                                                <label for="bank_penerbit">Penerbit Kartu Kredit</label>
+                                                <input type="text" id="bank_penerbit" name="bank_penerbit"
+                                                    class="form-control @error('bank_penerbit') is-invalid @enderror"
+                                                    value="{{ $data == '' ? old('bank_penerbit') : old('bank_penerbit', $data->bank_penerbit) }}">
+                                                @error('bank_penerbit')
+                                                    <span id="bank_penerbit"
+                                                        class="error invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group fLimit fPikir"
+                                                {{ $data == ''
+                                                    ? 'style=display:none;'
+                                                    : (old('status', $vpengajuan) == 'Pikir - Pikir' ||
+                                                    old('status', $vpengajuan) == 'Ya' ||
+                                                    (old('status3', $data->status) == '21') |
+                                                        (old('status3', $data->status) == '22') |
+                                                        (old('status3', $data->status) == '38')
+                                                        ? 'style=display:block;'
+                                                        : 'style=display:none;') }}>
+                                                <label for="limit">Limit Kartu Kredit</label>
+                                                <input type="text" id="limit" name="limit"
+                                                    class="form-control @error('limit') is-invalid @enderror"
+                                                    value="{{ $data == '' ? old('limit') : old('limit', $data->limit) }}"
+                                                    data-inputmask="'alias': 'currency', 'placeholder': '', 'digits': '0','digitsOptional':'!1', 
+                                                    'rightAlign':'false', 'allowMinus': 'false', 'showMaskOnFocus': 'false', 
+                                                    'showMaskOnHover': 'false','groupSeparator':'.','removeMaskOnSubmit': 'true'"
+                                                    data-mask>
+                                                @error('limit')
+                                                    <span id="limit"
+                                                        class="error invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                            <div class="form-group fMob fPikir"
+                                                {{ $data == ''
+                                                    ? 'style=display:none;'
+                                                    : (old('status', $vpengajuan) == 'Pikir - Pikir' ||
+                                                    old('status', $vpengajuan) == 'Ya' ||
+                                                    (old('status3', $data->status) == '21') |
+                                                        (old('status3', $data->status) == '22') |
+                                                        (old('status3', $data->status) == '38')
+                                                        ? 'style=display:block;'
+                                                        : 'style=display:none;') }}>
+                                                <label for="mob">MOB</label>
+                                                <input type="text" id="mob" name="mob"
+                                                    class="form-control @error('mob') is-invalid @enderror"
+                                                    value="{{ $data == '' ? old('mob') : old('mob', $data->mob) }}"
+                                                    data-inputmask="'mask': '99/99'" data-mask>
+                                                @error('mob')
+                                                    <span id="mob"
+                                                        class="error invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
                                         @endif
                                         <div class="form-group">
                                             <label for="deskripsi">Remarks</label>
@@ -304,7 +383,7 @@
                                             @enderror
                                         </div>
                                         @if ($data != '')
-                                            @if ($data->status == '1')
+                                            @if ($data->status == '1' && auth()->user()->cabang_id != 4)
                                                 <?php
                                                 $prosesNasabah = ['VIP', 'REGULER'];
                                                 ?>
@@ -421,10 +500,13 @@
     </div>
 @endsection
 @section('addScript')
+    <script src="{{ asset('adminlte/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
     <script>
         var cabang_id = '{{ auth()->user()->cabang_id }}';
         var tesCall = 0;
         if (cabang_id == '4') {
+            $('[data-mask]').inputmask();
+
             function testCall() {
                 tesCall = parseInt(tesCall) + 1;
             }
@@ -433,16 +515,19 @@
                     $('#status1').val('');
                     $('#status3').val('');
                     $('.fsubproduk').css('display', 'block');
+                    $('.fPikir').css('display', 'block');
                     $('.fstatus1').css('display', 'none');
                     $('.fstatus3').css('display', 'none');
                 } else if (this.value == 'Pikir - Pikir') {
                     $('#subproduk_id').val('');
                     $('#status3').val('');
+                    $('.fPikir').css('display', 'block');
                     $('.fsubproduk').css('display', 'none');
                     $('.fstatus1').css('display', 'none');
                     $('.fstatus3').css('display', 'none');
                 } else {
                     $('#subproduk_id').val('');
+                    $('.fPikir').css('display', 'none');
                     $('.fsubproduk').css('display', 'none');
                     $('.fstatus1').css('display', 'block');
                 }
@@ -455,9 +540,24 @@
                     $('.fstatus3').css('display', 'none');
                 }
             });
+            $("#status3").change(function() {
+                if (this.value == '21' || this.value == '22' || this.value == '38') {
+                    $('.fBank_penerbit').css('display', 'block');
+                    $('.fLimit').css('display', 'block');
+                    $('.fMob').css('display', 'block');
+                } else {
+                    $('#bank_penerbit').val('');
+                    $('#limit').val('');
+                    $('#mob').val('');
+                    $('.fBank_penerbit').css('display', 'none');
+                    $('.fLimit').css('display', 'none');
+                    $('.fMob').css('display', 'none');
+                }
+            });
 
             function rbutton(param) {
                 $('#rbutton').val(param);
+                $('.fPikir').css('display', 'none');
                 if (param == '1') {
                     $('#rbutton1').css('background-color', '#ff2d2e ');
                     $('#rbutton1').css('color', '#fff');

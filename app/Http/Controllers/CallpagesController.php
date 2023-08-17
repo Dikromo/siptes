@@ -164,6 +164,8 @@ class CallpagesController extends Controller
     }
     public function salescallStore(Request $request, $id)
     {
+        // dd($request->loan_apply);
+        // exit;
         $id = decrypt($id);
         $checkdata = ['id' => $id];
 
@@ -183,15 +185,22 @@ class CallpagesController extends Controller
             if ($request->rbutton == '1') {
                 if ($request->status == 'Ya') {
                     $rules = [
-                        'rbutton'       => ['required'],
-                        'status'        => ['required'],
-                        'subproduk_id'     => ['required'],
+                        'rbutton'           => ['required'],
+                        'status'            => ['required'],
+                        'subproduk_id'      => ['required'],
+                        'loan_apply'        => ['required'],
+                        'limit'             => ['required'],
+                        'bank_penerbit'     => ['required'],
+                        'mob'               => ['required'],
                     ];
                 } else if ($request->status == 'Pikir - Pikir') {
                     $rules = [
-                        'rbutton'       => ['required'],
-                        'status'        => ['required'],
-                        'deskripsi'     => ['required'],
+                        'rbutton'           => ['required'],
+                        'status'            => ['required'],
+                        'loan_apply'        => ['required'],
+                        'limit'             => ['required'],
+                        'bank_penerbit'     => ['required'],
+                        'mob'               => ['required'],
                     ];
                 } else {
                     if ($request->status1 == '29') {
@@ -199,14 +208,23 @@ class CallpagesController extends Controller
                             $rules = [
                                 'rbutton'       => ['required'],
                                 'status'        => ['required'],
-                                'status1'       => ['required'],
+                                'status3'       => ['required'],
                                 'deskripsi'     => ['required'],
+                            ];
+                        } else if ($request->status3 == '21' || $request->status3 == '22' || $request->status3 == '38') {
+                            $rules = [
+                                'rbutton'           => ['required'],
+                                'status'            => ['required'],
+                                'status3'           => ['required'],
+                                'limit'             => ['required'],
+                                'bank_penerbit'     => ['required'],
+                                'mob'               => ['required'],
                             ];
                         } else {
                             $rules = [
-                                'rbutton'     => ['required'],
+                                'rbutton'       => ['required'],
                                 'status'        => ['required'],
-                                'status3'     => ['required'],
+                                'status3'       => ['required'],
                             ];
                         }
                     } else if ($request->status1 == '30') {
@@ -234,20 +252,20 @@ class CallpagesController extends Controller
             $rules = [
                 'status'     => ['required'],
             ];
-        }
-        if ($request->tipeproses == 'VIP') {
-            $rules['tipeproses'] = 'required';
-            $rules['nik'] = 'required';
-            $rules['dob'] = 'required';
-            $rules['perusahaan'] = 'required';
-            $rules['jabatan'] = 'required';
-            $rules['jmoasli'] = 'required';
-        }
+            if ($request->tipeproses == 'VIP') {
+                $rules['tipeproses'] = 'required';
+                $rules['nik'] = 'required';
+                $rules['dob'] = 'required';
+                $rules['perusahaan'] = 'required';
+                $rules['jabatan'] = 'required';
+                $rules['jmoasli'] = 'required';
+            }
 
-        if ($request->tipeproses == 'REGULER') {
-            $rules['tipeproses'] = 'required';
-            $rules['nik'] = 'required';
-            $rules['dob'] = 'required';
+            if ($request->tipeproses == 'REGULER') {
+                $rules['tipeproses'] = 'required';
+                $rules['nik'] = 'required';
+                $rules['dob'] = 'required';
+            }
         }
 
         $validateData = $request->validate($rules, $custommessage);
@@ -275,7 +293,7 @@ class CallpagesController extends Controller
             }
         }
         $validateData['deskripsi'] = $request->deskripsi;
-        if (!isset($request->tipeproses)) {
+        if (!isset($request->tipeproses) && $request->tipe != 'apply') {
             $validateData['end_call_time'] =  now();
             $validateData['updated_at'] =  now();
         }

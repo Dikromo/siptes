@@ -284,25 +284,25 @@ class DashboardController extends Controller
                 </div>
                 </div>';
                 }
-                if ($signalPercent >= '21') {
+                if ($signalPercent >= '25') {
                     $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
                 }
-                if ($signalPercent >= '25') {
+                if ($signalPercent >= '30') {
                     $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
                 }
-                if ($signalPercent >= '30') {
+                if ($signalPercent >= '37') {
                     $signalBar .= '<div class="progress vertical" style="height:25px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
                 }
-                if ($signalPercent > '37') {
+                if ($signalPercent > '42') {
                     $signalBar .= '<div class="progress vertical" style="height:30px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>

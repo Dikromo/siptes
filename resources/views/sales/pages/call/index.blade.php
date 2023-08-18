@@ -44,15 +44,15 @@
                                 }
                             }
                             $signalPercent = ((int) $dataCall + (int) $dataCallout) / (int) $runhour;
-                            if ($signalPercent <= '21') {
+                            if ($signalPercent < '25') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Sangat Lambat</span>';
-                            } elseif ($signalPercent > '21' && $signalPercent <= '25') {
+                            } elseif ($signalPercent >= '25' && $signalPercent < '30') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Lambat</span>';
-                            } elseif ($signalPercent > '25' && $signalPercent <= '30') {
+                            } elseif ($signalPercent >= '30' && $signalPercent < '37') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb7904;">Kurang Cepat</span>';
-                            } elseif ($signalPercent > '30' && $signalPercent <= '37') {
+                            } elseif ($signalPercent >= '37' && $signalPercent < '42') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">OK</span>';
-                            } elseif ($signalPercent > '37') {
+                            } elseif ($signalPercent >= '42') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">Cepat</span>';
                             }
                             ?>

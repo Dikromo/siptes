@@ -197,7 +197,6 @@ class CallpagesController extends Controller
                     $rules = [
                         'rbutton'           => ['required'],
                         'status'            => ['required'],
-                        'loan_apply'        => ['required'],
                         'limit'             => ['required'],
                         'bank_penerbit'     => ['required'],
                         'mob'               => ['required'],

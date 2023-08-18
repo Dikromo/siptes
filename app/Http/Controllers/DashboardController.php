@@ -168,9 +168,31 @@ class DashboardController extends Controller
     }
     public function getSalescall2(Request $request)
     {
+        $cektoday = date('Y-m-d');
         $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
         $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
         $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
+
+        if ($request->tanggal == $cektoday) {
+            $timerun1 = date('Y-m-d 00:00:00');
+            $timerun2 = date('Y-m-d H:i:s');
+            $jarak = date_diff(date_create($timerun2), date_create($timerun1));
+            if ($jarak->h <= '10') {
+                $runhour = '1';
+            } else {
+                if ($jarak->h >= '17') {
+                    $runhour = '7';
+                } else {
+                    $runhour = $jarak->h;
+                }
+            }
+        } else {
+            $timerun1 = date('H:i:s', strtotime($request->tanggal . ' 00:00:00'));
+            $timerun2 = date('H:i:s', strtotime($request->tanggal . ' 17:00:00'));
+            $jarak = date_diff(date_create($timerun2), date_create($timerun1));
+            $runhour = '7';
+        }
+
         $data = User::select(
             'users.id',
             'users.name',
@@ -245,6 +267,7 @@ class DashboardController extends Controller
             })
             ->addColumn('linkTotal', '/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today))
             ->addColumn('linkTotal1', '/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today))
+            ->addColumn('signalCek', '{{$total_call_today}}')
             ->addColumn('totData', '{{($total_nocall + $total_call_today)}}')
             ->addColumn('totSisah', '{{($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today}}')
             ->addColumn('totToday', '{{($total_nocall + $total_call_today)-(($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today)}}')
@@ -252,8 +275,42 @@ class DashboardController extends Controller
             ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
-            ->editColumn('name', '{{{$name}}} ({{{$spvname}}})')
-            ->rawColumns(['today'])
+            ->editColumn('name', function ($data) use ($today, $runhour) {
+                $signalPercent = (int)$data->total_call_today / (int)$runhour;
+                $signalBar = $data->name . '(' . $data->spvname . '-' . $runhour . ')';
+                if ($signalPercent >= '0') {
+                    $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
+                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                </div>
+                </div>';
+                }
+                if ($signalPercent >= '21') {
+                    $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;">
+                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                </div>
+                </div>';
+                }
+                if ($signalPercent >= '30') {
+                    $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;">
+                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                </div>
+                </div>';
+                }
+                if ($signalPercent >= '37') {
+                    $signalBar .= '<div class="progress vertical" style="height:25px;width:5px;">
+                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                </div>
+                </div>';
+                }
+                if ($signalPercent >= '42') {
+                    $signalBar .= '<div class="progress vertical" style="height:30px;width:5px;">
+                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                </div>
+                </div>';
+                }
+                return $signalBar;
+            })
+            ->rawColumns(['today', 'name'])
             ->make(true);
     }
     public function getSalescall2_detail(Request $request)

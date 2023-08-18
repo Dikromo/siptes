@@ -183,7 +183,7 @@ class DashboardController extends Controller
                 if ($jarak->h >= '17') {
                     $runhour = '7';
                 } else {
-                    $runhour = $jarak->h;
+                    $runhour = (int)$jarak->h - 10;
                 }
             }
         } else {

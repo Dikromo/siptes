@@ -28,7 +28,34 @@
                             </div>
 
                             <h3 class="profile-username text-center">{{ auth()->user()->name }}</h3>
-
+                            <?php
+                            $signalBar = '';
+                            $signalText = '';
+                            $timerun1 = date('Y-m-d 00:00:00');
+                            $timerun2 = date('Y-m-d H:i:s');
+                            $jarak = date_diff(date_create($timerun2), date_create($timerun1));
+                            if ($jarak->h <= '10') {
+                                $runhour = '1';
+                            } else {
+                                if ($jarak->h >= '17') {
+                                    $runhour = '7';
+                                } else {
+                                    $runhour = (int) $jarak->h - 10;
+                                }
+                            }
+                            $signalPercent = ((int) $dataCall + (int) $dataCallout) / (int) $runhour;
+                            if ($signalPercent <= '21') {
+                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Sangat Lambat</span>';
+                            } elseif ($signalPercent > '21' && $signalPercent <= '25') {
+                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Lambat</span>';
+                            } elseif ($signalPercent > '25' && $signalPercent <= '30') {
+                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb7904;">Kurang Cepat</span>';
+                            } elseif ($signalPercent > '30' && $signalPercent <= '37') {
+                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">OK</span>';
+                            } elseif ($signalPercent > '37') {
+                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">Cepat</span>';
+                            }
+                            ?>
                             <p class="text-muted text-center">
                                 {{ auth()->user()->roleuser_id == '3' ? 'TELEMARKETING' : '' }}
                             </p>
@@ -68,6 +95,8 @@
                                     </div>
                                 </div>
                             </div>
+                            <p class="profile-username text-center" style="font-size:18px;">Kecepatan
+                                Menelpon<br>{!! $signalText !!}</p>
                             {{-- <a class="btn"><i class="nav-icon fas fa-database"></i>
                                 Total Data : {{ count($data_total) }}</a> --}}
                             @foreach ($data as $item)
@@ -86,7 +115,8 @@
                                 Show List Call Back</a>
                         </div>
                         <div class='cTable' style="display:none">
-                            <h3 class="profile-username text-left pl-2 jTable"><i class="nav-icon fas fa-headset"></i> List
+                            <h3 class="profile-username text-left pl-2 jTable"><i class="nav-icon fas fa-headset"></i>
+                                List
                                 Call
                                 Back
                             </h3>

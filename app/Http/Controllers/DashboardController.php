@@ -277,7 +277,7 @@ class DashboardController extends Controller
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->editColumn('name', function ($data) use ($today, $runhour) {
                 $signalPercent = (int)$data->total_call_today / (int)$runhour;
-                $signalBar = $data->name . '(' . $data->spvname . '-' . $runhour . ')';
+                $signalBar = $data->name . '(' . $data->spvname . ')';
                 if ($signalPercent >= '0') {
                     $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
@@ -290,19 +290,19 @@ class DashboardController extends Controller
                 </div>
                 </div>';
                 }
-                if ($signalPercent >= '30') {
+                if ($signalPercent >= '25') {
                     $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
                 }
-                if ($signalPercent >= '37') {
+                if ($signalPercent >= '30') {
                     $signalBar .= '<div class="progress vertical" style="height:25px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
                 }
-                if ($signalPercent >= '42') {
+                if ($signalPercent > '37') {
                     $signalBar .= '<div class="progress vertical" style="height:30px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>

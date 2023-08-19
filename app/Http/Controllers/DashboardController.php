@@ -169,6 +169,7 @@ class DashboardController extends Controller
     public function getSalescall2(Request $request)
     {
         $cektoday = date('Y-m-d');
+        $cektoday2 = date('Y-m-d', strtotime($request->tanggal));
         $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
         $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
         $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
@@ -281,10 +282,10 @@ class DashboardController extends Controller
             ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
-            ->editColumn('name', function ($data) use ($today, $runhour) {
+            ->editColumn('name', function ($data) use ($cektoday2, $runhour) {
                 $signalPercent = round((int)$data->total_call_today / (float)$runhour);
                 $signalBar = $data->name . '(' . $data->spvname . ')';
-                if (date('l', strtotime($today)) != 'Sunday') {
+                if (date('l', strtotime($cektoday2)) != 'Sunday') {
                     if ($signalPercent >= '26') {
                         $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">

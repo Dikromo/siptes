@@ -284,35 +284,37 @@ class DashboardController extends Controller
             ->editColumn('name', function ($data) use ($today, $runhour) {
                 $signalPercent = round((int)$data->total_call_today / (float)$runhour);
                 $signalBar = $data->name . '(' . $data->spvname . ')';
-                if ($signalPercent >= '26') {
-                    $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
+                if (date('l', strtotime($today)) != 'Sunday') {
+                    if ($signalPercent >= '26') {
+                        $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
-                }
-                if ($signalPercent >= '30') {
-                    $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
+                    }
+                    if ($signalPercent >= '30') {
+                        $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
-                }
-                if ($signalPercent >= '34') {
-                    $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
+                    }
+                    if ($signalPercent >= '34') {
+                        $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
-                }
-                if ($signalPercent >= '39') {
-                    $signalBar .= '<div class="progress vertical" style="height:25px;width:5px;margin-left:1px;">
+                    }
+                    if ($signalPercent >= '39') {
+                        $signalBar .= '<div class="progress vertical" style="height:25px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
-                }
-                if ($signalPercent >= '43') {
-                    $signalBar .= '<div class="progress vertical" style="height:30px;width:5px;margin-left:1px;">
+                    }
+                    if ($signalPercent >= '43') {
+                        $signalBar .= '<div class="progress vertical" style="height:30px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
+                    }
                 }
                 return $signalBar;
             })

@@ -282,7 +282,7 @@ class DashboardController extends Controller
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->editColumn('name', function ($data) use ($today, $runhour) {
-                $signalPercent = round((int)$data->total_call_today / (int)$runhour);
+                $signalPercent = round((int)$data->total_call_today / (float)$runhour);
                 $signalBar = $data->name . '(' . $data->spvname . ' - ' . $runhour . ')';
                 if ($signalPercent >= '26') {
                     $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">

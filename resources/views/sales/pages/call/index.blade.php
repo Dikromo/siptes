@@ -49,7 +49,7 @@
                                     }
                                 }
                             }
-                            $signalPercent = round(((int) $dataCall + (int) $dataCallout) / (int) $runhour);
+                            $signalPercent = round(((int) $dataCall + (int) $dataCallout) / (float) $runhour);
                             if ($signalPercent >= '0' && $signalPercent < '26') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">-__-</span>';
                             } elseif ($signalPercent >= '26' && $signalPercent < '30') {

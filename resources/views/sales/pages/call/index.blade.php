@@ -40,19 +40,27 @@
                                 if ($jarak->h >= '17') {
                                     $runhour = '7';
                                 } else {
-                                    $runhour = (int) $jarak->h - 10;
+                                    if ($jarak->h <= '12') {
+                                        $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                                        $runhour = $runhour + (int) $jarak->m;
+                                    } else {
+                                        $runhour = ((int) $jarak->h - 10) * 60;
+                                        $runhour = $runhour + (int) $jarak->m;
+                                    }
                                 }
                             }
-                            $signalPercent = ((int) $dataCall + (int) $dataCallout) / (int) $runhour;
-                            if ($signalPercent < '25') {
+                            $signalPercent = round(((int) $dataCall + (int) $dataCallout) / (int) $runhour);
+                            if ($signalPercent >= '0' && $signalPercent < '26') {
+                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">-__-</span>';
+                            } elseif ($signalPercent >= '26' && $signalPercent < '30') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Sangat Lambat</span>';
-                            } elseif ($signalPercent >= '25' && $signalPercent < '30') {
+                            } elseif ($signalPercent >= '30' && $signalPercent < '34') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Lambat</span>';
-                            } elseif ($signalPercent >= '30' && $signalPercent < '37') {
+                            } elseif ($signalPercent >= '34' && $signalPercent < '39') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb7904;">Kurang Cepat</span>';
-                            } elseif ($signalPercent >= '37' && $signalPercent < '42') {
+                            } elseif ($signalPercent >= '39' && $signalPercent < '43') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">OK</span>';
-                            } elseif ($signalPercent >= '42') {
+                            } elseif ($signalPercent >= '43') {
                                 $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">Cepat</span>';
                             }
                             ?>

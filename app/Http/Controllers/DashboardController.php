@@ -204,6 +204,7 @@ class DashboardController extends Controller
             'users.id',
             'users.name',
             'parentuser.name as spvname',
+            'sm.name as smname',
             DB::raw('COUNT(distribusis.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
@@ -233,6 +234,7 @@ class DashboardController extends Controller
             })
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
+            ->leftjoin('users as sm', 'sm.id', '=', 'users.sm_id')
             ->where('users.status', '1')
             ->where('users.roleuser_id', '3');
         if (auth()->user()->roleuser_id == '2') {
@@ -245,7 +247,7 @@ class DashboardController extends Controller
             $data = $data->where('users.um_id', auth()->user()->id);
         }
         $data = $data->orderby('users.parentuser_id', 'asc')
-            ->groupBy(DB::raw('1,2,3'));
+            ->groupBy(DB::raw('1,2,3,4'));
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('today', function ($data) use ($today) {
@@ -288,7 +290,7 @@ class DashboardController extends Controller
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->editColumn('name', function ($data) use ($cektoday2, $runhour) {
                 $signalPercent = round((int)$data->total_call_today / (float)$runhour);
-                $signalBar = $data->name . '(' . $data->spvname . ')';
+                $signalBar = $data->name . '(' . $data->spvname . ')' . '(' . $data->smname . ')';
                 if (date('l', strtotime($cektoday2)) != 'Sunday') {
                     if ($signalPercent >= '26') {
                         $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">

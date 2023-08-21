@@ -79,12 +79,24 @@ class CustomerController extends Controller
                 ->where('cabang_id', auth()->user()->cabang_id)
                 ->where('roleuser_id', '3');
         } else if (auth()->user()->roleuser_id == '5') {
-            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
+            $userSelect = $userSelect->where('sm_id', auth()->user()->id)
                 ->where(function ($query) {
                     $query->where('roleuser_id', '2')
                         ->orWhere('roleuser_id', '3');
                 })
                 ->orderby('roleuser_id', 'asc');
+        } else if (auth()->user()->roleuser_id == '6') {
+            if (auth()->user()->cabang_id == 4) {
+                $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
+                    ->where('roleuser_id', '3');
+            } else {
+                $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
+                    ->where(function ($query) {
+                        $query->where('roleuser_id', '2')
+                            ->orWhere('roleuser_id', '3');
+                    })
+                    ->orderby('roleuser_id', 'asc');
+            }
         } else {
             $userSelect = $userSelect->where(function ($query) {
                 $query->where('roleuser_id', '2')
@@ -511,9 +523,12 @@ class CustomerController extends Controller
         if (auth()->user()->roleuser_id == '2') {
             $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
                 ->where('roleuser_id', '3');
-        } else if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
+        } else if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '6') {
             $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
                 ->Where('roleuser_id', '3');
+        } else if (auth()->user()->roleuser_id == '5') {
+            $userSelect = $userSelect->where('sm_id', auth()->user()->id)
+                ->where('roleuser_id', '3');
         } else {
             $userSelect = $userSelect->where('roleuser_id', '3');
         }
@@ -558,6 +573,8 @@ class CustomerController extends Controller
         }
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
+        } else if (auth()->user()->roleuser_id == '5') {
+            $data = $data->where('sales.sm_id', auth()->user()->id);
         }
         if (auth()->user()->roleuser_id != '1') {
             $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);

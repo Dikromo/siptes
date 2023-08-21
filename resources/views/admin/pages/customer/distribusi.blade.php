@@ -236,7 +236,8 @@
                                 @enderror
                                 @if (auth()->user()->roleuser_id == '1' ||
                                         (auth()->user()->roleuser_id == '2' && auth()->user()->cabang_id == '4') ||
-                                        (auth()->user()->roleuser_id == '4' && auth()->user()->cabang_id == '4'))
+                                        (auth()->user()->roleuser_id == '4' && auth()->user()->cabang_id == '4') ||
+                                        auth()->user()->roleuser_id == '6')
                                     <input type="checkbox" class="checkbox">Select All
                                     <p class="totSales"></p>
                                 @endif

@@ -87,6 +87,8 @@ Route::put('/statuscall/{statuscallid}', [StatuscallController::class, 'statusca
 Route::get('/statuscall/{id}/edit', [StatuscallController::class, 'statuscallEdit'])->middleware('auth');
 
 
+Route::post('/cek/sm', [SelectController::class, 'getSM'])->middleware('auth');
+Route::post('/cek/um', [SelectController::class, 'getUM'])->middleware('auth');
 Route::post('/cek/produkspv', [SelectController::class, 'getProdukspv'])->middleware('auth');
 
 

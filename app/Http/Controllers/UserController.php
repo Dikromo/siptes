@@ -38,11 +38,18 @@ class UserController extends Controller
                 $data = $data->orderby('users.created_at', 'desc');
                 break;
             case '4':
+            case '6':
+                $data = $data->where('roleuser_id', '<>', '1')
+                    ->where('cabang_id', auth()->user()->cabang_id)
+                    ->orderby('users.created_at', 'desc');
+                break;
+
             case '5':
                 $data = $data->where('roleuser_id', '<>', '1')
                     ->where('roleuser_id', '<>', '4')
                     ->where('roleuser_id', '<>', '5')
-                    ->where('cabang_id', auth()->user()->cabang_id)
+                    ->where('roleuser_id', '<>', '6')
+                    ->where('sm_id', auth()->user()->id)
                     ->orderby('users.created_at', 'desc');
                 break;
             default:
@@ -75,26 +82,41 @@ class UserController extends Controller
     }
     public function userFormadd()
     {
-        $userSelect = User::where('status', '1')
+        $spvSelect = User::where('status', '1')
             ->where('roleuser_id', '2');
+        $smSelect = User::where('status', '1')
+            ->where('roleuser_id', '5');
+        $umSelect = User::where('status', '1')
+            ->where('roleuser_id', '6');
 
         $roleSelect = Roleuser::where('status', '1');
         $produkSelect = Produk::where('status', '1');
         $cabangSelect = Cabang::where('status', '1');
 
         if (auth()->user()->roleuser_id != '1') {
-            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id);
-            $roleSelect = $roleSelect->where('id', '<>', '1')
-                ->where('id', '<>', '4')
-                ->where('id', '<>', '5');
+            $spvSelect = $spvSelect->where('cabang_id', auth()->user()->cabang_id);
+            $smSelect = $smSelect->where('cabang_id', auth()->user()->cabang_id);
+            $umSelect = $umSelect->where('cabang_id', auth()->user()->cabang_id);
+            if (auth()->user()->roleuser_id == '5') {
+                $roleSelect = $roleSelect->where('id', '<>', '1')
+                    ->where('id', '<>', '4')
+                    ->where('id', '<>', '5')
+                    ->where('id', '<>', '6');
+            } else {
+                $roleSelect = $roleSelect->where('id', '<>', '1')
+                    ->where('id', '<>', '4')
+                    ->where('id', '<>', '6');
+            }
         }
-        //dd($userSelect);
+        // dd($spvSelect);
         return view('admin.pages.user.form', [
             'title' => 'User',
             'active' => 'user',
             'active_sub' => '',
             "data" => '',
-            "userSelect" => $userSelect->get(),
+            "spvSelect" => $spvSelect->get(),
+            "smSelect" => $smSelect->get(),
+            "umSelect" => $umSelect->get(),
             "roleSelect" => $roleSelect->get(),
             "produkSelect" => $produkSelect->get(),
             "cabangSelect" => $cabangSelect->get(),
@@ -102,25 +124,41 @@ class UserController extends Controller
     }
     public function userEdit(User $user)
     {
-        $userSelect = User::where('status', '1')
+        $spvSelect = User::where('status', '1')
             ->where('roleuser_id', '2');
+        $smSelect = User::where('status', '1')
+            ->where('roleuser_id', '5');
+        $umSelect = User::where('status', '1')
+            ->where('roleuser_id', '6');
 
         $roleSelect = Roleuser::where('status', '1');
         $produkSelect = Produk::where('status', '1');
         $cabangSelect = Cabang::where('status', '1');
 
         if (auth()->user()->roleuser_id != '1') {
-            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id);
-            $roleSelect = $roleSelect->where('id', '<>', '1')
-                ->where('id', '<>', '4')
-                ->where('id', '<>', '5');
+            $spvSelect = $spvSelect->where('cabang_id', auth()->user()->cabang_id);
+            $smSelect = $smSelect->where('cabang_id', auth()->user()->cabang_id);
+            $umSelect = $umSelect->where('cabang_id', auth()->user()->cabang_id);
+            if (auth()->user()->roleuser_id == '5') {
+                $roleSelect = $roleSelect->where('id', '<>', '1')
+                    ->where('id', '<>', '4')
+                    ->where('id', '<>', '5')
+                    ->where('id', '<>', '6');
+            } else {
+                $roleSelect = $roleSelect->where('id', '<>', '1')
+                    ->where('id', '<>', '4')
+                    ->where('id', '<>', '6');
+            }
         }
+        //dd($spvSelect);
         return view('admin.pages.user.form', [
             'title' => 'User',
             'active' => 'user',
             'active_sub' => '',
             "data" => $user,
-            "userSelect" => $userSelect->get(),
+            "spvSelect" => $spvSelect->get(),
+            "smSelect" => $smSelect->get(),
+            "umSelect" => $umSelect->get(),
             "roleSelect" => $roleSelect->get(),
             "produkSelect" => $produkSelect->get(),
             "cabangSelect" => $cabangSelect->get(),
@@ -157,16 +195,29 @@ class UserController extends Controller
             'email'     => ['required'],
             'status'    => ['required'],
         ];
-        if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
+        if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
 
             $rules['roleuser_id'] = 'required';
             if ($request->roleuser_id != '1') {
                 $rules['cabang_id'] = 'required';
             }
-            if ($request->roleuser_id == '2' || $request->roleuser_id == '3') {
+            if ($request->roleuser_id == '2' || $request->roleuser_id == '3' || $request->roleuser_id == '5' || $request->roleuser_id == '6') {
                 $rules['produk_id'] = 'required';
+                if ($request->roleuser_id == '2') {
+                    $rules['sm_id'] = 'required';
+                    $rules['um_id'] = 'required';
+                }
                 if ($request->roleuser_id == '3') {
                     $rules['parentuser_id'] = 'required';
+                    $rules['sm_id'] = 'required';
+                    $rules['um_id'] = 'required';
+                }
+                if ($request->roleuser_id == '5') {
+                    unset($rules['produk_id']);
+                    $rules['um_id'] = 'required';
+                }
+                if ($request->roleuser_id == '6') {
+                    unset($rules['produk_id']);
                 }
             }
         }
@@ -218,7 +269,7 @@ class UserController extends Controller
                 $validateData['password'] = Hash::make($validateData['password']);
             }
         }
-        if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
+        if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
             if ($request->roleuser_id == '2') {
                 $validateData['parentuser_id'] =  '0';
             }

@@ -127,10 +127,16 @@
                                     class="form-control @error('cabang_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('cabang_id', auth()->user()->cabang_id) : old('cabang_id', $data->cabang_id) }}">
                             @endif
-                            @if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5')
+                            @if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6')
                                 <input type="hidden" id="hparentuser_id" name="parentuser_id"
                                     class="form-control @error('parentuser_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('parentuser_id') : old('parentuser_id', $data->parentuser_id) }}">
+                                <input type="hidden" id="hsm_id" name="sm_id"
+                                    class="form-control @error('sm_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('sm_id') : old('sm_id', $data->sm_id) }}">
+                                <input type="hidden" id="hum_id" name="um_id"
+                                    class="form-control @error('um_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('um_id') : old('um_id', $data->um_id) }}">
                                 <input type="hidden" id="hproduk_id" name="produk_id"
                                     class="form-control @error('produk_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('produk_id') : old('produk_id', $data->produk_id) }}">
@@ -139,7 +145,10 @@
                                     value="{{ $data == '' ? old('cabang_id', auth()->user()->cabang_id) : old('cabang_id', $data->cabang_id) }}">
                             @endif
                             {{-- End hidden input --}}
-                            @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5')
+                            @if (auth()->user()->roleuser_id == '1' ||
+                                    auth()->user()->roleuser_id == '4' ||
+                                    auth()->user()->roleuser_id == '5' ||
+                                    auth()->user()->roleuser_id == '6')
                                 <input type="hidden" id="hproduk_id" name="produk_id"
                                     class="form-control @error('produk_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('produk_id') : old('produk_id', $data->produk_id) }}">
@@ -153,14 +162,19 @@
 
                                         @foreach ($roleSelect as $item)
                                             @if ($data != '')
-                                                @if (old('roleuser_id') == $item->id || $data->roleuser_id == $item->id)
+                                                @if (old('roleuser_id', $data->roleuser_id) == $item->id)
                                                     <option value="{{ $item->id }}" selected>{{ $item->nama }}
                                                     </option>
                                                 @else
                                                     <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                                 @endif
                                             @else
-                                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                                @if (old('roleuser_id') == $item->id)
+                                                    <option value="{{ $item->id }}" selected>{{ $item->nama }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                                @endif
                                             @endif
                                         @endforeach
                                     </select>
@@ -175,7 +189,7 @@
                                         id="parentuser_id"
                                         {{ ($data == '' ? '' : $data->roleuser_id != '3') ? 'disabled' : '' }}>
                                         <option value="">-- Pilih --</option>
-                                        @foreach ($userSelect as $item)
+                                        @foreach ($spvSelect as $item)
                                             @if ($data != '')
                                                 @if (old('parentuser_id') == $item->id || $data->parentuser_id == $item->id)
                                                     <option value="{{ $item->id }}" selected>{{ $item->name }}
@@ -190,6 +204,54 @@
                                     </select>
                                     @error('parentuser_id')
                                         <span id="parentuser_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="sm_id">Sales Manager</label>
+                                    <select name="sm_id"
+                                        class="form-control select2 @error('sm_id') is-invalid @enderror  "
+                                        id="sm_id"
+                                        {{ ($data == '' ? '' : $data->roleuser_id != '2') ? 'disabled' : '' }}>
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($smSelect as $item)
+                                            @if ($data != '')
+                                                @if (old('sm_id') == $item->id || $data->sm_id == $item->id)
+                                                    <option value="{{ $item->id }}" selected>{{ $item->name }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('sm_id')
+                                        <span id="sm_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                                <div class="form-group">
+                                    <label for="um_id">Unit Manager</label>
+                                    <select name="um_id"
+                                        class="form-control select2 @error('um_id') is-invalid @enderror  "
+                                        id="um_id"
+                                        {{ ($data == '' ? '' : $data->roleuser_id != '5') ? 'disabled' : '' }}>
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($umSelect as $item)
+                                            @if ($data != '')
+                                                @if (old('um_id') == $item->id || $data->um_id == $item->id)
+                                                    <option value="{{ $item->id }}" selected>{{ $item->name }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('um_id')
+                                        <span id="um_id" class="error invalid-feedback">{{ $message }}</span>
                                     @enderror
                                 </div>
                                 <div class="form-group">
@@ -277,32 +339,63 @@
     <script src="{{ asset('adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>
-        $('.select2').select2()
-        $('#roleuser_id').on('select2:select', function(e) {
-            var data = e.params.data.id;
+        $('.select2').select2();
 
+        function check_form(param) {
             $('#parentuser_id').val('').change();
             $('#produk_id').val('').change();
-            if (data == '3') {
+            if (param == '3') {
+                console.log('aaa');
                 $('#parentuser_id').prop('disabled', false);
+                $('#sm_id').prop('disabled', true);
+                $('#um_id').prop('disabled', true);
                 $('#produk_id').prop('disabled', true);
-            } else if (data == '2') {
+            } else if (param == '2') {
                 $('#hparentuser_id').val('');
                 $('#hproduk_id').val('');
                 $('#parentuser_id').prop('disabled', true);
+                $('#um_id').prop('disabled', true);
+                $('#sm_id').prop('disabled', false);
+                $('#produk_id').prop('disabled', false);
+            } else if (param == '5') {
+                $('#hparentuser_id').val('');
+                $('#hproduk_id').val('');
+                $('#parentuser_id').prop('disabled', true);
+                $('#sm_id').prop('disabled', true);
+                $('#um_id').prop('disabled', false);
                 $('#produk_id').prop('disabled', false);
             } else {
                 $('#hparentuser_id').val('');
                 $('#hproduk_id').val('');
                 $('#parentuser_id').prop('disabled', true);
+                $('#um_id').prop('disabled', true);
+                $('#sm_id').prop('disabled', true);
                 $('#produk_id').prop('disabled', true);
             }
+        }
+        if ($('#roleuser_id').val() != '') {
+            check_form($('#roleuser_id').val());
+        }
+
+        $('#roleuser_id').on('select2:select', function(e) {
+            var data = e.params.data.id;
+
+            check_form(data);
         });
 
         $('#parentuser_id').on('select2:select', function(e) {
             var data = e.params.data.id;
             $('#hparentuser_id').val(data);
             getProduk(data);
+            getSM(data);
+            getUM(data);
+        });
+
+        $('#sm_id').on('select2:select', function(e) {
+            var data = e.params.data.id;
+            $('#hparentuser_id').val(data);
+            getProduk(data);
+            getUM(data);
         });
         $('#formUser').submit(function() {
             $('#roleuser_id').prop('disabled', false);
@@ -312,6 +405,38 @@
             });
             return true;
         });
+
+        function getSM(param) {
+            $.ajax({
+                type: 'POST',
+                url: "/cek/sm",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: param,
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                $('#hsm_id').val(data);
+                $('#sm_id').val(data).change();
+            });
+        }
+
+        function getUM(param) {
+            $.ajax({
+                type: 'POST',
+                url: "/cek/um",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: param,
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                $('#hum_id').val(data);
+                $('#um_id').val(data).change();
+            });
+        }
 
         function getProduk(param) {
             $.ajax({

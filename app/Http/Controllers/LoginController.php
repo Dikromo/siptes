@@ -23,7 +23,7 @@ class LoginController extends Controller
         $validateData['status'] = '1';
         if (Auth::attempt($validateData)) {
             $request->session()->regenerate();
-            if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5') {
+            if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5'  || auth()->user()->roleuser_id == '6') {
                 return redirect()->intended('/admin');
             } else {
                 return redirect()->intended('/call');

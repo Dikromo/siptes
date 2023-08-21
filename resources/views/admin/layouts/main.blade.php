@@ -17,6 +17,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
             @case(4)
             @case(5)
+
+            @case(6)
                 <!-- Navbar -->
                 @include('admin.layouts.navbar')
                 <!-- /.navbar -->
@@ -37,6 +39,8 @@ scratch. This page gets rid of all links and provides the needed markup only.
 
                 @case(4)
                 @case(5)
+
+                @case(6)
                     <div class="content-header">
                         <div class="container-fluid">
                             <div class="row mb-2">

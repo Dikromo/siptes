@@ -341,9 +341,11 @@
     <script>
         $('.select2').select2();
 
-        function check_form(param) {
-            $('#parentuser_id').val('').change();
-            $('#produk_id').val('').change();
+        function check_form(param, param1) {
+            if (param1 != 'awal') {
+                $('#parentuser_id').val('').change();
+                $('#produk_id').val('').change();
+            }
             if (param == '3') {
                 console.log('aaa');
                 $('#parentuser_id').prop('disabled', false);
@@ -374,13 +376,13 @@
             }
         }
         if ($('#roleuser_id').val() != '') {
-            check_form($('#roleuser_id').val());
+            check_form($('#roleuser_id').val(), 'awal');
         }
 
         $('#roleuser_id').on('select2:select', function(e) {
             var data = e.params.data.id;
 
-            check_form(data);
+            check_form(data, '');
         });
 
         $('#parentuser_id').on('select2:select', function(e) {

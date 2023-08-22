@@ -112,7 +112,6 @@ class UserController extends Controller
                 $umSelect = $umSelect->where('id', auth()->user()->id);
                 $roleSelect = $roleSelect->where('id', '<>', '1')
                     ->where('id', '<>', '4')
-                    ->where('id', '<>', '5')
                     ->where('id', '<>', '6');
             } else {
                 $roleSelect = $roleSelect->where('id', '<>', '1')

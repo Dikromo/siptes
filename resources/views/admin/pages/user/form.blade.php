@@ -120,6 +120,12 @@
                                 <input type="hidden" id="hparentuser_id" name="parentuser_id"
                                     class="form-control @error('parentuser_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('parentuser_id', auth()->user()->id) : old('parentuser_id', $data->parentuser_id) }}">
+                                <input type="hidden" id="hsm_id" name="sm_id"
+                                    class="form-control @error('sm_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('sm_id') : old('sm_id', $data->sm_id) }}">
+                                <input type="hidden" id="hum_id" name="um_id"
+                                    class="form-control @error('um_id') is-invalid @enderror"
+                                    value="{{ $data == '' ? old('um_id') : old('um_id', $data->um_id) }}">
                                 <input type="hidden" id="hproduk_id" name="produk_id"
                                     class="form-control @error('produk_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('produk_id', auth()->user()->produk_id) : old('produk_id', $data->produk_id) }}">

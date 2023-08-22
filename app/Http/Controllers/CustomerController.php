@@ -575,6 +575,8 @@ class CustomerController extends Controller
             $data = $data->where('sales.parentuser_id', auth()->user()->id);
         } else if (auth()->user()->roleuser_id == '5') {
             $data = $data->where('sales.sm_id', auth()->user()->id);
+        } else if (auth()->user()->roleuser_id == '6') {
+            $data = $data->where('sales.um_id', auth()->user()->id);
         }
         if (auth()->user()->roleuser_id != '1') {
             $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);

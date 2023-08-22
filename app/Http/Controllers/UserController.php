@@ -40,6 +40,7 @@ class UserController extends Controller
             case '4':
             case '6':
                 $data = $data->where('roleuser_id', '<>', '1')
+                    ->where('um_id', auth()->user()->id)
                     ->where('cabang_id', auth()->user()->cabang_id)
                     ->orderby('users.created_at', 'desc');
                 break;
@@ -98,6 +99,17 @@ class UserController extends Controller
             $smSelect = $smSelect->where('cabang_id', auth()->user()->cabang_id);
             $umSelect = $umSelect->where('cabang_id', auth()->user()->cabang_id);
             if (auth()->user()->roleuser_id == '5') {
+                $spvSelect = $spvSelect->where('sm_id', auth()->user()->id);
+                $smSelect = $smSelect->where('id', auth()->user()->id);
+                $umSelect = $umSelect->where('id', auth()->user()->um_id);
+                $roleSelect = $roleSelect->where('id', '<>', '1')
+                    ->where('id', '<>', '4')
+                    ->where('id', '<>', '5')
+                    ->where('id', '<>', '6');
+            } else if (auth()->user()->roleuser_id == '6') {
+                $spvSelect = $spvSelect->where('um_id', auth()->user()->id);
+                $smSelect = $smSelect->where('um_id', auth()->user()->id);
+                $umSelect = $umSelect->where('id', auth()->user()->id);
                 $roleSelect = $roleSelect->where('id', '<>', '1')
                     ->where('id', '<>', '4')
                     ->where('id', '<>', '5')

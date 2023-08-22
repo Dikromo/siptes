@@ -232,7 +232,7 @@
                     visible: false
                 }];
             } else {
-                sortPos = 6;
+                sortPos = 7;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -251,6 +251,9 @@
                 }, {
                     data: 'statustext',
                     name: 'statuscalls.nama as statustext'
+                }, {
+                    data: 'deskripsi',
+                    name: 'deskripsi'
                 }, {
                     data: 'call_time',
                     name: 'call_time'

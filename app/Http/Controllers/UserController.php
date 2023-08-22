@@ -273,7 +273,7 @@ class UserController extends Controller
             if ($request->roleuser_id == '2') {
                 $validateData['parentuser_id'] =  '0';
             }
-            if ($request->roleuser_id == '4' || $request->roleuser_id == '5') {
+            if ($request->roleuser_id == '4' || $request->roleuser_id == '5' || $request->roleuser_id == '6') {
                 $validateData['parentuser_id'] =  '0';
                 $validateData['produk_id'] =  '';
             }

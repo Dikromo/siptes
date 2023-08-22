@@ -122,10 +122,10 @@
                                     value="{{ $data == '' ? old('parentuser_id', auth()->user()->id) : old('parentuser_id', $data->parentuser_id) }}">
                                 <input type="hidden" id="hsm_id" name="sm_id"
                                     class="form-control @error('sm_id') is-invalid @enderror"
-                                    value="{{ $data == '' ? old('sm_id') : old('sm_id', $data->sm_id) }}">
+                                    value="{{ $data == '' ? old('sm_id', auth()->user()->sm_id) : old('sm_id', $data->sm_id) }}">
                                 <input type="hidden" id="hum_id" name="um_id"
                                     class="form-control @error('um_id') is-invalid @enderror"
-                                    value="{{ $data == '' ? old('um_id') : old('um_id', $data->um_id) }}">
+                                    value="{{ $data == '' ? old('um_id', auth()->user()->um_id) : old('um_id', $data->um_id) }}">
                                 <input type="hidden" id="hproduk_id" name="produk_id"
                                     class="form-control @error('produk_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('produk_id', auth()->user()->produk_id) : old('produk_id', $data->produk_id) }}">
@@ -137,15 +137,6 @@
                                 <input type="hidden" id="hparentuser_id" name="parentuser_id"
                                     class="form-control @error('parentuser_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('parentuser_id') : old('parentuser_id', $data->parentuser_id) }}">
-                                <input type="hidden" id="hsm_id" name="sm_id"
-                                    class="form-control @error('sm_id') is-invalid @enderror"
-                                    value="{{ $data == '' ? old('sm_id') : old('sm_id', $data->sm_id) }}">
-                                <input type="hidden" id="hum_id" name="um_id"
-                                    class="form-control @error('um_id') is-invalid @enderror"
-                                    value="{{ $data == '' ? old('um_id') : old('um_id', $data->um_id) }}">
-                                <input type="hidden" id="hproduk_id" name="produk_id"
-                                    class="form-control @error('produk_id') is-invalid @enderror"
-                                    value="{{ $data == '' ? old('produk_id') : old('produk_id', $data->produk_id) }}">
                                 <input type="hidden" id="hcabang_id" name="cabang_id"
                                     class="form-control @error('cabang_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('cabang_id', auth()->user()->cabang_id) : old('cabang_id', $data->cabang_id) }}">
@@ -352,12 +343,15 @@
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
     <script>
         $('.select2').select2();
+        var user_id = '{{ auth()->user()->id }}';
+        var roleuser_id = '{{ auth()->user()->roleuser_id }}';
 
         function check_form(param, param1) {
             if (param1 != 'awal') {
                 $('#parentuser_id').val('').change();
                 $('#produk_id').val('').change();
             }
+            console.log(param + 'aaa');
             if (param == '3') {
                 console.log('aaa');
                 $('#parentuser_id').prop('disabled', false);
@@ -369,13 +363,22 @@
                 $('#hproduk_id').val('');
                 $('#parentuser_id').prop('disabled', true);
                 $('#um_id').prop('disabled', true);
-                $('#sm_id').prop('disabled', false);
+
+                $('#sm_id').prop('disabled', true);
+                if (roleuser_id != '5') {
+                    $('#sm_id').prop('disabled', false);
+                } else {
+
+                    $('#hsm_id').val(user_id);
+                    $('#sm_id').val(user_id).change();
+                    getUM(user_id);
+                    $('#sm_id').prop('disabled', true);
+                }
                 $('#produk_id').prop('disabled', false);
             } else if (param == '5') {
                 $('#hparentuser_id').val('');
                 $('#hproduk_id').val('');
                 $('#parentuser_id').prop('disabled', true);
-                $('#sm_id').prop('disabled', true);
                 $('#um_id').prop('disabled', false);
                 $('#produk_id').prop('disabled', false);
             } else {
@@ -387,10 +390,11 @@
                 $('#produk_id').prop('disabled', true);
             }
         }
-        if ($('#roleuser_id').val() != '') {
-            check_form($('#roleuser_id').val(), 'awal');
+        if (roleuser_id != '2') {
+            if ($('#roleuser_id').val() != '') {
+                check_form($('#roleuser_id').val(), 'awal');
+            }
         }
-
         $('#roleuser_id').on('select2:select', function(e) {
             var data = e.params.data.id;
 
@@ -407,12 +411,15 @@
 
         $('#sm_id').on('select2:select', function(e) {
             var data = e.params.data.id;
-            $('#hparentuser_id').val(data);
+            $('#hsm_id').val(data);
             getProduk(data);
             getUM(data);
         });
         $('#formUser').submit(function() {
             $('#roleuser_id').prop('disabled', false);
+            $('#sm_id').prop('disabled', false);
+            $('#um_id').prop('disabled', false);
+            $('#produk_id').prop('disabled', false);
             $('#modal-overlay').modal({
                 backdrop: 'static',
                 keyboard: false

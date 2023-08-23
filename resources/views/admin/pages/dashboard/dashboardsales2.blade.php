@@ -127,13 +127,33 @@
                                     <th>Today Call</th>
                                     <th>Today Sisah Data</th>
                                     <th>Today Call Out</th>
+                                    <th>Today Prospek</th>
+                                    <th>Today closing</th>
                                     <th>Tanggal Data</th>
                                     <th>H-1 Data</th>
+                                    <th>H-1 Call</th>
+                                    <th>H-1 Call Out</th>
+                                    <th>H-1 Prospek</th>
+                                    <th>H-1 closing</th>
                                     <th>H-2 Data</th>
+                                    <th>H-2 Call</th>
+                                    <th>H-2 Call Out</th>
+                                    <th>H-2 Prospek</th>
+                                    <th>H-2 closing</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -271,6 +291,16 @@
                 visible: false,
                 searchable: false
             }, {
+                data: 'total_prospek_today',
+                name: 'total_prospek_today',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_closing_today',
+                name: 'total_closing_today',
+                visible: false,
+                searchable: false
+            }, {
                 data: null,
                 name: null,
                 render: {
@@ -287,6 +317,26 @@
                     display: "h2"
                 }
             }, {
+                data: 'total_call_2',
+                name: 'total_call_2',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_callout_2',
+                name: 'total_callout_2',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_prospek_2',
+                name: 'total_prospek_2',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_closing_2',
+                name: 'total_closing_2',
+                visible: false,
+                searchable: false
+            }, {
                 data: null,
                 name: null,
                 render: {
@@ -294,6 +344,26 @@
                     filter: "total_data_3",
                     display: "h3"
                 }
+            }, {
+                data: 'total_call_3',
+                name: 'total_call_3',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_callout_3',
+                name: 'total_callout_3',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_prospek_3',
+                name: 'total_prospek_3',
+                visible: false,
+                searchable: false
+            }, {
+                data: 'total_closing_3',
+                name: 'total_closing_3',
+                visible: false,
+                searchable: false
             }];
             var tables1 = new $('#dataTables').DataTable({
                 autoWidth: false,
@@ -331,9 +401,13 @@
                     let api = this.api();
                     let vLink = '';
                     let vLink1 = '';
+                    let vLinkprospek1 = '';
+                    let vLinkclosing1 = '';
                     if (typeof data[0] === "undefined") {} else {
                         vLink = data[0]['linkTotal'];
                         vLink1 = data[0]['linkTotal1'];
+                        vLinkprospek1 = data[0]['linkTotalprospek1'];
+                        vLinkclosing1 = data[0]['linkTotalclosing1'];
                     }
 
 
@@ -391,9 +465,72 @@
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalprospek = api
+                        .column(9, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalclosing = api
+                        .column(10, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
 
+
+                    gtotalCall2 = api
+                        .column(13, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalCallout2 = api
+                        .column(14, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalprospek2 = api
+                        .column(15, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalclosing2 = api
+                        .column(16, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+
+
+                    gtotalCall3 = api
+                        .column(18, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalCallout3 = api
+                        .column(19, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalprospek3 = api
+                        .column(20, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalclosing3 = api
+                        .column(21, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
                     // Update footer
-                    api.column(9).footer().innerHTML =
+                    api.column(11).footer().innerHTML =
                         gtotalDistribusi + ' (' +
                         gtotalSisahdatakemarin +
                         '</a> + ' +
@@ -401,7 +538,28 @@
                         ') <a href="' + vLink + '&search=' + sBox + '" target="_blank"> ' + gtotalCallhariini +
                         '</a> | ' + gtotalSisahdatahariini +
                         ' | <a href="' + vLink1 + '&search=' + sBox + '" target="_blank"> ' +
-                        gtotalCallouthariini + '</a>';
+                        gtotalCallouthariini + '</a>' +
+                        ' | <a href="' + vLinkprospek1 + '&search=' + sBox + '" target="_blank"> ' +
+                        gtotalprospek + '</a>' +
+                        ' | <a href="' + vLinkclosing1 + '&search=' + sBox + '" target="_blank"> ' +
+                        gtotalclosing + '</a>';
+
+                    api.column(12).footer().innerHTML =
+                        gtotalCall2 +
+                        ' | ' +
+                        gtotalCallout2 +
+                        ' | ' +
+                        gtotalprospek2 +
+                        ' | ' +
+                        gtotalclosing2;
+                    api.column(17).footer().innerHTML =
+                        gtotalCall3 +
+                        ' | ' +
+                        gtotalCallout3 +
+                        ' | ' +
+                        gtotalprospek3 +
+                        ' | ' +
+                        gtotalclosing3;
                 },
                 processing: false,
                 serverSide: false,

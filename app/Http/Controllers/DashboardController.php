@@ -204,7 +204,9 @@ class DashboardController extends Controller
             'users.id',
             'users.name',
             'parentuser.name as spvname',
+            'parentuser.nickname as spvnickname',
             'sm.name as smname',
+            'sm.nickname as smnickname',
             DB::raw('COUNT(distribusis.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
@@ -242,7 +244,11 @@ class DashboardController extends Controller
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
             ->leftjoin('users as sm', 'sm.id', '=', 'users.sm_id')
             ->where('users.status', '1')
-            ->where('users.roleuser_id', '3');
+            ->where('users.roleuser_id', '3')
+            ->where(function ($query) use ($cektoday) {
+                $query->whereNull('users.flag_hadir')
+                    ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
+            });;
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('users.parentuser_id', auth()->user()->id);
         } else if (auth()->user()->roleuser_id == '4') {
@@ -253,7 +259,7 @@ class DashboardController extends Controller
             $data = $data->where('users.um_id', auth()->user()->id);
         }
         $data = $data->orderby('users.parentuser_id', 'asc')
-            ->groupBy(DB::raw('1,2,3,4'));
+            ->groupBy(DB::raw('1,2,3,4,5,6'));
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('today', function ($data) use ($today) {
@@ -290,6 +296,8 @@ class DashboardController extends Controller
             })
             ->addColumn('linkTotal', '/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today))
             ->addColumn('linkTotal1', '/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today))
+            ->addColumn('linkTotalprospek1', '/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today))
+            ->addColumn('linkTotalclosing1', '/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today))
             ->addColumn('signalCek', '{{$total_call_today}}')
             ->addColumn('totData', '{{($total_nocall + $total_call_today)}}')
             ->addColumn('totSisah', '{{($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today}}')
@@ -300,25 +308,48 @@ class DashboardController extends Controller
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->editColumn('name', function ($data) use ($cektoday2, $runhour) {
                 $signalPercent = round((int)$data->total_call_today / (float)$runhour);
-                $signalBar = $data->name . '(' . $data->spvname . ')' . '(' . $data->smname . ')';
+                $signalBar = $data->name;
+                $signalBar .= $data->spvnickname == '' ? '(' . $data->spvname . ')' : '(' . $data->spvnickname . ')';
+                $signalBar .= $data->smnickname == '' ? '(' . $data->smname . ')' : '(' . $data->ssmnamepvname . ')';
                 if (date('l', strtotime($cektoday2)) != 'Sunday') {
                     if ($signalPercent >= '26') {
-                        $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
-                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
-                </div>
-                </div>';
+                        if ($signalPercent <= '34') {
+                            $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
+                            <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                        } else {
+                            $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
+                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                        }
                     }
                     if ($signalPercent >= '30') {
-                        $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
-                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
-                </div>
-                </div>';
+                        if ($signalPercent <= '34') {
+                            $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
+                            <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                        } else {
+                            $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
+                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                        }
                     }
                     if ($signalPercent >= '34') {
-                        $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
-                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
-                </div>
-                </div>';
+                        if ($signalPercent <= '34') {
+                            $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
+                            <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                        } else {
+                            $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
+                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                        }
                     }
                     if ($signalPercent >= '39') {
                         $signalBar .= '<div class="progress vertical" style="height:25px;width:5px;margin-left:1px;">

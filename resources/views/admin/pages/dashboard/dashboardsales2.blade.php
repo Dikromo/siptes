@@ -418,7 +418,8 @@
                     tr.removeClass('shown');
                 } else {
                     // Open this row
-                    if (roleuser_id == '1' || roleuser_id == '4' || (roleuser_id == '2' && cabang_id == '4')) {
+                    if (roleuser_id == '1' || roleuser_id == '4' || roleuser_id == '6' || (roleuser_id == '2' &&
+                            cabang_id == '4')) {
                         row.child(format(row.data())).show();
                         tr.addClass('shown');
                     }

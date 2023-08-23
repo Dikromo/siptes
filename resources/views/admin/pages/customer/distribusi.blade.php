@@ -222,12 +222,24 @@
                                     @foreach ($userData as $item)
                                         @if ($get != '')
                                             @if ($vUserid == $item->id)
-                                                <option value="{{ $item->id }}" selected>{{ $item->name }}</option>
+                                                <option value="{{ $item->id }}" selected>
+                                                    {{ $item->name }}
+                                                    {{ $item->nickname != null || $item->nickname != '' ? '(' . $item->nickname . ')' : '' }}
+                                                    {{ $item->spvnickname != null || $item->spvnickname != '' ? '(' . $item->spvnickname . ')' : '' }}
+                                                </option>
                                             @else
-                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                <option value="{{ $item->id }}">
+                                                    {{ $item->name }}
+                                                    {{ $item->nickname != null || $item->nickname != '' ? '(' . $item->nickname . ')' : '' }}
+                                                    {{ $item->spvnickname != null || $item->spvnickname != '' ? '(' . $item->spvnickname . ')' : '' }}
+                                                </option>
                                             @endif
                                         @else
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->name }}
+                                                {{ $item->nickname != null || $item->nickname != '' ? '(' . $item->nickname . ')' : '' }}
+                                                {{ $item->spvnickname != null || $item->spvnickname != '' ? '(' . $item->spvnickname . ')' : '' }}
+                                            </option>
                                         @endif
                                     @endforeach
                                 </select>

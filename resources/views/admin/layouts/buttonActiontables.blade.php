@@ -7,7 +7,7 @@
                     $view = true;
                     $edit = true;
                     $delete = true;
-        
+                    $aktif = true;
                     $slug = $data->username;
                     break;
         
@@ -15,12 +15,14 @@
                     $view = false;
                     $edit = true;
                     $delete = false;
+                    $aktif = false;
                     $slug = encrypt($data->id);
                     break;
                 case 'mutasi':
                     $view = false;
                     $edit = true;
                     $delete = false;
+                    $aktif = false;
                     $slug = encrypt($data->id);
                     break;
         
@@ -28,6 +30,7 @@
                     $view = false;
                     $edit = true;
                     $delete = false;
+                    $aktif = false;
                     $slug = encrypt($data->id);
                     break;
         
@@ -41,7 +44,7 @@
                     $view = false;
                     $edit = true;
                     $delete = false;
-        
+                    $aktif = true;
                     $slug = $data->username;
                     break;
         
@@ -49,12 +52,14 @@
                     $view = false;
                     $edit = true;
                     $delete = false;
+                    $aktif = false;
                     $slug = encrypt($data->id);
                     break;
                 case 'mutasi':
                     $view = false;
                     $edit = true;
                     $delete = false;
+                    $aktif = false;
                     $slug = encrypt($data->id);
                     break;
         
@@ -62,6 +67,7 @@
                     $view = false;
                     $edit = true;
                     $delete = false;
+                    $aktif = false;
                     $slug = encrypt($data->id);
                     break;
         
@@ -90,8 +96,25 @@
                 @method('delete')
                 @csrf
                 <input type="hidden" name="id" value="{{ encrypt($data->id) }}">
+                <input type="hidden" name="tipe" value="delete">
                 <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Apakah anda yakin?')">
                     <i class="fas fa-trash"></i> Delete
+                </button>
+            </form>
+        @endif
+        @if ($aktif)
+            <form action="/{{ $links }}" method="post" class="d-inline">
+                @method('delete')
+                @csrf
+                <input type="hidden" name="id" value="{{ encrypt($data->id) }}">
+                <input type="hidden" name="tipe" value="kehadiran">
+                <input type="hidden" name="flag" value="{{ $data->flag_hadir == date('Y-m-d') ? '0' : '1' }}">
+                <button type="submit"
+                    class="btn {{ $data->flag_hadir == date('Y-m-d') ? 'btn-success' : 'btn-danger' }} btn-sm"
+                    onclick="return confirm('Apakah anda yakin?')">
+                    {!! $data->flag_hadir == date('Y-m-d')
+                        ? '<i class="fas fa-user"></i> Hadir'
+                        : '<i class="fas fa-user-slash"></i> Tidak Hadir' !!}
                 </button>
             </form>
         @endif

@@ -31,31 +31,33 @@ class UserController extends Controller
         $data = User::select(
             'users.*',
             'roleusers.nama as roletext',
+            'spv.name as spvnama',
         )
-            ->join('roleusers', 'roleusers.id', '=', 'users.roleuser_id');
+            ->join('roleusers', 'roleusers.id', '=', 'users.roleuser_id')
+            ->leftjoin('users as spv', 'spv.id', '=', 'users.parentuser_id');
         switch (auth()->user()->roleuser_id) {
             case '1':
                 $data = $data->orderby('users.created_at', 'desc');
                 break;
             case '4':
             case '6':
-                $data = $data->where('roleuser_id', '<>', '1')
-                    ->where('um_id', auth()->user()->id)
-                    ->where('cabang_id', auth()->user()->cabang_id)
+                $data = $data->where('users.roleuser_id', '<>', '1')
+                    ->where('users.um_id', auth()->user()->id)
+                    ->where('users.cabang_id', auth()->user()->cabang_id)
                     ->orderby('users.created_at', 'desc');
                 break;
 
             case '5':
-                $data = $data->where('roleuser_id', '<>', '1')
-                    ->where('roleuser_id', '<>', '4')
-                    ->where('roleuser_id', '<>', '5')
-                    ->where('roleuser_id', '<>', '6')
-                    ->where('sm_id', auth()->user()->id)
+                $data = $data->where('users.roleuser_id', '<>', '1')
+                    ->where('users.roleuser_id', '<>', '4')
+                    ->where('users.roleuser_id', '<>', '5')
+                    ->where('users.roleuser_id', '<>', '6')
+                    ->where('users.sm_id', auth()->user()->id)
                     ->orderby('users.created_at', 'desc');
                 break;
             default:
-                $data = $data->where('roleuser_id', '3')
-                    ->where('parentuser_id', auth()->user()->id)
+                $data = $data->where('users.roleuser_id', '3')
+                    ->where('users.parentuser_id', auth()->user()->id)
                     ->orderby('users.created_at', 'desc');
                 break;
         }
@@ -186,14 +188,26 @@ class UserController extends Controller
     }
     public function userDestroy(Request $request)
     {
-        $upData = ['status' => '2'];
+        if ($request->tipe == 'delete') {
+            $upData = ['status' => '2'];
+        } else if ($request->tipe == 'kehadiran') {
+            if ($request->flag == '1') {
+                $upData = ['flag_hadir' => date("Y-m-d")];
+            } else {
+                $upData = ['flag_hadir' => null];
+            }
+        }
         $id = decrypt($request->id);
 
         //dd($upData);
         /** Update Call start time */
         User::where('id', $id)
             ->Update($upData);
-        Session::flash('success', 'Data Berhasil Dihapus!');
+        if ($request->tipe == 'delete') {
+            Session::flash('success', 'Data Berhasil Dihapus!');
+        } else if ($request->tipe == 'kehadiran') {
+            Session::flash('success', 'Data Berhasil Diupdate!');
+        }
         return redirect('/user');
     }
     public function userStore(Request $request, User $user)
@@ -281,6 +295,7 @@ class UserController extends Controller
             }
         }
         if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
+            $validateData['nickname'] =  $request->nickname;
             if ($request->roleuser_id == '2') {
                 $validateData['parentuser_id'] =  '0';
             }

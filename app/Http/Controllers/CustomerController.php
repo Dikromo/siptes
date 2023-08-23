@@ -73,37 +73,48 @@ class CustomerController extends Controller
     }
     public function customerDistribusi(Request $request)
     {
-        $userSelect = User::where('status', '1');
+        $hariini = date('Y-m-d');
+        // dd($hariini);
+        $userSelect = User::select(
+            'users.*',
+            'spv.nickname as spvnickname'
+        )
+            ->leftjoin('users as spv', 'spv.id', '=', 'users.parentuser_id')
+            ->where('users.status', '1')
+            ->where(function ($query) use ($hariini) {
+                $query->whereNull('users.flag_hadir')
+                    ->orWhereRaw('date(users.flag_hadir) <> "' . $hariini . '"');
+            });
         if (auth()->user()->roleuser_id == '2') {
-            $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
-                ->where('cabang_id', auth()->user()->cabang_id)
-                ->where('roleuser_id', '3');
+            $userSelect = $userSelect->where('users.parentuser_id', auth()->user()->id)
+                ->where('users.cabang_id', auth()->user()->cabang_id)
+                ->where('users.roleuser_id', '3');
         } else if (auth()->user()->roleuser_id == '5') {
-            $userSelect = $userSelect->where('sm_id', auth()->user()->id)
+            $userSelect = $userSelect->where('users.sm_id', auth()->user()->id)
                 ->where(function ($query) {
-                    $query->where('roleuser_id', '2')
-                        ->orWhere('roleuser_id', '3');
+                    $query->where('users.roleuser_id', '2')
+                        ->orWhere('users.roleuser_id', '3');
                 })
-                ->orderby('roleuser_id', 'asc');
+                ->orderby('users.roleuser_id', 'asc');
         } else if (auth()->user()->roleuser_id == '6') {
             if (auth()->user()->cabang_id == 4) {
-                $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
-                    ->where('roleuser_id', '3');
+                $userSelect = $userSelect->where('users.cabang_id', auth()->user()->cabang_id)
+                    ->where('users.roleuser_id', '3');
             } else {
-                $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
+                $userSelect = $userSelect->where('users.cabang_id', auth()->user()->cabang_id)
                     ->where(function ($query) {
-                        $query->where('roleuser_id', '2')
-                            ->orWhere('roleuser_id', '3');
+                        $query->where('users.users.roleuser_id', '2')
+                            ->orWhere('users.users.roleuser_id', '3');
                     })
-                    ->orderby('roleuser_id', 'asc');
+                    ->orderby('users.roleuser_id', 'asc');
             }
         } else {
             $userSelect = $userSelect->where(function ($query) {
-                $query->where('roleuser_id', '2')
-                    ->orWhere('roleuser_id', '3');
+                $query->where('users.roleuser_id', '2')
+                    ->orWhere('users.roleuser_id', '3');
             })
-                ->orderby('cabang_id', 'asc')
-                ->orderby('roleuser_id', 'asc');
+                ->orderby('users.cabang_id', 'asc')
+                ->orderby('users.roleuser_id', 'asc');
         }
 
         $produkSelect = Produk::where('status', '1')
@@ -569,6 +580,12 @@ class CustomerController extends Controller
             }
             if ($paramStatus == '1') {
                 $data = $data->where('statuscalls.jenis', $paramStatus);
+            }
+            if ($paramStatus == '2') {
+                $data = $data->whereIn('distribusis.status', ['1', '15']);
+            }
+            if ($paramStatus == '3') {
+                $data = $data->whereIn('distribusis.status', ['2', '34']);
             }
         }
         if (auth()->user()->roleuser_id == '2') {

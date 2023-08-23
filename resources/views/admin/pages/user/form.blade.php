@@ -66,6 +66,17 @@
                                     <span id="username" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+                            @if (auth()->user()->roleuser_id != '2')
+                                <div class="form-group">
+                                    <label for="nickname">Kode</label>
+                                    <input type="text" id="nickname" name="nickname"
+                                        class="form-control @error('nickname') is-invalid @enderror"
+                                        value="{{ $data == '' ? old('nickname') : old('nickname', $data->nickname) }}">
+                                    @error('nickname')
+                                        <span id="nickname" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endif
                             <div class="form-group">
                                 <label for="password">password</label>
                                 <input type="password" id="password" name="password"

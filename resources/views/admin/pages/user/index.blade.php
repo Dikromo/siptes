@@ -41,6 +41,7 @@
                                     <th>Nama</th>
                                     <th>Username</th>
                                     <th>Role</th>
+                                    <th>Supervisor</th>
                                     <th>Status</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
@@ -116,6 +117,9 @@
             }, {
                 data: 'roletext',
                 name: 'roleusers.nama'
+            }, {
+                data: 'spvnama',
+                name: 'spv.name'
             }, {
                 data: 'statusText',
                 name: 'statusText'

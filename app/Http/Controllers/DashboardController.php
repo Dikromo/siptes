@@ -317,7 +317,7 @@ class DashboardController extends Controller
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->editColumn('name', function ($data) use ($cektoday2, $runhour) {
                 $signalPercent = round((int)$data->total_call_today / (float)$runhour);
-                $signalBar  = $data->roleuser_id == '2' ? '*' . $data->name : $data->name;
+                $signalBar  = $data->roleuser_id == '2' ? '<i class="fas fa-star" style="color: #e7af13;"></i>' . $data->name : $data->name;
                 $signalBar .= $data->spvnickname == '' ? '(' . $data->spvname . ')' : '(' . $data->spvnickname . ')';
                 $signalBar .= $data->smnickname == '' ? '(' . $data->smname . ')' : '(' . $data->ssmnamepvname . ')';
                 if (date('l', strtotime($cektoday2)) != 'Sunday') {

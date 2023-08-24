@@ -185,8 +185,13 @@ class DashboardController extends Controller
                     $runhour = '7';
                 } else {
                     if ($jarak->h <= '12') {
-                        $runhour = ((int) $jarak->h + 1 - 10) * 60;
-                        $runhour = ($runhour + (int) $jarak->i) / 60;
+                        if ($jarak->h == '12') {
+                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                            $runhour = ($runhour) / 60;
+                        } else {
+                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                            $runhour = ($runhour + (int) $jarak->i) / 60;
+                        }
                     } else {
                         $runhour = ((int) $jarak->h - 10) * 60;
                         $runhour = ($runhour + (int) $jarak->i) / 60;
@@ -203,7 +208,7 @@ class DashboardController extends Controller
         $data = User::select(
             'users.id',
             'users.name',
-            'parentuser.name as spvname',
+            DB::raw('IF(parentuser.name is not null, parentuser.name, users.name) as spvname'),
             'parentuser.nickname as spvnickname',
             'sm.name as smname',
             'sm.nickname as smnickname',
@@ -233,7 +238,7 @@ class DashboardController extends Controller
             DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_closing_3'),
             DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_prospek_3'),
         )
-            ->join('distribusis', function ($join) use ($today, $today2, $today3) {
+            ->leftjoin('distribusis', function ($join) use ($today, $today2, $today3) {
                 $join->on('distribusis.user_id', '=', 'users.id');
                 // ->where(function ($query)  use ($today, $today2, $today3) {
                 //     $query->whereDate('distribusis.distribusi_at', '>=', $today3)
@@ -244,7 +249,10 @@ class DashboardController extends Controller
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
             ->leftjoin('users as sm', 'sm.id', '=', 'users.sm_id')
             ->where('users.status', '1')
-            ->where('users.roleuser_id', '3')
+            ->where(function ($query) {
+                $query->where('users.roleuser_id', '2')
+                    ->orWhere('users.roleuser_id', '3');
+            })
             ->where(function ($query) use ($cektoday) {
                 $query->whereNull('users.flag_hadir')
                     ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');

@@ -50,6 +50,8 @@ Route::get('/customer/cekdbr', [CustomerController::class, 'viewCekdbr'])->middl
 Route::post('/customer/ajax/cekdbr', [CustomerController::class, 'cekDbr'])->middleware('auth');
 Route::get('/customer/callhistory', [CustomerController::class, 'viewCallhistory'])->middleware('auth');
 Route::post('/customer/ajax/callhistory', [CustomerController::class, 'callhistory'])->middleware('auth');
+Route::post('/customer/callhistory/detail', [CustomerController::class, 'callhistoryEdit'])->middleware('auth');
+Route::put('/customer/callhistory/{callhistoryid}', [CustomerController::class, 'callhistoryStoremodal'])->middleware('auth');
 Route::get('/customer/logdistribusi', [CustomerController::class, 'viewlogDistribusi'])->middleware('auth');
 Route::post('/customer/ajax/logdistribusi', [CustomerController::class, 'logDistribusi'])->middleware('auth');
 

@@ -7,17 +7,18 @@ use App\Models\Produk;
 use App\Models\Customer;
 use App\Models\Fileexcel;
 use App\Models\Distribusi;
+use App\Models\Statuscall;
 use Illuminate\Http\Request;
+use App\Models\Log_distribusi;
 use App\Imports\CustomerImport;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Validation\Rules\File;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
-use App\Models\Log_distribusi;
-use Illuminate\Support\Facades\Auth;
 
 class CustomerController extends Controller
 {
@@ -546,6 +547,9 @@ class CustomerController extends Controller
         } else {
             $userSelect = $userSelect->where('roleuser_id', '3');
         }
+        $statusSelect = Statuscall::where('status', '1')
+            ->where('jenis', '1')
+            ->whereIn('id', ['2', '3']);
         return view('admin.pages.customer.callhistory', [
             'title' => 'Call History',
             'active' => 'callhistory',
@@ -553,6 +557,7 @@ class CustomerController extends Controller
             "data" => '',
             "get" => isset($request) ? $request : '',
             "userSelect" => $userSelect->get(),
+            "statusSelect" => $statusSelect->get(),
             //"category" => User::all(),
         ]);
     }
@@ -566,14 +571,18 @@ class CustomerController extends Controller
             'customers.provider as provider',
             'sales.name as salesnama',
             'parentuser.name as spvnama',
+            'parentuser.name as spvnama',
             DB::raw('CONCAT(sales.name," (",parentuser.name,") ") AS csalesnama'),
             'statuscalls.nama as statustext',
+            'subproduks.nama as subproduktext',
             'fileexcels.kode as kode',
             DB::raw('timediff(distribusis.updated_at,distribusis.call_time) as selisih')
         )
             ->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
             ->join('users as parentuser', 'parentuser.id', '=', 'sales.parentuser_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->leftjoin('produks', 'produks.id', '=', 'distribusis.produk_id')
+            ->leftjoin('subproduks', 'subproduks.id', '=', 'distribusis.subproduk_id')
             ->leftjoin('customers', 'customers.id', '=', 'distribusis.customer_id')
             ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
             ->where('distribusis.status', '<>', '0');
@@ -610,7 +619,45 @@ class CustomerController extends Controller
             ->addIndexColumn()
             ->editColumn('no_telp', '\'{{{substr($no_telp,-4)}}}')
             ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
+            ->addColumn('action', function ($data) {
+                if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
+                    return view('admin.layouts.buttonActiontables')
+                        ->with(['data' => $data, 'links' => 'modalEdit(\'' . encrypt($data->id) . '\')', 'type' => 'onclick']);
+                } else {
+                    return '';
+                }
+            })
             ->make(true);
+    }
+    public function callhistoryEdit(Request $request)
+    {
+        $id = decrypt($request->id);
+        $data = Distribusi::select(
+            'distribusis.id',
+            'distribusis.status',
+            DB::raw('date_format(updated_at, "%Y-%m-%d %H:%i:%s") as editgl'),
+        )
+            ->firstWhere('id', $id);
+        return $data;
+    }
+    public function callhistoryStoremodal(Request $request, Distribusi $distribusi)
+    {
+        $result = '';
+        $checkdata = ['id' => $distribusi->id];
+
+        $validateData = [
+            'status'        => $request->jenis,
+            'updated_at'    => $request->tanggal,
+        ];
+
+        if (isset($distribusi->id)) {
+            Distribusi::updateOrInsert($checkdata, $validateData);
+            $result = 'Data Berhasil di Update!';
+        } else {
+            $result = 'Data Berhasil di ditambahkan!';
+        }
+
+        return json_encode($result);
     }
     /**
      * Show the form for creating a new resource.

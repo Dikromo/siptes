@@ -33,6 +33,13 @@
                     $aktif = false;
                     $slug = encrypt($data->id);
                     break;
+                case 'callhistory':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $aktif = false;
+                    $slug = encrypt($data->id);
+                    break;
         
                 default:
                     $slug = '';
@@ -64,6 +71,13 @@
                     break;
         
                 case 'statuscall':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $aktif = false;
+                    $slug = encrypt($data->id);
+                    break;
+                case 'callhistory':
                     $view = false;
                     $edit = true;
                     $delete = false;

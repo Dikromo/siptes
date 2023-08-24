@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-bs4/css/dataTables.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
+    {{-- <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-rowgroup/css/rowGroup.bootstrap4.min.css') }}"> --}}
 
     <div class="container-fluid">
         <div class="row">
@@ -121,6 +122,7 @@
                                     <th></th>
                                     <th>NO</th>
                                     <th>Nama</th>
+                                    <th>supervisor</th>
                                     <th>Distribusi</th>
                                     <th>Sisah Data</th>
                                     <th>Total Data</th>
@@ -166,6 +168,7 @@
                                     <th></th>
                                     <th></th>
                                     <th></th>
+                                    <th></th>
                                 </tr>
                             </tfoot>
                         </table>
@@ -179,6 +182,7 @@
 @endsection
 @section('addScript')
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
+    {{-- <script src="{{ asset('adminlte/plugins/datatables-rowgroup/js/dataTables.rowGroup.min.js') }}"></script> --}}
     <script src="{{ asset('adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
@@ -213,37 +217,37 @@
             switch ($('#tipe').val()) {
                 case 'Total Data':
                     paramSort = [
-                        [3, 'desc']
+                        [4, 'desc']
                     ]
                     break;
                 case 'Sisah Data Sebelumnya':
                     paramSort = [
-                        [4, 'desc']
+                        [5, 'desc']
                     ]
                     break;
                 case 'Distribusi Hari Ini':
                     paramSort = [
-                        [5, 'desc']
+                        [6, 'desc']
                     ]
                     break;
                 case 'Sudah di Telepon':
                     paramSort = [
-                        [6, 'desc']
+                        [7, 'desc']
                     ]
                     break;
                 case 'Sisah Data':
                     paramSort = [
-                        [7, 'desc']
+                        [8, 'desc']
                     ]
                     break;
                 case 'Telepon Di Angkat':
                     paramSort = [
-                        [8, 'desc']
+                        [9, 'desc']
                     ]
                     break;
                 default:
                     paramSort = [
-                        [1, 'asc']
+                        [3, 'asc']
                     ]
                     break;
             }
@@ -260,6 +264,9 @@
             }, {
                 data: 'name',
                 name: 'name'
+            }, {
+                data: 'spvname',
+                name: 'parentuser.name as spvname'
             }, {
                 data: 'totData',
                 name: 'totData',
@@ -424,55 +431,55 @@
 
                     // Total over all pages
                     total = api
-                        .column(4)
+                        .column(5)
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
 
                     // Total over this page
                     gtotalDistribusi = api
-                        .column(3, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalSisahdatakemarin = api
                         .column(4, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalDishariini = api
+                    gtotalSisahdatakemarin = api
                         .column(5, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallhariini = api
+                    gtotalDishariini = api
                         .column(6, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalSisahdatahariini = api
+                    gtotalCallhariini = api
                         .column(7, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallouthariini = api
+                    gtotalSisahdatahariini = api
                         .column(8, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalprospek = api
+                    gtotalCallouthariini = api
                         .column(9, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalclosing = api
+                    gtotalprospek = api
                         .column(10, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalclosing = api
+                        .column(11, {
                             page: 'current'
                         })
                         .data()
@@ -480,25 +487,25 @@
 
 
                     gtotalCall2 = api
-                        .column(13, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallout2 = api
                         .column(14, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalprospek2 = api
+                    gtotalCallout2 = api
                         .column(15, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalclosing2 = api
+                    gtotalprospek2 = api
                         .column(16, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalclosing2 = api
+                        .column(17, {
                             page: 'current'
                         })
                         .data()
@@ -506,31 +513,31 @@
 
 
                     gtotalCall3 = api
-                        .column(18, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallout3 = api
                         .column(19, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalprospek3 = api
+                    gtotalCallout3 = api
                         .column(20, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalclosing3 = api
+                    gtotalprospek3 = api
                         .column(21, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalclosing3 = api
+                        .column(22, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
                     // Update footer
-                    api.column(11).footer().innerHTML =
+                    api.column(12).footer().innerHTML =
                         gtotalDistribusi + ' (' +
                         gtotalSisahdatakemarin +
                         '</a> + ' +
@@ -544,7 +551,7 @@
                         ' | <a href="' + vLinkclosing1 + '&search=' + sBox + '" target="_blank"> ' +
                         gtotalclosing + '</a>';
 
-                    api.column(12).footer().innerHTML =
+                    api.column(13).footer().innerHTML =
                         gtotalCall2 +
                         ' | ' +
                         gtotalCallout2 +
@@ -552,7 +559,7 @@
                         gtotalprospek2 +
                         ' | ' +
                         gtotalclosing2;
-                    api.column(17).footer().innerHTML =
+                    api.column(18).footer().innerHTML =
                         gtotalCall3 +
                         ' | ' +
                         gtotalCallout3 +
@@ -563,7 +570,7 @@
                 },
                 processing: false,
                 serverSide: false,
-                order: paramSort
+                order: paramSort,
             });
 
             tables1.on('click', 'td.dt-control', function() {

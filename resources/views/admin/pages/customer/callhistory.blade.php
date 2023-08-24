@@ -97,6 +97,9 @@
                                     @endif
                                     <th>Provider</th>
                                     <th>Status</th>
+                                    @if (auth()->user()->cabang_id == '4' || auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
+                                        <th>Subproduk</th>
+                                    @endif
                                     <th>Deskripsi</th>
                                     <th>Start Call</th>
                                     <th>End Call</th>
@@ -146,6 +149,47 @@
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->
+
+    <div class="modal fade" id="modalAdd">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Call History</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="jenis">Jenis</label>
+                        <select name="jenis" class="form-control select2 @error('jenis') is-invalid @enderror  "
+                            id="jenis" style="width: 100%">
+                            <option value="">-- Pilih --</option>
+                            @foreach ($statusSelect as $item)
+                                <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                            @endforeach
+                        </select>
+                        @error('jenis')
+                            <span id="jenis" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="tanggal">Tanggal</label>
+                        <input type="datetime-local" step="1" id="tanggal" name="tanggal"
+                            class="form-control @error('tanggal') is-invalid @enderror"
+                            value="{{ $data == '' ? old('tanggal') : old('tanggal', $data->tanggal) }}">
+                        @error('tanggal')
+                            <span id="tanggal" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEditcallhistory();">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('addScript')
     <script src="{{ asset('adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
@@ -162,6 +206,8 @@
     <script type="text/javascript">
         $('.select2').select2()
         // $(document).ready(function() {
+        var linkid = "";
+        var tipe = "";
         var fromTanggal = $('#fromTanggal').val();
         var toTanggal = $('#toTanggal').val();
         var hari = "<?php echo date('Y-m-d'); ?>";
@@ -171,6 +217,67 @@
         var searchHistory = "<?php echo $get->search; ?>";
 
         renderTable(fromTanggal, toTanggal);
+
+
+        function modalEdit(param) {
+            linkid = '';
+            tipe = '';
+            $('#jenis').val('').change();
+            $('#tanggal').val('');
+            if (param != '') {
+                $.ajax({
+                    type: 'POST',
+                    url: "/customer/callhistory/detail",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: param,
+                    },
+                    dataType: "json",
+                    encode: true,
+                }).done(function(data) {
+                    tipe = param == '' ? 'POST' : 'PUT';
+                    linkid = param == '' ? '' : '/' + param;
+                    if (data.status == '2' || data.status == '3') {
+                        $('#jenis').val(data.status).change();
+                    }
+                    $('#tanggal').val(data.editgl);
+                });
+            } else {
+                tipe = param == '' ? 'POST' : 'PUT';
+                linkid = param == '' ? '' : '/' + param;
+            }
+            $('#modalAdd').modal({
+                backdrop: 'static',
+            });
+        }
+
+        function saveEditcallhistory() {
+            $.ajax({
+                type: tipe,
+                url: "/customer/callhistory" + linkid,
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    jenis: $('#jenis').val(),
+                    tanggal: $('#tanggal').val(),
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                $('#modalAdd').modal('hide');
+                toastAlert(data);
+                renderTable($('#fromTanggal').val(), $('#toTanggal').val());
+                $('#jenis').val('').change();
+                $('#tanggal').val('');
+            });
+        }
+
+        function toastAlert(param) {
+            $(document).Toasts('create', {
+                class: 'bg-success',
+                title: 'Berhasil',
+                body: param
+            })
+        }
 
         function proses() {
             $("#dataTables").DataTable().off('click');
@@ -184,7 +291,7 @@
 
         function renderTable(param1, param2) {
             if (cabangs == '4' || roleuser_id == '1' || roleuser_id == '4') {
-                sortPos = 8;
+                sortPos = 9;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -210,6 +317,9 @@
                     data: 'statustext',
                     name: 'statuscalls.nama as statustext'
                 }, {
+                    data: 'subproduktext',
+                    name: 'subproduks.nama as subproduktext',
+                }, {
                     data: 'deskripsi',
                     name: 'deskripsi'
                 }, {
@@ -230,6 +340,11 @@
                     data: 'spvnama',
                     name: 'parentuser.name as spvnama',
                     visible: false
+                }, {
+                    data: 'action',
+                    name: 'action',
+                    searchable: false,
+                    orderable: false
                 }];
             } else {
                 sortPos = 7;
@@ -272,6 +387,11 @@
                     data: 'spvnama',
                     name: 'parentuser.name as spvnama',
                     visible: false
+                }, {
+                    data: 'action',
+                    name: 'action',
+                    searchable: false,
+                    orderable: false
                 }];
             }
             if (paramHistory != '') {

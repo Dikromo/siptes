@@ -291,7 +291,7 @@
 
         function renderTable(param1, param2) {
             if (cabangs == '4' || roleuser_id == '1' || roleuser_id == '4') {
-                sortPos = 9;
+                sortPos = 10;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',

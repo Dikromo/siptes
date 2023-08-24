@@ -646,6 +646,7 @@ class CustomerController extends Controller
     public function callhistoryEdit(Request $request)
     {
         $id = decrypt($request->id);
+        $validateData = [];
         $data = Distribusi::select(
             'distribusis.id',
             'distribusis.status',
@@ -659,11 +660,12 @@ class CustomerController extends Controller
         $result = '';
         $checkdata = ['id' => $distribusi->id];
 
-        $validateData = [
-            'status'        => $request->jenis,
-            'updated_at'    => $request->tanggal,
-        ];
-
+        if ($request->jenis != '') {
+            $validateData['status'] = $request->jenis;
+        }
+        if ($request->tanggal != '') {
+            $validateData['updated_at'] = $request->tanggal;
+        }
         if (isset($distribusi->id)) {
             Distribusi::updateOrInsert($checkdata, $validateData);
             $result = 'Data Berhasil di Update!';

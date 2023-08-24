@@ -99,12 +99,13 @@ class CustomerController extends Controller
         } else if (auth()->user()->roleuser_id == '6') {
             if (auth()->user()->cabang_id == 4) {
                 $userSelect = $userSelect->where('users.cabang_id', auth()->user()->cabang_id)
-                    ->where('users.roleuser_id', '3');
+                    ->where('users.roleuser_id', '2')
+                    ->orWhere('users.roleuser_id', '3');
             } else {
                 $userSelect = $userSelect->where('users.cabang_id', auth()->user()->cabang_id)
                     ->where(function ($query) {
-                        $query->where('users.users.roleuser_id', '2')
-                            ->orWhere('users.users.roleuser_id', '3');
+                        $query->where('users.roleuser_id', '2')
+                            ->orWhere('users.roleuser_id', '3');
                     })
                     ->orderby('users.roleuser_id', 'asc');
             }

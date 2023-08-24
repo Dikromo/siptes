@@ -446,6 +446,9 @@
                 serverSide: true
             }).buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');
         }
+        $('#dataTables').on('search.dt', function() {
+            searchHistory = $('.dataTables_filter input').val(); // <-- the value
+        });
         // })
     </script>
 @endsection

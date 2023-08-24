@@ -446,8 +446,7 @@ class DashboardController extends Controller
                     });
             })
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
-            ->join('users', 'users.id', '=', 'distribusis.user_id')
-            ->where('users.roleuser_id', '3');
+            ->join('users', 'users.id', '=', 'distribusis.user_id');
 
         $data = $data->orderby('fileexcels.id', 'desc')
             ->groupBy(DB::raw('1,2'));

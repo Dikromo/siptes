@@ -537,15 +537,28 @@ class CustomerController extends Controller
         $userSelect = User::where('status', '1');
         if (auth()->user()->roleuser_id == '2') {
             $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
-                ->where('roleuser_id', '3');
+                ->where(function ($query) {
+                    $query->where('roleuser_id', '2')
+                        ->orWhere('roleuser_id', '3');
+                });
         } else if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '6') {
             $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
-                ->Where('roleuser_id', '3');
+                ->where(function ($query) {
+                    $query->where('roleuser_id', '2')
+                        ->orWhere('roleuser_id', '3');
+                });
         } else if (auth()->user()->roleuser_id == '5') {
             $userSelect = $userSelect->where('sm_id', auth()->user()->id)
-                ->where('roleuser_id', '3');
+                ->where(function ($query) {
+                    $query->where('roleuser_id', '2')
+                        ->orWhere('roleuser_id', '3');
+                });
         } else {
-            $userSelect = $userSelect->where('roleuser_id', '3');
+            $userSelect = $userSelect
+                ->where(function ($query) {
+                    $query->where('roleuser_id', '2')
+                        ->orWhere('roleuser_id', '3');
+                });
         }
         $statusSelect = Statuscall::where('status', '1')
             ->where('jenis', '1')
@@ -579,7 +592,7 @@ class CustomerController extends Controller
             DB::raw('timediff(distribusis.updated_at,distribusis.call_time) as selisih')
         )
             ->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
-            ->join('users as parentuser', 'parentuser.id', '=', 'sales.parentuser_id')
+            ->leftjoin('users as parentuser', 'parentuser.id', '=', 'sales.parentuser_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->leftjoin('produks', 'produks.id', '=', 'distribusis.produk_id')
             ->leftjoin('subproduks', 'subproduks.id', '=', 'distribusis.subproduk_id')

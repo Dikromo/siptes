@@ -90,15 +90,18 @@
                             auth()->user()->roleuser_id == '2' ||
                             auth()->user()->roleuser_id == '5' ||
                             auth()->user()->roleuser_id == '6')
-                        <li class="nav-item">
-                            <a href="/customer/import" class="nav-link {{ $active === 'customer' ? 'active' : '' }}">
-                                <i class="nav-icon fas fa-database"></i>
-                                <p>
-                                    Import Customer
-                                    <!--span class="right badge badge-danger">New</span-->
-                                </p>
-                            </a>
-                        </li>
+                        @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6')
+                            <li class="nav-item">
+                                <a href="/customer/import"
+                                    class="nav-link {{ $active === 'customer' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-database"></i>
+                                    <p>
+                                        Import Customer
+                                        <!--span class="right badge badge-danger">New</span-->
+                                    </p>
+                                </a>
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <a href="/customer/distribusi"
                                 class="nav-link {{ $active === 'distribusi' ? 'active' : '' }}">

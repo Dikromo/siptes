@@ -266,7 +266,8 @@
                 name: 'name'
             }, {
                 data: 'spvname',
-                name: 'parentuser.name as spvname'
+                name: 'parentuser.name as spvname',
+                visible: false,
             }, {
                 data: 'totData',
                 name: 'totData',

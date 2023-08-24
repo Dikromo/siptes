@@ -212,6 +212,7 @@ class DashboardController extends Controller
             'parentuser.nickname as spvnickname',
             'sm.name as smname',
             'sm.nickname as smnickname',
+            'users.roleuser_id',
             DB::raw('COUNT(distribusis.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
@@ -267,7 +268,7 @@ class DashboardController extends Controller
             $data = $data->where('users.um_id', auth()->user()->id);
         }
         $data = $data->orderby('users.parentuser_id', 'asc')
-            ->groupBy(DB::raw('1,2,3,4,5,6'));
+            ->groupBy(DB::raw('1,2,3,4,5,6,7'));
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('today', function ($data) use ($today) {
@@ -316,7 +317,7 @@ class DashboardController extends Controller
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->editColumn('name', function ($data) use ($cektoday2, $runhour) {
                 $signalPercent = round((int)$data->total_call_today / (float)$runhour);
-                $signalBar = $data->name;
+                $signalBar  = $data->roleuser_id == '2' ? '*' . $data->name : $data->name;
                 $signalBar .= $data->spvnickname == '' ? '(' . $data->spvname . ')' : '(' . $data->spvnickname . ')';
                 $signalBar .= $data->smnickname == '' ? '(' . $data->smname . ')' : '(' . $data->ssmnamepvname . ')';
                 if (date('l', strtotime($cektoday2)) != 'Sunday') {

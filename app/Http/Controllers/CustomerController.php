@@ -632,6 +632,7 @@ class CustomerController extends Controller
             ->addIndexColumn()
             ->editColumn('no_telp', '\'{{{substr($no_telp,-4)}}}')
             ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
+            ->editColumn('csalesnama', '{{{$csalesnama == null ? $salesnama : $csalesnama;}}}')
             ->addColumn('action', function ($data) {
                 if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
                     return view('admin.layouts.buttonActiontables')

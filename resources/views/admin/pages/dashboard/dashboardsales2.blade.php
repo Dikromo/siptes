@@ -269,7 +269,8 @@
                 name: 'name'
             }, {
                 data: 'smname',
-                name: 'sm.name as smname'
+                name: 'sm.name as smname',
+                visible: false,
             }, {
                 data: 'spvname',
                 name: 'parentuser.name as spvname',

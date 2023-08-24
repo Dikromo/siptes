@@ -74,7 +74,7 @@ class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsOnFa
         }
         return new Customer([
             //
-            'nama'          => $row['nama'],
+            'nama'          => trim($row['nama']),
             'no_telp'       => $row['no_telp'],
             'perusahaan'    => $row['perusahaan'] == null ? '' : $row['perusahaan'],
             'kota'          => $row['kota'] == null ? '' : $row['kota'],

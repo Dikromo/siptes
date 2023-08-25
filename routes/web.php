@@ -1,15 +1,16 @@
 <?php
 
-use App\Http\Controllers\CallpagesController;
-use App\Http\Controllers\CustomerController;
-use App\Http\Controllers\DashboardController;
-use App\Http\Controllers\JmoController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\JmoController;
+use App\Http\Controllers\UserController;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\MutasiController;
 use App\Http\Controllers\SelectController;
+use App\Http\Controllers\CampaignController;
+use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\CallpagesController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\StatuscallController;
-use App\Http\Controllers\UserController;
 
 /*
 |--------------------------------------------------------------------------
@@ -54,6 +55,9 @@ Route::post('/customer/callhistory/detail', [CustomerController::class, 'callhis
 Route::put('/customer/callhistory/{callhistoryid}', [CustomerController::class, 'callhistoryStoremodal'])->middleware('auth');
 Route::get('/customer/logdistribusi', [CustomerController::class, 'viewlogDistribusi'])->middleware('auth');
 Route::post('/customer/ajax/logdistribusi', [CustomerController::class, 'logDistribusi'])->middleware('auth');
+
+Route::get('/campaign', [CampaignController::class, 'index'])->middleware('auth');
+Route::post('/campaign/ajax', [CampaignController::class, 'dataTables'])->middleware('auth');
 
 Route::get('/call', [CallpagesController::class, 'salesCallpages'])->middleware('auth');
 Route::get('/call/detail/{id}', [CallpagesController::class, 'salesCallshow'])->middleware('auth');

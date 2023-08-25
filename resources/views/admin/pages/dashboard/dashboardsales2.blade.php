@@ -219,32 +219,32 @@
             switch ($('#tipe').val()) {
                 case 'Total Data':
                     paramSort = [
-                        [6, 'desc']
+                        [7, 'desc']
                     ]
                     break;
                 case 'Sisah Data Sebelumnya':
                     paramSort = [
-                        [7, 'desc']
+                        [6, 'desc']
                     ]
                     break;
                 case 'Distribusi Hari Ini':
                     paramSort = [
-                        [8, 'desc']
+                        [5, 'desc']
                     ]
                     break;
                 case 'Sudah di Telepon':
                     paramSort = [
-                        [9, 'desc']
+                        [8, 'desc']
                     ]
                     break;
                 case 'Sisah Data':
                     paramSort = [
-                        [10, 'desc']
+                        [9, 'desc']
                     ]
                     break;
                 case 'Telepon Di Angkat':
                     paramSort = [
-                        [11, 'desc']
+                        [10, 'desc']
                     ]
                     break;
                 default:

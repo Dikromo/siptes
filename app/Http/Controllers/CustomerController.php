@@ -113,11 +113,7 @@ class CustomerController extends Controller
                     ->orderby('users.roleuser_id', 'asc');
             }
         } else {
-            $userSelect = $userSelect->where(function ($query) {
-                $query->where('users.roleuser_id', '2')
-                    ->orWhere('users.roleuser_id', '3');
-            })
-                ->orderby('users.cabang_id', 'asc')
+            $userSelect = $userSelect->orderby('users.cabang_id', 'asc')
                 ->orderby('users.roleuser_id', 'asc');
         }
 

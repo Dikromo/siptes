@@ -250,6 +250,7 @@ class DashboardController extends Controller
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
             ->leftjoin('users as sm', 'sm.id', '=', 'users.sm_id')
             ->where('users.status', '1')
+            ->whereDate('distribusis.distribusi_at', '<=', $today)
             ->where(function ($query) {
                 $query->where('users.roleuser_id', '2')
                     ->orWhere('users.roleuser_id', '3');
@@ -257,7 +258,7 @@ class DashboardController extends Controller
             ->where(function ($query) use ($cektoday) {
                 $query->whereNull('users.flag_hadir')
                     ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
-            });;
+            });
         if (auth()->user()->roleuser_id == '2') {
             $data = $data->where('users.parentuser_id', auth()->user()->id);
         } else if (auth()->user()->roleuser_id == '4') {

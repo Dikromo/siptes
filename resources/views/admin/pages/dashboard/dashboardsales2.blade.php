@@ -13,7 +13,7 @@
                 <div class="card card-primary card-outline">
                     <div class="card-body">
                         <?php
-                        $arrayTipe = ['Total Data', 'Sisah Data Sebelumnya', 'Distribusi Hari Ini', 'Sudah di Telepon', 'Sisah Data', 'Telepon Di Angkat', 'Prospek', 'Closing'];
+                        $arrayTipe = ['Total Data', 'Sisah Data Sebelumnya', 'Distribusi Hari Ini', 'Sudah di Telepon', 'Sisah Data', 'Telepon Di Angkat', 'Prospek', 'Closing', 'Closing 3 hari'];
                         ?>
                         <div class="form-group">
                             <label for="tipe">Sort By</label>
@@ -255,6 +255,13 @@
                 case 'Closing':
                     paramSort = [
                         [12, 'desc']
+                    ]
+                    break;
+                case 'Closing 3 hari':
+                    paramSort = [
+                        [12, 'desc'],
+                        [18, 'desc'],
+                        [23, 'desc'],
                     ]
                     break;
                 default:

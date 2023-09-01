@@ -119,8 +119,15 @@ class CustomerController extends Controller
 
         $produkSelect = Produk::where('status', '1')
             ->get();
-        $fileExcel = Fileexcel::where('user_id', auth()->user()->id)
+        $fileExcel = Fileexcel::select(
+            'fileexcels.id',
+            'fileexcels.kode',
+            DB::raw('COUNT(IF(customers.status = "0", 1, NULL)) AS total_data'),
+        )
+            ->join('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
+            ->where('user_id', auth()->user()->id)
             ->orderby('id', 'desc')
+            ->groupBy(DB::raw('1,2'))
             ->without("Customer")
             ->get();
         return view('admin.pages.customer.distribusi', [

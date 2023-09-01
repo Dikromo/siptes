@@ -166,12 +166,15 @@
                                     @foreach ($fileExceldata as $item)
                                         @if (session('oldData') != '')
                                             @if (session('oldData')['fileexcel_id'] == $item->id)
-                                                <option value="{{ $item->id }}" selected>{{ $item->kode }}</option>
+                                                <option value="{{ $item->id }}" selected>
+                                                    {{ $item->kode . '(' . $item->total_data . ')' }}</option>
                                             @else
-                                                <option value="{{ $item->id }}">{{ $item->kode }}</option>
+                                                <option value="{{ $item->id }}">
+                                                    {{ $item->kode . '(' . $item->total_data . ')' }}</option>
                                             @endif
                                         @else
-                                            <option value="{{ $item->id }}">{{ $item->kode }}</option>
+                                            <option value="{{ $item->id }}">
+                                                {{ $item->kode . '(' . $item->total_data . ')' }}</option>
                                         @endif
                                     @endforeach
                                 </select>

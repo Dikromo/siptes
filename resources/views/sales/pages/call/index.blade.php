@@ -72,8 +72,24 @@
                                     <div class="info-box">
                                         <span class="info-box-icon bg-success"><i class="fas fa-headset"></i></span>
                                         <div class="info-box-content">
-                                            <span class="info-box-text">Total Calls Out</span>
-                                            <span class="info-box-number">{{ $dataCallout }}</span>
+                                            <div class="row">
+                                                <div class="col-md-6 col-12">
+                                                    <span class="info-box-text">Total Calls Out</span>
+                                                    <span class="info-box-number">{{ $dataCallout }}</span>
+                                                </div>
+                                                <div class="col-md-6 col-12">
+                                                    <span class="info-box-text">Closing 3 Hari</span>
+                                                    @if ($dataClosing->count() == 0)
+                                                        <span class="info-box-number">0 | 0 | 0</span>
+                                                    @else
+                                                        @foreach ($dataClosing as $items)
+                                                            <span
+                                                                class="info-box-number">{{ $items->closing1 . ' | ' . $items->closing2 . ' | ' . $items->closing3 }}</span>
+                                                        @endforeach
+                                                    @endif
+
+                                                </div>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>

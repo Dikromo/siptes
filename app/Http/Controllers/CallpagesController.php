@@ -2,19 +2,50 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Subproduk;
 use App\Models\Distribusi;
 use App\Models\Statuscall;
-use App\Models\Subproduk;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 
 class CallpagesController extends Controller
 {
     //
+    private function checkDay($param, $param2)
+    {
+        $hasil = '';
+        if ($param2 == 'today') {
+            switch (date('l', strtotime($param))) {
+                case 'Sunday':
+                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    break;
+                default:
+                    $hasil = $param;
+                    break;
+            }
+        } else {
+            switch (date('l', strtotime($param))) {
+                case 'Saturday':
+                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    break;
+
+                case 'Sunday':
+                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    break;
+                default:
+                    $hasil = $param;
+                    break;
+            }
+        }
+        return $hasil;
+    }
     public function salesCallpages()
     {
-        $hariini = date('Y-m-d');
+        $hariini = $this->checkDay(date('Y-m-d'), 'today');
+        $h2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($hariini))), '');
+        $h3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($hariini))), '');
         //$hariini = date('Y-m-d', strtotime('2023-07-21'));
         $data = Distribusi::where('user_id', auth()->user()->id)
             ->where('status', 0)
@@ -51,6 +82,23 @@ class CallpagesController extends Controller
             ->without("Customer")
             ->without("User")
             ->get();
+
+        $dataClosing = Distribusi::select(
+            'distribusis.user_id',
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $hariini . '", 1, NULL)) AS closing1'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $h2 . '", 1, NULL)) AS closing2'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $h3 . '", 1, NULL)) AS closing3'),
+        )->where('user_id', auth()->user()->id)
+            ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->where('statuscalls.jenis', '1')
+            ->where(function ($query)  use ($hariini, $h3) {
+                $query->whereDate('distribusis.updated_at', '>=', $h3)
+                    ->whereDate('distribusis.updated_at', '<=', $hariini);
+            })
+            ->groupBy(DB::raw('1'))
+            ->without("Customer")
+            ->without("User")
+            ->get();
         return view('sales.pages.call.index', [
             'title' => 'Call Page',
             'active' => 'call',
@@ -60,7 +108,7 @@ class CallpagesController extends Controller
             "data_total_today" => $dataalltoday->count(),
             "dataCall" => $dataCall->count(),
             "dataCallout" => $dataCallout->count(),
-            "dataCallout" => $dataCallout->count(),
+            "dataClosing" => $dataClosing,
             //"category" => User::all(),
         ]);
     }

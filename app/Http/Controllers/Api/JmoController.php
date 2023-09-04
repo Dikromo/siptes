@@ -30,7 +30,7 @@ class JmoController extends Controller
                     $statusData = true;
 
                     $cardpath = $item->cardpath == '' || $item->cardpath == null ? 'card.png' : $item->cardpath;
-                    $foto = $item->foto == '' || $item->foto == null ? '' : $item->foto;
+                    $foto = $item->foto == '' || $item->foto == null ? 'default.jpg' : $item->foto;
                     if ($item->jht == '1') {
                         $note[] = 'JHT';
                     }

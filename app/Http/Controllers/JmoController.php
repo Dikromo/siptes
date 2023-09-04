@@ -156,7 +156,7 @@ class JmoController extends Controller
             //exit;
         } else {
             if (!isset($jmo->id)) {
-                $validateData['foto'] =  'foto/default.png';
+                $validateData['foto'] =  'foto/default.jpg';
             }
         }
 

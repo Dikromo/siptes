@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::table('jmos', function (Blueprint $table) {
             //
-            $table->string('foto')->nullable()->after('nama');
+            $table->string('nik')->nullable()->after('nama');
+            $table->string('foto')->nullable()->after('nokartu');
+            $table->string('no_telp')->nullable()->after('perusahaan');
             $table->string('lastiuran')->nullable();
             $table->string('jmltenagakerja')->nullable();
             $table->string('saldo')->nullable();
@@ -27,6 +29,8 @@ return new class extends Migration
     {
         Schema::table('jmos', function (Blueprint $table) {
             //
+            $table->dropColumn('nik');
+            $table->dropColumn('no_telp');
             $table->dropColumn('foto');
             $table->dropColumn('lastiuran');
             $table->dropColumn('jmltenagakerja');

@@ -33,6 +33,7 @@ class JmoController extends Controller
 
                     $jmoData = [
                         'nik' => $item->nik,
+                        'no_telp' => $item->no_telp,
                         'nama' => $item->nama,
                         'noKartu' => $item->nokartu,
                         'statusPeserta' => $item->statusPeserta,

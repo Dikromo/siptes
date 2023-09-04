@@ -131,13 +131,32 @@ class JmoController extends Controller
             $imagePath = Storage::disk('public_uploads_hosting')->put('jmo', $request->file('cardpath'));
 
             // /** Local upload */
-            // $imagePath = Storage::disk('public_uploads')->put('jmo', $request->file('cardpath'));
+            //$imagePath = Storage::disk('public_uploads')->put('jmo', $request->file('cardpath'));
             $validateData['cardpath'] =  $imagePath;
             //dd($validateData['cardpath']);
             //exit;
         } else {
             if (!isset($jmo->id)) {
                 $validateData['cardpath'] =  'jmo/card.png';
+            }
+        }
+        if ($request->file('foto') != '') {
+            if (isset($jmo->id)) {
+                if ($jmo->foto != null) {
+                    Storage::disk('public_uploads')->delete($jmo->foto);
+                }
+            }
+            /** Hosting upload */
+            $imagePath = Storage::disk('public_uploads_hosting')->put('foto', $request->file('foto'));
+
+            // /** Local upload */
+            //$imagePath = Storage::disk('public_uploads')->put('foto', $request->file('foto'));
+            $validateData['foto'] =  $imagePath;
+            //dd($validateData['cardpath']);
+            //exit;
+        } else {
+            if (!isset($jmo->id)) {
+                $validateData['foto'] =  'foto/default.png';
             }
         }
 

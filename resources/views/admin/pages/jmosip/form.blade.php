@@ -195,6 +195,26 @@
                                             @enderror
                                         </div>
                                     </div>
+                                    <div class="row boxPreview1" style="display: {{ $data == '' ? 'none' : 'block' }}">
+                                        <div class="col-md-6">
+                                            <img src="{{ $data == '' ? '' : url('/') . '/assets/img/' . $data->foto }}"
+                                                alt="img-preview" id="imgPreview1" width="250px">
+                                        </div>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="foto">Foto</label>
+                                        <div class="custom-file">
+                                            <input type="file" id="foto" name="foto"
+                                                class="custom-file-input @error('foto') is-invalid @enderror"
+                                                value="{{ old('foto') }}">
+                                            <label class="custom-file-label" for="foto">Choose file</label>
+                                            @error('foto')
+                                                <span id="foto"
+                                                    class="error invalid-feedback">{{ $message }}</span>
+                                            @enderror
+                                        </div>
+                                    </div>
+
                                     <?php
                                     
                                     //{{ ($data == '' ? (old('masaIuranjkp') ? '' : 'checked') : $data->jkm == '1') ? 'checked' : '' }}>{{ $data->jkm }}
@@ -354,6 +374,20 @@
                     $('.boxPreview').css("display", "block");
                     console.log(event.target.result);
                     $('#imgPreview').attr('src', event.target.result);
+                }
+                reader.readAsDataURL(file);
+            }
+        });
+
+        $('#foto').change(function() {
+            const file = this.files[0];
+            console.log(file);
+            if (file) {
+                let reader = new FileReader();
+                reader.onload = function(event) {
+                    $('.boxPreview1').css("display", "block");
+                    console.log(event.target.result);
+                    $('#imgPreview1').attr('src', event.target.result);
                 }
                 reader.readAsDataURL(file);
             }

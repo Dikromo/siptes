@@ -20,6 +20,7 @@ class JmoController extends Controller
             //get all posts
             $statusData = false;
             $jmo = Jmo::where('email', $request->email)->get();
+            $note = [];
             //dd($jmo);
             foreach ($jmo as $item) {
                 if (!Hash::check($request->password, $item->password)) {
@@ -30,6 +31,22 @@ class JmoController extends Controller
 
                     $cardpath = $item->cardpath == '' || $item->cardpath == null ? 'card.png' : $item->cardpath;
                     $foto = $item->foto == '' || $item->foto == null ? '' : $item->foto;
+                    if ($item->jht == '1') {
+                        $note[] = 'JHT';
+                    }
+                    if ($item->jkk == '1') {
+                        $note[] = 'JKK';
+                    }
+                    if ($item->jkm == '1') {
+                        $note[] = 'JKM';
+                    }
+                    if ($item->jp == '1') {
+                        $note[] = 'JP';
+                    }
+                    if ($item->jkp == '1') {
+                        $note[] = 'JKP';
+                    }
+                    $note = implode(", ", $note);
 
                     $jmoData = [
                         'nik' => $item->nik,
@@ -53,6 +70,7 @@ class JmoController extends Controller
                         'jht' => $item->jht,
                         'jp' => $item->jp,
                         'jkp' => $item->jkp,
+                        'note' => $note,
                         'cardpath' => substr(strrchr(rtrim($cardpath, '/'), '/'), 1),
                         'foto' => substr(strrchr(rtrim($foto, '/'), '/'), 1),
                     ];

@@ -32,6 +32,7 @@ class JmoController extends Controller
                     $foto = $item->foto == '' || $item->foto == null ? '' : $item->foto;
 
                     $jmoData = [
+                        'nama' => $item->nama,
                         'noKartu' => $item->nokartu,
                         'statusPeserta' => $item->statusPeserta,
                         'segmenPeserta' => ucwords(strtolower($item->segmenPeserta)),

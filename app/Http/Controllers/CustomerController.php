@@ -177,8 +177,10 @@ class CustomerController extends Controller
                     $data =   $data->whereNotIn('b.user_id', $request->user_id);
                 }
                 if ($request->provider == 'NON-SIMPATI') {
-                    $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                        ->where('customers.provider', '<>', 'Tidak Ditemukan');
                 } else if ($request->provider == 'ALL-PROVIDER') {
+                    $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
                 } else {
                     $data =   $data->where('customers.provider', $request->provider);
                 }
@@ -203,8 +205,10 @@ class CustomerController extends Controller
                     ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id');
 
                 if ($request->provider == 'NON-SIMPATI') {
-                    $data =   $data->where('provider', '<>', 'SIMPATI');
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                        ->where('customers.provider', '<>', 'Tidak Ditemukan');
                 } else if ($request->provider == 'ALL-PROVIDER') {
+                    $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
                 } else {
                     $data =   $data->where('provider', $request->provider);
                 }
@@ -232,8 +236,10 @@ class CustomerController extends Controller
                 })
                 ->where('distribusis.produk_id', $produk_id);
             if ($request->provider == 'NON-SIMPATI') {
-                $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                    ->where('customers.provider', '<>', 'Tidak Ditemukan');
             } else if ($request->provider == 'ALL-PROVIDER') {
+                $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
             } else {
                 $data =   $data->where('customers.provider', $request->provider);
             }
@@ -301,8 +307,10 @@ class CustomerController extends Controller
                                 ->orWhere('distribusis.status', null);
                         });
                     if ($request->provider == 'NON-SIMPATI') {
-                        $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                        $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                            ->where('customers.provider', '<>', 'Tidak Ditemukan');
                     } else if ($request->provider == 'ALL-PROVIDER') {
+                        $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
                     } else {
                         $data =   $data->where('customers.provider', $request->provider);
                     }
@@ -334,8 +342,10 @@ class CustomerController extends Controller
                         ->where('customers.fileexcel_id', $request->fileexcel_id)
                         ->where('distribusis.produk_id', null);
                     if ($request->provider == 'NON-SIMPATI') {
-                        $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                        $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                            ->where('customers.provider', '<>', 'Tidak Ditemukan');
                     } else if ($request->provider == 'ALL-PROVIDER') {
+                        $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
                     } else {
                         $data =   $data->where('customers.provider', $request->provider);
                     }
@@ -380,8 +390,10 @@ class CustomerController extends Controller
                             ->orWhere('distribusis.status', null);
                     });
                 if ($request->provider == 'NON-SIMPATI') {
-                    $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                        ->where('customers.provider', '<>', 'Tidak Ditemukan');
                 } else if ($request->provider == 'ALL-PROVIDER') {
+                    $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
                 } else {
                     $data =   $data->where('customers.provider', $request->provider);
                 }
@@ -440,8 +452,10 @@ class CustomerController extends Controller
                     $data =   $data->whereNotIn('b.user_id', $request->user_id);
                 }
                 if ($request->provider == 'NON-SIMPATI') {
-                    $data =   $data->where('customers.provider', '<>', 'SIMPATI');
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                        ->where('customers.provider', '<>', 'Tidak Ditemukan');
                 } else if ($request->provider == 'ALL-PROVIDER') {
+                    $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
                 } else {
                     $data =   $data->where('customers.provider', $request->provider);
                 }

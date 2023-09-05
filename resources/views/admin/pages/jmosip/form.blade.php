@@ -52,6 +52,25 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
+                                        <label for="nik">nik</label>
+                                        <input type="text" id="nik" name="nik"
+                                            class="form-control @error('nik') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('nik') : old('nik', $data->nik) }}" required>
+                                        @error('nik')
+                                            <span id="nik" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="no_telp">no_telp</label>
+                                        <input type="text" id="no_telp" name="no_telp"
+                                            class="form-control @error('no_telp') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('no_telp') : old('no_telp', $data->no_telp) }}"
+                                            required>
+                                        @error('no_telp')
+                                            <span id="no_telp" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
                                         <label for="email">Email</label>
                                         <input type="email" id="email" name="email"
                                             class="form-control @error('email') is-invalid @enderror"
@@ -81,6 +100,16 @@
                                         @enderror
                                     </div>
                                     <div class="form-group">
+                                        <label for="jmltenagakerja">Total Karyawan</label>
+                                        <input type="text" id="jmltenagakerja" name="jmltenagakerja"
+                                            class="form-control @error('jmltenagakerja') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('jmltenagakerja') : old('jmltenagakerja', $data->jmltenagakerja) }}"
+                                            required>
+                                        @error('jmltenagakerja')
+                                            <span id="jmltenagakerja" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
                                         <label for="lastUpah">Upah Terakhir</label>
                                         <input type="number" id="lastUpah" name="lastUpah"
                                             class="form-control @error('lastUpah') is-invalid @enderror"
@@ -93,7 +122,7 @@
                                     <div class="form-group">
                                         <label for="password">Password</label>
                                         <input type="password" id="password" name="password"
-                                            class="form-control @error('password') is-invalid @enderror" required>
+                                            class="form-control @error('password') is-invalid @enderror">
                                         @error('password')
                                             <span id="password" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
@@ -107,7 +136,28 @@
                                             value="{{ $data == '' ? old('segmenPeserta') : old('segmenPeserta', $data->segmenPeserta) }}"
                                             required>
                                         @error('segmenPeserta')
-                                            <span id="segmenPeserta" class="error invalid-feedback">{{ $message }}</span>
+                                            <span id="segmenPeserta"
+                                                class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="saldo">Saldo</label>
+                                        <input type="text" id="saldo" name="saldo"
+                                            class="form-control @error('saldo') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('saldo') : old('saldo', $data->saldo) }}"
+                                            required>
+                                        @error('saldo')
+                                            <span id="saldo" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="lastiuran">Iuran Terakhir</label>
+                                        <input type="text" id="lastiuran" name="lastiuran"
+                                            class="form-control @error('lastiuran') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('lastiuran') : old('lastiuran', $data->lastiuran) }}"
+                                            required>
+                                        @error('lastiuran')
+                                            <span id="lastiuran" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
                                     </div>
                                     <div class="row">

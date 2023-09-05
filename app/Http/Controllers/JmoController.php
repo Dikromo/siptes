@@ -92,17 +92,38 @@ class JmoController extends Controller
             'nokartu'  => ['required'],
             'email'     => ['required'],
             'perusahaan'     => ['required'],
-            'password'  => ['required'],
         ];
 
         if ($request->email != $jmo->email) {
             $rules['email'] = 'required|unique:users';
         }
 
+        if (!isset($jmo->id)) {
+            $rules['password'] = 'required';
+        }
+        if (isset($jmo->id)) {
+            if ($request->password != '') {
+                $rules['password'] = 'required';
+            }
+        }
+
         $validateData = $request->validate($rules);
-        $validateData['password'] = Hash::make($validateData['password']);
+
+        if (!isset($jmo->id)) {
+            $validateData['password'] = Hash::make($validateData['password']);
+        }
+        if (isset($jmo->id)) {
+            if ($request->password != '') {
+                $validateData['password'] = Hash::make($validateData['password']);
+            }
+        }
 
         $validateData['statuspeserta'] =  '1';
+        $validateData['nik'] =  $request->nik;
+        $validateData['no_telp'] =  $request->no_telp;
+        $validateData['jmltenagakerja'] =  $request->jmltenagakerja;
+        $validateData['saldo'] =  $request->saldo;
+        $validateData['lastiuran'] =  $request->lastiuran;
         $validateData['segmenpeserta'] =  $request->segmenPeserta;
         $validateData['lastUpah'] =  $request->lastUpah;
         $validateData['lastIuranDate'] =  $request->lastIuranDate;

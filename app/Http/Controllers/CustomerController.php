@@ -126,6 +126,7 @@ class CustomerController extends Controller
         )
             ->join('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
             ->where('user_id', auth()->user()->id)
+            ->where('customers.provider', '<>', 'Tidak Ditemukan')
             ->orderby('id', 'desc')
             ->groupBy(DB::raw('1,2'))
             ->without("Customer")

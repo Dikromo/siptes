@@ -57,7 +57,7 @@ class JmoController extends Controller
                         'segmenPeserta' => ucwords(strtolower($item->segmenPeserta)),
                         'perusahaan' => strtoupper($item->perusahaan),
                         'lastUpah' => number_format($item->lastUpah, 2, ",", "."),
-                        'saldo' => number_format($item->saldo, 2, ",", "."),
+                        'saldo' => 'Rp ' . number_format($item->saldo, 2, ",", "."),
                         'lastiuran' => ucwords(strtolower($item->lastiuran)),
                         'jmltenagakerja' => ucwords(strtolower($item->jmltenagakerja)),
                         'lastIuranDate' => ucwords(strtolower($item->lastIuranDate)),

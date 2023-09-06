@@ -603,6 +603,7 @@ class CustomerController extends Controller
     public function callhistory(Request $request)
     {
         $paramStatus = $request->status != '' ? (string)decrypt($request->status) : '';
+        $idcampaign = $request->idcampaign != '' ? (string)decrypt($request->idcampaign) : '';
         $data = Distribusi::select(
             'distribusis.*',
             'customers.nama as nama',
@@ -649,9 +650,13 @@ class CustomerController extends Controller
         if (auth()->user()->roleuser_id != '1') {
             $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
         }
-        $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
-            ->whereDate('distribusis.updated_at', '<=', $request->totanggal)
-            ->without("Customer")
+        if ($idcampaign != '') {
+            $data = $data->where('fileexcels.id', $idcampaign);
+        } else {
+            $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
+                ->whereDate('distribusis.updated_at', '<=', $request->totanggal);
+        }
+        $data = $data->without("Customer")
             ->without("User");
         //echo $data;
         return DataTables::of($data)

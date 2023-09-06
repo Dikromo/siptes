@@ -214,6 +214,7 @@
         var cabangs = "<?php echo auth()->user()->cabang_id; ?>";
         var roleuser_id = "<?php echo auth()->user()->roleuser_id; ?>";
         var paramHistory = "<?php echo $get->param; ?>";
+        var idcampaign = "<?php echo $get->idcampaign; ?>";
         var searchHistory = "<?php echo $get->search; ?>";
 
         renderTable(fromTanggal, toTanggal);
@@ -395,10 +396,17 @@
                 }];
             }
             if (paramHistory != '') {
-                paramLength = [
-                    [-1],
-                    ["All"]
-                ];
+                if (idcampaign != '') {
+                    paramLength = [
+                        [10, 50, 100, 200, 500, -1],
+                        [10, 50, 100, 200, 500, "All"]
+                    ];
+                } else {
+                    paramLength = [
+                        [-1],
+                        ["All"]
+                    ];
+                }
             } else {
                 paramLength = [
                     [10, 50, 100, 200, 500, -1],
@@ -423,6 +431,7 @@
                         totanggal: param2,
                         user_id: $('#user_id').val(),
                         status: paramHistory,
+                        idcampaign: idcampaign,
                     }
                 },
 

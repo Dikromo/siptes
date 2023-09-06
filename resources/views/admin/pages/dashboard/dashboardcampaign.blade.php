@@ -15,7 +15,7 @@
                         <?php
                         $arrayTipe = ['Total Data', 'Sisah Data Sebelumnya', 'Distribusi Hari Ini', 'Sudah di Telepon', 'Sisah Data', 'Telepon Di Angkat', 'Prospek', 'Closing', 'Closing 3 hari'];
                         ?>
-                        <div class="form-group">
+                        {{-- <div class="form-group">
                             <label for="tipe">Sort By</label>
                             <select name="tipe" class="form-control select2 @error('tipe') is-invalid @enderror  "
                                 id="tipe">
@@ -39,7 +39,7 @@
                             @error('tipe')
                                 <span id="tipe" class="error invalid-feedback">{{ $message }}</span>
                             @enderror
-                        </div>
+                        </div> --}}
                         <div class="form-group">
                             <label for="tanggal">Tanggal</label>
                             <input type="date" id="tanggal" name="tanggal"
@@ -119,11 +119,11 @@
                                     <th>H-1 Call Out</th>
                                     <th>H-2 Data</th>
                                     <th>H-2 Call Out</th> --}}
-                                    <th></th>
+                                    {{-- <th></th> --}}
                                     <th>NO</th>
                                     <th>Nama</th>
-                                    <th>SM</th>
-                                    <th>supervisor</th>
+                                    {{-- <th>SM</th>
+                                    <th>supervisor</th> --}}
                                     <th>Distribusi</th>
                                     <th>Sisah Data</th>
                                     <th>Total Data</th>
@@ -132,6 +132,7 @@
                                     <th>Today Call Out</th>
                                     <th>Today Prospek</th>
                                     <th>Today closing</th>
+                                    <th>All Data</th>
                                     <th>Tanggal Data</th>
                                     <th>H-1 Data</th>
                                     <th>H-1 Call</th>
@@ -147,9 +148,10 @@
                             </thead>
                             <tfoot>
                                 <tr>
+                                    {{-- <th></th> --}}
                                     <th></th>
-                                    <th></th>
-                                    <th></th>
+                                    {{-- <th></th>
+                                    <th></th> --}}
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -266,137 +268,139 @@
                     break;
                 default:
                     paramSort = [
-                        [3, 'asc'],
-                        [4, 'asc']
+                        [0, 'asc'],
                     ]
                     break;
             }
-            paramColumn = [{
-                className: 'dt-control',
-                orderable: false,
-                data: null,
-                defaultContent: ''
-            }, {
-                data: 'DT_RowIndex',
-                name: 'DT_RowIndex',
-                orderable: false,
-                searchable: false
-            }, {
-                data: 'name',
-                name: 'name'
-            }, {
-                data: 'smname',
-                name: 'sm.name as smname',
-                visible: false,
-            }, {
-                data: 'spvname',
-                name: 'parentuser.name as spvname',
-                visible: false,
-            }, {
-                data: 'totData',
-                name: 'totData',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'totSisah',
-                name: 'totSisah',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'totToday',
-                name: 'totToday',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_call_today',
-                name: 'total_call_today',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_nocall',
-                name: 'total_nocall',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_callout_today',
-                name: 'total_callout_today',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_prospek_today',
-                name: 'total_prospek_today',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_closing_today',
-                name: 'total_closing_today',
-                visible: false,
-                searchable: false
-            }, {
-                data: null,
-                name: null,
-                render: {
-                    _: "total_data_today",
-                    filter: "total_data_today",
-                    display: "today"
+            paramColumn = [
+                //     {
+                //     className: 'dt-control',
+                //     orderable: false,
+                //     data: null,
+                //     defaultContent: ''
+                // },
+                {
+                    data: 'DT_RowIndex',
+                    name: 'DT_RowIndex',
+                    orderable: false,
+                    searchable: false
+                }, {
+                    data: 'kode',
+                    name: 'kode',
+                }, {
+                    data: 'totData',
+                    name: 'totData',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'totSisah',
+                    name: 'totSisah',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'totToday',
+                    name: 'totToday',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_call_today',
+                    name: 'total_call_today',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_nocall',
+                    name: 'total_nocall',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_callout_today',
+                    name: 'total_callout_today',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_prospek_today',
+                    name: 'total_prospek_today',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_closing_today',
+                    name: 'total_closing_today',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_data1",
+                        filter: "total_data1",
+                        display: "all"
+                    }
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_data_today",
+                        filter: "total_data_today",
+                        display: "today"
+                    }
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_data_2",
+                        filter: "total_data_2",
+                        display: "h2"
+                    }
+                }, {
+                    data: 'total_call_2',
+                    name: 'total_call_2',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_callout_2',
+                    name: 'total_callout_2',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_prospek_2',
+                    name: 'total_prospek_2',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_closing_2',
+                    name: 'total_closing_2',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_data_3",
+                        filter: "total_data_3",
+                        display: "h3"
+                    }
+                }, {
+                    data: 'total_call_3',
+                    name: 'total_call_3',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_callout_3',
+                    name: 'total_callout_3',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_prospek_3',
+                    name: 'total_prospek_3',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_closing_3',
+                    name: 'total_closing_3',
+                    visible: false,
+                    searchable: false
                 }
-            }, {
-                data: null,
-                name: null,
-                render: {
-                    _: "total_data_2",
-                    filter: "total_data_2",
-                    display: "h2"
-                }
-            }, {
-                data: 'total_call_2',
-                name: 'total_call_2',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_callout_2',
-                name: 'total_callout_2',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_prospek_2',
-                name: 'total_prospek_2',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_closing_2',
-                name: 'total_closing_2',
-                visible: false,
-                searchable: false
-            }, {
-                data: null,
-                name: null,
-                render: {
-                    _: "total_data_3",
-                    filter: "total_data_3",
-                    display: "h3"
-                }
-            }, {
-                data: 'total_call_3',
-                name: 'total_call_3',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_callout_3',
-                name: 'total_callout_3',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_prospek_3',
-                name: 'total_prospek_3',
-                visible: false,
-                searchable: false
-            }, {
-                data: 'total_closing_3',
-                name: 'total_closing_3',
-                visible: false,
-                searchable: false
-            }];
+            ];
             var tables1 = new $('#dataTables').DataTable({
                 autoWidth: false,
                 bDestroy: true,
@@ -405,7 +409,7 @@
                 },
                 ajax: {
                     type: 'POST',
-                    url: '/dashboard/ajaxsalescall2',
+                    url: '/dashboard/ajaxcampaigncall',
                     data: {
                         _token: '{{ csrf_token() }}',
                         tanggal: param,
@@ -430,168 +434,168 @@
                 //     filename: 'export_callhistory_' + hari
                 // }, ],
                 footerCallback: function(row, data, start, end, display) {
-                    let api = this.api();
-                    let vLink = '';
-                    let vLink1 = '';
-                    let vLinkprospek1 = '';
-                    let vLinkclosing1 = '';
-                    if (typeof data[0] === "undefined") {} else {
-                        vLink = data[0]['linkTotal'];
-                        vLink1 = data[0]['linkTotal1'];
-                        vLinkprospek1 = data[0]['linkTotalprospek1'];
-                        vLinkclosing1 = data[0]['linkTotalclosing1'];
-                    }
+                    // let api = this.api();
+                    // let vLink = '';
+                    // let vLink1 = '';
+                    // let vLinkprospek1 = '';
+                    // let vLinkclosing1 = '';
+                    // if (typeof data[0] === "undefined") {} else {
+                    //     vLink = data[0]['linkTotal'];
+                    //     vLink1 = data[0]['linkTotal1'];
+                    //     vLinkprospek1 = data[0]['linkTotalprospek1'];
+                    //     vLinkclosing1 = data[0]['linkTotalclosing1'];
+                    // }
 
 
-                    let sBox = $('.dataTables_filter input').val();
+                    // let sBox = $('.dataTables_filter input').val();
 
-                    // Remove the formatting to get integer data for summation
-                    let intVal = function(i) {
-                        return typeof i === 'string' ?
-                            i.replace(/[\$,]/g, '') * 1 :
-                            typeof i === 'number' ?
-                            i :
-                            0;
-                    };
+                    // // Remove the formatting to get integer data for summation
+                    // let intVal = function(i) {
+                    //     return typeof i === 'string' ?
+                    //         i.replace(/[\$,]/g, '') * 1 :
+                    //         typeof i === 'number' ?
+                    //         i :
+                    //         0;
+                    // };
 
-                    // Total over all pages
-                    total = api
-                        .column(6)
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // // Total over all pages
+                    // total = api
+                    //     .column(6)
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
 
-                    // Total over this page
-                    gtotalDistribusi = api
-                        .column(5, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalSisahdatakemarin = api
-                        .column(6, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalDishariini = api
-                        .column(7, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallhariini = api
-                        .column(8, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalSisahdatahariini = api
-                        .column(9, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallouthariini = api
-                        .column(10, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalprospek = api
-                        .column(11, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalclosing = api
-                        .column(12, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-
-
-                    gtotalCall2 = api
-                        .column(15, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallout2 = api
-                        .column(16, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalprospek2 = api
-                        .column(17, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalclosing2 = api
-                        .column(18, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // // Total over this page
+                    // gtotalDistribusi = api
+                    //     .column(5, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalSisahdatakemarin = api
+                    //     .column(6, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalDishariini = api
+                    //     .column(7, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalCallhariini = api
+                    //     .column(8, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalSisahdatahariini = api
+                    //     .column(9, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalCallouthariini = api
+                    //     .column(10, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalprospek = api
+                    //     .column(11, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalclosing = api
+                    //     .column(12, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
 
 
-                    gtotalCall3 = api
-                        .column(20, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallout3 = api
-                        .column(21, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalprospek3 = api
-                        .column(22, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalclosing3 = api
-                        .column(23, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    // Update footer
-                    api.column(13).footer().innerHTML =
-                        gtotalDistribusi + ' (' +
-                        gtotalSisahdatakemarin +
-                        '</a> + ' +
-                        gtotalDishariini +
-                        ') <a href="' + vLink + '&search=' + sBox + '" target="_blank"> ' + gtotalCallhariini +
-                        '</a> | ' + gtotalSisahdatahariini +
-                        ' | <a href="' + vLink1 + '&search=' + sBox + '" target="_blank"> ' +
-                        gtotalCallouthariini + '</a>' +
-                        ' | <a href="' + vLinkprospek1 + '&search=' + sBox + '" target="_blank"> ' +
-                        gtotalprospek + '</a>' +
-                        ' | <a href="' + vLinkclosing1 + '&search=' + sBox + '" target="_blank"> ' +
-                        gtotalclosing + '</a>';
+                    // gtotalCall2 = api
+                    //     .column(15, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalCallout2 = api
+                    //     .column(16, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalprospek2 = api
+                    //     .column(17, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalclosing2 = api
+                    //     .column(18, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
 
-                    api.column(14).footer().innerHTML =
-                        gtotalCall2 +
-                        ' | ' +
-                        gtotalCallout2 +
-                        ' | ' +
-                        gtotalprospek2 +
-                        ' | ' +
-                        gtotalclosing2;
-                    api.column(19).footer().innerHTML =
-                        gtotalCall3 +
-                        ' | ' +
-                        gtotalCallout3 +
-                        ' | ' +
-                        gtotalprospek3 +
-                        ' | ' +
-                        gtotalclosing3;
+
+                    // gtotalCall3 = api
+                    //     .column(20, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalCallout3 = api
+                    //     .column(21, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalprospek3 = api
+                    //     .column(22, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // gtotalclosing3 = api
+                    //     .column(23, {
+                    //         page: 'current'
+                    //     })
+                    //     .data()
+                    //     .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    // // Update footer
+                    // api.column(13).footer().innerHTML =
+                    //     gtotalDistribusi + ' (' +
+                    //     gtotalSisahdatakemarin +
+                    //     '</a> + ' +
+                    //     gtotalDishariini +
+                    //     ') <a href="' + vLink + '&search=' + sBox + '" target="_blank"> ' + gtotalCallhariini +
+                    //     '</a> | ' + gtotalSisahdatahariini +
+                    //     ' | <a href="' + vLink1 + '&search=' + sBox + '" target="_blank"> ' +
+                    //     gtotalCallouthariini + '</a>' +
+                    //     ' | <a href="' + vLinkprospek1 + '&search=' + sBox + '" target="_blank"> ' +
+                    //     gtotalprospek + '</a>' +
+                    //     ' | <a href="' + vLinkclosing1 + '&search=' + sBox + '" target="_blank"> ' +
+                    //     gtotalclosing + '</a>';
+
+                    // api.column(14).footer().innerHTML =
+                    //     gtotalCall2 +
+                    //     ' | ' +
+                    //     gtotalCallout2 +
+                    //     ' | ' +
+                    //     gtotalprospek2 +
+                    //     ' | ' +
+                    //     gtotalclosing2;
+                    // api.column(19).footer().innerHTML =
+                    //     gtotalCall3 +
+                    //     ' | ' +
+                    //     gtotalCallout3 +
+                    //     ' | ' +
+                    //     gtotalprospek3 +
+                    //     ' | ' +
+                    //     gtotalclosing3;
                 },
                 processing: false,
                 serverSide: false,
@@ -625,7 +629,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '/dashboard/ajaxsalescall2/detail',
+                    url: '/dashboard/ajaxcampaigncall/detail',
                     data: {
                         _token: '{{ csrf_token() }}',
                         user_id: d.id,

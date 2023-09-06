@@ -609,15 +609,15 @@ class DashboardController extends Controller
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#eb7904" title="total data terdistribusi">' . $data->total_data1 . '</span>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . ' target="_blank""><span style="color:#eb7904" title="total telepon">' . $data->total_call . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904" title="total telepon">' . $data->total_call . '</span></a>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#eb0424" title="total belum telepon">' . $data->total_nocall . '</span>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="<a href="/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . ' target="_blank""><span style="color:#009b05" title="total diangkat">' . $data->total_callout . '</span></a>';
+                $vToday .= '<a href="<a href="/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05" title="total diangkat">' . $data->total_callout . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . ' target="_blank""><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . ' target="_blank""><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing . '</span></a>';
                 return $vToday;
             })
             ->addColumn('today', function ($data) use ($today) {

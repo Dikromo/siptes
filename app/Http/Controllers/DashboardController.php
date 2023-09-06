@@ -209,7 +209,7 @@ class DashboardController extends Controller
             'users.id',
             'users.name',
             DB::raw('IF(parentuser.name is not null, parentuser.name, users.name) as spvname'),
-            'parentuser.nickname as spvnickname',
+            DB::raw('IF(parentuser.nickname is not null, parentuser.nickname, users.nickname) as spvnickname'),
             'sm.name as smname',
             'sm.nickname as smnickname',
             'users.roleuser_id',
@@ -319,8 +319,8 @@ class DashboardController extends Controller
             ->editColumn('name', function ($data) use ($cektoday2, $runhour) {
                 $signalPercent = round((int)$data->total_call_today / (float)$runhour);
                 $signalBar  = $data->roleuser_id == '2' ? '<i class="fas fa-star" style="color: #e7af13;"></i>' . $data->name : $data->name;
-                $signalBar .= $data->spvnickname == '' ? '(' . $data->spvname . ')' : '(' . $data->spvnickname . ')';
-                $signalBar .= $data->smnickname == '' ? '(' . $data->smname . ')' : '(' . $data->ssmnamepvname . ')';
+                $signalBar .=  $data->spvnickname == '' ? '(' . $data->spvname . ')' : '(' . $data->spvnickname . ')';
+                $signalBar .= $data->smnickname == '' ? '(' . $data->smname . ')' : '(' . $data->smnickname . ')';
                 if (date('l', strtotime($cektoday2)) != 'Sunday') {
                     if ($signalPercent >= '26') {
                         if ($signalPercent <= '34') {

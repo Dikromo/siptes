@@ -119,17 +119,25 @@ class CustomerController extends Controller
 
         $produkSelect = Produk::where('status', '1')
             ->get();
-        $fileExcel = Fileexcel::select(
-            'fileexcels.id',
-            'fileexcels.kode',
-            DB::raw('COUNT(IF(customers.status = "0", 1, NULL)) AS total_data'),
-        )
+
+        $lastDistribusi = DB::table('distribusis')
+            ->select('customer_id', DB::raw('MAX(id) as id'))
+            ->groupBy('customer_id');
+
+        $fileExcel = DB::table('fileexcels')
+            ->select(
+                'fileexcels.id',
+                'fileexcels.kode',
+                DB::raw('COUNT(IF(customers.status = "0", 1, NULL)) AS total_data'),
+            )
             ->join('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
-            ->where('user_id', auth()->user()->id)
+            ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                $join->on('customers.id', '=', 'a.customer_id');
+            });
+        $fileExcel =    $fileExcel->where('fileexcels.user_id', auth()->user()->id)
             ->where('customers.provider', '<>', 'Tidak Ditemukan')
-            ->orderby('id', 'desc')
+            ->orderby('fileexcels.id', 'desc')
             ->groupBy(DB::raw('1,2'))
-            ->without("Customer")
             ->get();
         return view('admin.pages.customer.distribusi', [
             'title' => 'Distribusi',

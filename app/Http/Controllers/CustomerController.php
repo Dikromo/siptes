@@ -105,7 +105,7 @@ class CustomerController extends Controller
                             ->orWhere('users.roleuser_id', '3');
                     });
             } else {
-                $userSelect = $userSelect->where('users.cabang_id', auth()->user()->cabang_id)
+                $userSelect = $userSelect->where('users.um_id', auth()->user()->id)
                     ->where(function ($query) {
                         $query->where('users.roleuser_id', '2')
                             ->orWhere('users.roleuser_id', '3');
@@ -637,6 +637,9 @@ class CustomerController extends Controller
             }
             if ($paramStatus == '1') {
                 $data = $data->where('statuscalls.jenis', $paramStatus);
+            }
+            if ($paramStatus == '4') {
+                $data = $data->where('statuscalls.jenis', '2');
             }
             if ($paramStatus == '2') {
                 $data = $data->whereIn('distribusis.status', ['1', '15']);

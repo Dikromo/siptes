@@ -76,6 +76,18 @@
                                 </p>
                             </a>
                         </li>
+                        @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '6')
+                            <li class="nav-item">
+                                <a href="/dashboard/campaign"
+                                    class="nav-link {{ $active === 'dashboardcampaign' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-chart-column"></i>
+                                    <p>
+                                        Dashboard Campaign
+                                        <!--span class="right badge badge-danger">New</span-->
+                                    </p>
+                                </a>
+                            </li>
+                        @endif
                     @endif
                     <li class="nav-item">
                         <a href="/user" class="nav-link {{ $active === 'user' ? 'active' : '' }}">

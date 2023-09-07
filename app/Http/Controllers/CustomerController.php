@@ -609,9 +609,12 @@ class CustomerController extends Controller
             'customers.nama as nama',
             'customers.no_telp as no_telp',
             'customers.provider as provider',
-            'sales.name as salesnama',
-            'parentuser.name as spvnama',
-            'parentuser.name as spvnama',
+            DB::raw('UPPER(cabangs.nama) as cabangnama'),
+            DB::raw('UPPER(sales.name) as salesnama'),
+            DB::raw('UPPER(IF(parentuser.name is not null, parentuser.name, sales.name)) as spvnama'),
+            DB::raw('UPPER(IF(parentuser.nickname is not null, parentuser.nickname, sales.nickname)) as spvnickname'),
+            DB::raw('UPPER(sm.name) as smname'),
+            DB::raw('UPPER(sm.nickname) as smnickname'),
             DB::raw('CONCAT(sales.name," (",parentuser.name,") ") AS csalesnama'),
             'statuscalls.nama as statustext',
             'subproduks.nama as subproduktext',
@@ -620,7 +623,9 @@ class CustomerController extends Controller
         )
             ->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'sales.parentuser_id')
+            ->leftjoin('users as sm', 'sm.id', '=', 'sales.sm_id')
             ->join('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->leftjoin('cabangs', 'cabangs.id', '=', 'sales.cabang_id')
             ->leftjoin('produks', 'produks.id', '=', 'distribusis.produk_id')
             ->leftjoin('subproduks', 'subproduks.id', '=', 'distribusis.subproduk_id')
             ->leftjoin('customers', 'customers.id', '=', 'distribusis.customer_id')
@@ -664,6 +669,7 @@ class CustomerController extends Controller
             ->editColumn('no_telp', '\'{{{substr($no_telp,-4)}}}')
             ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
             ->editColumn('csalesnama', '{{{$csalesnama == null ? $salesnama : $csalesnama;}}}')
+            ->editColumn('updated_tgl', '{{{date("Y-m-d",strtotime($updated_at));}}}')
             ->addColumn('action', function ($data) {
                 if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
                     return view('admin.layouts.buttonActiontables')

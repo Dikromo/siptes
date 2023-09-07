@@ -97,6 +97,11 @@
                                     @endif
                                     <th>Provider</th>
                                     <th>Status</th>
+                                    <th>Status Date</th>
+                                    <th>Limit</th>
+                                    <th>MOB</th>
+                                    <th>Bank CC</th>
+                                    <th>Loan Apply</th>
                                     @if (auth()->user()->cabang_id == '4' || auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
                                         <th>Subproduk</th>
                                     @endif
@@ -105,7 +110,9 @@
                                     <th>End Call</th>
                                     <th>Interval</th>
                                     <th>Sales</th>
-                                    <th>spv</th>
+                                    <th>SPV</th>
+                                    <th>SM</th>
+                                    <th>Site</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
                                 </tr>
@@ -292,7 +299,7 @@
 
         function renderTable(param1, param2) {
             if (cabangs == '4' || roleuser_id == '1' || roleuser_id == '4') {
-                sortPos = 10;
+                sortPos = 15;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -318,6 +325,26 @@
                     data: 'statustext',
                     name: 'statuscalls.nama as statustext'
                 }, {
+                    data: 'updated_tgl',
+                    name: 'updated_at',
+                    visible: false
+                }, {
+                    data: 'limit',
+                    name: 'limit',
+                    visible: false
+                }, {
+                    data: 'bank_penerbit',
+                    name: 'bank_penerbit',
+                    visible: false
+                }, {
+                    data: 'mob',
+                    name: 'mob',
+                    visible: false
+                }, {
+                    data: 'loan_apply',
+                    name: 'loan_apply',
+                    visible: false
+                }, {
                     data: 'subproduktext',
                     name: 'subproduks.nama as subproduktext',
                 }, {
@@ -342,13 +369,21 @@
                     name: 'parentuser.name as spvnama',
                     visible: false
                 }, {
+                    data: 'smname',
+                    name: 'sm.name as smname',
+                    visible: false
+                }, {
+                    data: 'cabangnama',
+                    name: 'cabangs.nama as cabangnama',
+                    visible: false
+                }, {
                     data: 'action',
                     name: 'action',
                     searchable: false,
                     orderable: false
                 }];
             } else {
-                sortPos = 7;
+                sortPos = 12;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -367,6 +402,26 @@
                 }, {
                     data: 'statustext',
                     name: 'statuscalls.nama as statustext'
+                }, {
+                    data: 'updated_tgl',
+                    name: 'updated_at',
+                    visible: false
+                }, {
+                    data: 'limit',
+                    name: 'limit',
+                    visible: false
+                }, {
+                    data: 'bank_penerbit',
+                    name: 'bank_penerbit',
+                    visible: false
+                }, {
+                    data: 'mob',
+                    name: 'mob',
+                    visible: false
+                }, {
+                    data: 'loan_apply',
+                    name: 'loan_apply',
+                    visible: false
                 }, {
                     data: 'deskripsi',
                     name: 'deskripsi'
@@ -387,6 +442,14 @@
                 }, {
                     data: 'spvnama',
                     name: 'parentuser.name as spvnama',
+                    visible: false
+                }, {
+                    data: 'smname',
+                    name: 'sm.name as smname',
+                    visible: false
+                }, {
+                    data: 'cabangnama',
+                    name: 'cabangs.nama as cabangnama',
                     visible: false
                 }, {
                     data: 'action',

@@ -618,8 +618,8 @@ class DashboardController extends Controller
                 $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
                 $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
                 $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
-                $persencallout =  ($data->total_callout == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_callout / $data->total_data1) * 100) . '%';
-                $persennocallout =  ($data->total_nocallout == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocallout / $data->total_data1) * 100) . '%';
+                $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
+                $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
                 $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
                 $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
                 $vToday = '<span style="color:#009b9b"><span title="total data">' . $data->total_data . '</span>';

@@ -556,9 +556,9 @@
                         100);
                     gpersennocall = Math.round(parseFloat(gtotalnoCall) / parseFloat(gtotalDistribusi) *
                         100);
-                    gpersencallout = Math.round(parseFloat(gtotalCallout) / parseFloat(gtotalDistribusi) *
+                    gpersencallout = Math.round(parseFloat(gtotalCallout) / parseFloat(gtotalCall) *
                         100);
-                    gpersennocallout = Math.round(parseFloat(gtotalnoCallout) / parseFloat(gtotalDistribusi) *
+                    gpersennocallout = Math.round(parseFloat(gtotalnoCallout) / parseFloat(gtotalCall) *
                         100);
                     api.column(9).footer().innerHTML =
                         gtotalData + ' (' +

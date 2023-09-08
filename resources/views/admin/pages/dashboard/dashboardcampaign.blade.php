@@ -126,7 +126,8 @@
                                     <th>supervisor</th> --}}
                                     <th>Distribusi</th>
                                     <th>Sisah Data</th>
-                                    <th>All Data</th>
+                                    <th>Total Data (Terdistribusi | Belum Terdistribusi)(Telepon | Belum Ditelepon)(Contact
+                                        | Not Contact)</th>
                                     <th>All Call</th>
                                     <th>All Sisah Data</th>
                                     <th>All Call Out</th>

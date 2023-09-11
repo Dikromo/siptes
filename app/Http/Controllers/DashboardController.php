@@ -552,6 +552,7 @@ class DashboardController extends Controller
         $data = Fileexcel::select(
             'fileexcels.id',
             'fileexcels.kode',
+            'fileexcels.user_id as upload_user',
             DB::raw('(COUNT(IF(distribusis.status = "0", 1, NULL)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL))) AS sort_totaldata'),
             DB::raw('COUNT(customers.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status is null, 1, NULL)) AS total_nodistribusi'),
@@ -560,6 +561,21 @@ class DashboardController extends Controller
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, NULL)) AS total_callout'),
             DB::raw('COUNT(IF(statuscalls.jenis = "2", 1, NULL)) AS total_nocallout'),
+            DB::raw('COUNT(IF(
+                DATE(distribusis.distribusi_at) <> "' . $today . '" AND
+                (distribusis.status = "3" OR
+                distribusis.status = "12" OR
+                distribusis.status = "13" OR
+                distribusis.status = "14" OR
+                distribusis.status = "16" OR
+                distribusis.status = "18" OR
+                distribusis.status = "19" OR
+                distribusis.status = "26" OR
+                distribusis.status = "27" OR
+                distribusis.status = "28" OR
+                distribusis.status = "37")
+                , 1, NULL)
+                ) AS total_reload'),
             DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1, NULL)) AS total_closing'),
             DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34"), 1, NULL)) AS total_prospek'),
             DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $today . '",1, NULL)) AS total_data_today'),
@@ -608,7 +624,7 @@ class DashboardController extends Controller
             $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id, '31']);
         }
         $data = $data->orderby('sort_totaldata', 'desc')
-            ->groupBy(DB::raw('1,2'))
+            ->groupBy(DB::raw('1,2,3'))
             ->without("Customer");
 
         return DataTables::of($data->get())
@@ -636,6 +652,11 @@ class DashboardController extends Controller
                 $vToday .= ' | ';
                 $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('4') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb0424" title="total not contact">' . $data->total_nocallout . '(' . $persennocallout . ')' . '</span></a>';
                 $vToday .= ' ) ';
+                if ($data->upload_user == auth()->user()->id) {
+                    $vToday .= ' ( ';
+                    $vToday .= '<a href="#" target="_blank"><span style="color:#eb7904" title="total reload">' . $data->total_reload . '</span></a>';
+                    $vToday .= ' ) ';
+                }
                 // $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek . '(' . $persenprospek . ')' . '</span></a>';
                 // $vToday .= ' | ';
                 // $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing . '(' . $persenclosing . ')' . '</span></a>';

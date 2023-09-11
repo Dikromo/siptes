@@ -604,6 +604,20 @@ class CustomerController extends Controller
     {
         $paramStatus = $request->status != '' ? (string)decrypt($request->status) : '';
         $idcampaign = $request->idcampaign != '' ? (string)decrypt($request->idcampaign) : '';
+
+        if ($idcampaign != '') {
+            $lastDistribusi = DB::table('distribusis')
+                ->select('customer_id', DB::raw('MAX(distribusis.id) as id'))
+                ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+                ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+                ->join('users', 'users.id', '=', 'distribusis.user_id');
+            if (auth()->user()->roleuser_id != '1') {
+                $lastDistribusi = $lastDistribusi->whereRaw('users.cabang_id = "' . auth()->user()->cabang_id . '"')
+                    ->whereRaw('fileexcels.id= "' . $idcampaign . '"');
+            }
+            $lastDistribusi = $lastDistribusi->groupBy('customer_id');
+        }
+
         $data = Distribusi::select(
             'distribusis.*',
             'customers.nama as nama',
@@ -659,7 +673,9 @@ class CustomerController extends Controller
             $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
         }
         if ($idcampaign != '') {
-            $data = $data->where('fileexcels.id', $idcampaign);
+            $data = $data->join(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                $join->on('distribusis.id', '=', 'a.id');
+            })->where('fileexcels.id', $idcampaign);
         } else {
             $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
                 ->whereDate('distribusis.updated_at', '<=', $request->totanggal);

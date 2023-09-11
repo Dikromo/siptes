@@ -562,13 +562,28 @@
                     gpersennocallout = Math.round(parseFloat(gtotalnoCallout) / parseFloat(gtotalCall) *
                         100);
                     api.column(9).footer().innerHTML =
-                        gtotalData + ' (' +
-                        gtotalDistribusi + '(' + gpersendistribusi + '%)' + ' | ' +
-                        gtotalnoDistribusi + '(' + gpersennodistribusi + '%)' + ')(' +
-                        gtotalCall + '(' + gpersencall + '%)' + ' | ' +
-                        gtotalnoCall + '(' + gpersennocall + '%)' + ')(' +
-                        gtotalCallout + '(' + gpersencallout + '%)' + ' | ' +
-                        gtotalnoCallout + '(' + gpersennocallout + '%)' + ')';
+                        '<span style="color:#009b9b"><span title="total data">' + gtotalData + '</span>' +
+                        ' (' +
+                        '<span style="color:#eb7904" title="total data terdistribusi">' + gtotalDistribusi +
+                        '(' + gpersendistribusi + '%)' + '</span>' + ' | ' +
+                        '<span style="color:#eb0424" title="total belum terdistribusi">' + gtotalnoDistribusi +
+                        '(' + gpersennodistribusi + '%)' + '</span>' + ')' +
+                        ' (' +
+                        '<span style="color:#eb7904" title="total telepon">' + gtotalCall +
+                        '(' + gpersencall + '%)' + '</span>' + ' | ' +
+                        '<span style="color:#eb0424" title="total belum telepon">' + gtotalnoCall +
+                        '(' + gpersennocall + '%)' + '</span>' + ')' +
+                        ' (' +
+                        '<span style="color:#009b05" title="total contact">' + gtotalCallout +
+                        '(' + gpersencallout + '%)' + '</span>' + ' | ' +
+                        '<span style="color:#eb0424" title="total not contact">' + gtotalnoCallout +
+                        '(' + gpersennocallout + '%)' + '</span>' + ')';
+                    // gtotalDistribusi + '(' + gpersendistribusi + '%)' + ' | ' +
+                    // gtotalnoDistribusi + '(' + gpersennodistribusi + '%)' + ')(' +
+                    // gtotalCall + '(' + gpersencall + '%)' + ' | ' +
+                    // gtotalnoCall + '(' + gpersennocall + '%)' + ')(' +
+                    // gtotalCallout + '(' + gpersencallout + '%)' + ' | ' +
+                    // gtotalnoCallout + '(' + gpersennocallout + '%)' + ')';
 
 
                     gtotalDatatoday = api
@@ -631,13 +646,33 @@
                             gtotalCalltoday) *
                         100);
                     api.column(17).footer().innerHTML =
-                        gtotalDatatoday + ' (' +
-                        gtotalnoDistribusitoday + '(' + gpersennodistribusitoday + '%)' + ' + ' +
-                        gtotalDistribusitoday + '(' + gpersendistribusitoday + '%)' + ')(' +
-                        gtotalCalltoday + '(' + gpersencalltoday + '%)' + ' | ' +
-                        gtotalnoCalltoday + '(' + gpersennocalltoday + '%)' + ')(' +
-                        gtotalCallouttoday + '(' + gpersencallouttoday + '%)' + ' | ' +
-                        gtotalnoCallouttoday + '(' + gpersennocallouttoday + '%)' + ')';
+                        '<span style="color:#009b9b"><span title="total data">' + gtotalDatatoday + '</span>' +
+                        ' (' +
+                        '<span style="color:#009b9b" title="total data sisah kemarin">' +
+                        gtotalnoDistribusitoday +
+                        '(' + gpersennodistribusitoday + '%)' + '</span>' + ' | ' +
+                        '<span style="color:#009b9b" title="total distribusi hari ini">' +
+                        gtotalDistribusitoday +
+                        '(' + gpersendistribusitoday + '%)' + '</span>' + ')' +
+                        ' (' +
+                        '<span style="color:#eb7904" title="total telepon">' + gtotalCalltoday +
+                        '(' + gpersencalltoday + '%)' + '</span>' + ' | ' +
+                        '<span style="color:#eb0424" title="total belum telepon">' + gtotalnoCalltoday +
+                        '(' + gpersennocalltoday + '%)' + '</span>' + ')' +
+                        ' (' +
+                        '<span style="color:#009b05" title="total contact">' + gtotalCallouttoday +
+                        '(' + gpersencallouttoday + '%)' + '</span>' + ' | ' +
+                        '<span style="color:#eb0424" title="total not contact">' +
+                        gtotalnoCallouttoday +
+                        '(' + gpersennocallouttoday + '%)' + '</span>' + ')';
+
+                    // gtotalDatatoday + ' (' +
+                    // gtotalnoDistribusitoday + '(' + gpersennodistribusitoday + '%)' + ' + ' +
+                    // gtotalDistribusitoday + '(' + gpersendistribusitoday + '%)' + ')(' +
+                    // gtotalCalltoday + '(' + gpersencalltoday + '%)' + ' | ' +
+                    // gtotalnoCalltoday + '(' + gpersennocalltoday + '%)' + ')(' +
+                    // gtotalCallouttoday + '(' + gpersencallouttoday + '%)' + ' | ' +
+                    // gtotalnoCallouttoday + '(' + gpersennocallouttoday + '%)' + ')';
                     // gtotalSisahdatakemarin +
                     // '</a> + ' +
                     // gtotalDishariini +

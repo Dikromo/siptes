@@ -629,7 +629,7 @@ class DashboardController extends Controller
 
         return DataTables::of($data->get())
             ->addIndexColumn()
-            ->addColumn('all', function ($data) use ($today) {
+            ->addColumn('all1', function ($data) use ($today) {
                 $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
                 $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
                 $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
@@ -640,27 +640,69 @@ class DashboardController extends Controller
                 $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
                 $vToday = '<span style="color:#009b9b"><span title="total data">' . $data->total_data . '</span>';
                 $vToday .= ' ( ';
-                $vToday .= '<span style="color:#eb7904" title="total data terdistribusi">' . $data->total_data1 . '(' . $persendis . ')' . '</span>';
+                $vToday .= '<span style="color:#eb7904" title="total data terdistribusi">' . $data->total_data1  . '</span>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb0424" title="total belum terdistribusi">' . $data->total_nodistribusi . '(' . $persennodis . ')' . '</span>';
-                $vToday .= ' )( ';
-                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904" title="total telepon">' . $data->total_call . '(' . $persencall . ')' . '</span></a>';
-                $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb0424" title="total belum telepon">' . $data->total_nocall . '(' . $persennocall . ')' . '</span>';
-                $vToday .= ' )( ';
-                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05" title="total contact">' . $data->total_callout . '(' . $persencallout . ')' . '</span></a>';
-                $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('4') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb0424" title="total not contact">' . $data->total_nocallout . '(' . $persennocallout . ')' . '</span></a>';
-                $vToday .= ' )( ';
-                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek . '(' . $persenprospek . ')' . '</span></a>';
-                $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing . '(' . $persenclosing . ')' . '</span></a>';
-                $vToday .= ' ) ';
+                $vToday .= '<span style="color:#eb0424" title="total belum terdistribusi">' . $data->total_nodistribusi . '</span>';
+                $vToday .= ' )';
                 if ($data->upload_user == auth()->user()->id) {
                     $vToday .= ' ( ';
                     $vToday .= '<a href="#" target="_blank"><span style="color:#eb7904" title="total reload">' . $data->total_reload . '</span></a>';
                     $vToday .= ' ) ';
                 }
+                return $vToday;
+            })
+
+            ->addColumn('all2', function ($data) use ($today) {
+                $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
+                $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
+                $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
+                $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
+                $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
+                $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
+                $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
+                $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
+
+                $vToday = ' ( ';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904" title="total telepon">' . $data->total_call . '</span></a>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#eb0424" title="total belum telepon">' . $data->total_nocall . '</span>';
+                $vToday .= ' ) ';
+
+                return $vToday;
+            })
+            ->addColumn('all3', function ($data) use ($today) {
+                $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
+                $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
+                $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
+                $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
+                $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
+                $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
+                $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
+                $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
+
+                $vToday = ' ( ';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05" title="total contact">' . $data->total_callout . '(' . $persencallout . ')' . '</span></a>';
+                $vToday .= ' | ';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('4') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb0424" title="total not contact">' . $data->total_nocallout . '(' . $persennocallout . ')' . '</span></a>';
+                $vToday .= ' ) ';
+
+                return $vToday;
+            })
+            ->addColumn('all4', function ($data) use ($today) {
+                $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
+                $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
+                $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
+                $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
+                $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
+                $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
+                $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
+                $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
+
+                $vToday = '( ';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek . '</span></a>';
+                $vToday .= ' | ';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing . '</span></a>';
+                $vToday .= ' ) ';
                 return $vToday;
             })
             ->addColumn('today', function ($data) use ($today) {
@@ -696,7 +738,7 @@ class DashboardController extends Controller
             ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3.\' | \'.$total_nocallout_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
-            ->rawColumns(['today', 'all'])
+            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4'])
             ->make(true);
     }
     public function getCampaigncall_detail(Request $request)

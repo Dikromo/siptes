@@ -131,8 +131,10 @@
                                     <th>All Sisah Data</th>
                                     <th>All Call Out</th>
                                     <th>All Prospek</th>
-                                    <th>Total Data (Terdistribusi | Belum Terdistribusi)(Telepon | Belum Ditelepon)(Contact
-                                        | Not Contact)(Prospek | Closing)(Reload)</th>
+                                    <th>Total Data (Terdistribusi | Belum Terdistribusi)(Reload)</th>
+                                    <th>(Telepon | Belum Ditelepon)</th>
+                                    <th>(Contact | Not Contact)</th>
+                                    <th>(Prospek | Closing)</th>
                                     <th>Distribusi</th>
                                     <th>Sisah Data</th>
                                     <th>Total Data</th>
@@ -159,6 +161,9 @@
                                     <th></th>
                                     {{-- <th></th>
                                     <th></th> --}}
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -340,7 +345,31 @@
                     render: {
                         _: "total_data1",
                         filter: "total_data1",
-                        display: "all"
+                        display: "all1"
+                    }
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_call",
+                        filter: "total_call",
+                        display: "all2"
+                    }
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_callout",
+                        filter: "total_callout",
+                        display: "all3"
+                    }
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_closing",
+                        filter: "total_closing",
+                        display: "all4"
                     }
                 }, {
                     data: 'totData',
@@ -444,7 +473,7 @@
                 }
             ];
             var tables1 = new $('#dataTables').DataTable({
-                autoWidth: false,
+                autoWidth: true,
                 bDestroy: true,
                 initComplete: function(settings, json) {
                     fromTabel = this.api().data().length;
@@ -565,19 +594,41 @@
                         '<span style="color:#009b9b"><span title="total data">' + gtotalData + '</span>' +
                         ' (' +
                         '<span style="color:#eb7904" title="total data terdistribusi">' + gtotalDistribusi +
-                        '(' + gpersendistribusi + '%)' + '</span>' + ' | ' +
+                        '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total belum terdistribusi">' + gtotalnoDistribusi +
-                        '(' + gpersennodistribusi + '%)' + '</span>' + ')' +
+                        '</span>' + ')';
+
+                    api.column(10).footer().innerHTML =
                         ' (' +
                         '<span style="color:#eb7904" title="total telepon">' + gtotalCall +
-                        '(' + gpersencall + '%)' + '</span>' + ' | ' +
+                        '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total belum telepon">' + gtotalnoCall +
-                        '(' + gpersennocall + '%)' + '</span>' + ')' +
+                        '</span>' + ')';
+
+                    api.column(11).footer().innerHTML =
                         ' (' +
                         '<span style="color:#009b05" title="total contact">' + gtotalCallout +
                         '(' + gpersencallout + '%)' + '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total not contact">' + gtotalnoCallout +
                         '(' + gpersennocallout + '%)' + '</span>' + ')';
+
+                    // api.column(12).footer().innerHTML =
+                    //     '<span style="color:#009b9b"><span title="total data">' + gtotalData + '</span>' +
+                    //     ' (' +
+                    //     '<span style="color:#eb7904" title="total data terdistribusi">' + gtotalDistribusi +
+                    //     '(' + gpersendistribusi + '%)' + '</span>' + ' | ' +
+                    //     '<span style="color:#eb0424" title="total belum terdistribusi">' + gtotalnoDistribusi +
+                    //     '(' + gpersennodistribusi + '%)' + '</span>' + ')' +
+                    //     ' (' +
+                    //     '<span style="color:#eb7904" title="total telepon">' + gtotalCall +
+                    //     '(' + gpersencall + '%)' + '</span>' + ' | ' +
+                    //     '<span style="color:#eb0424" title="total belum telepon">' + gtotalnoCall +
+                    //     '(' + gpersennocall + '%)' + '</span>' + ')' +
+                    //     ' (' +
+                    //     '<span style="color:#009b05" title="total contact">' + gtotalCallout +
+                    //     '(' + gpersencallout + '%)' + '</span>' + ' | ' +
+                    //     '<span style="color:#eb0424" title="total not contact">' + gtotalnoCallout +
+                    //     '(' + gpersennocallout + '%)' + '</span>' + ')';
                     // gtotalDistribusi + '(' + gpersendistribusi + '%)' + ' | ' +
                     // gtotalnoDistribusi + '(' + gpersennodistribusi + '%)' + ')(' +
                     // gtotalCall + '(' + gpersencall + '%)' + ' | ' +
@@ -587,43 +638,43 @@
 
 
                     gtotalDatatoday = api
-                        .column(10, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalDistribusitoday = api
-                        .column(12, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoDistribusitoday = api
-                        .column(11, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCalltoday = api
                         .column(13, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCalltoday = api
-                        .column(14, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallouttoday = api
+                    gtotalDistribusitoday = api
                         .column(15, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCallouttoday = api
+                    gtotalnoDistribusitoday = api
+                        .column(14, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalCalltoday = api
                         .column(16, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalnoCalltoday = api
+                        .column(17, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalCallouttoday = api
+                        .column(18, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalnoCallouttoday = api
+                        .column(19, {
                             page: 'current'
                         })
                         .data()
@@ -645,7 +696,7 @@
                     gpersennocallouttoday = Math.round(parseFloat(gtotalnoCallouttoday) / parseFloat(
                             gtotalCalltoday) *
                         100);
-                    api.column(17).footer().innerHTML =
+                    api.column(20).footer().innerHTML =
                         '<span style="color:#009b9b"><span title="total data">' + gtotalDatatoday + '</span>' +
                         ' (' +
                         '<span style="color:#009b9b" title="total data sisah kemarin">' +

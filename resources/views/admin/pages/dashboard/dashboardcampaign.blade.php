@@ -204,6 +204,35 @@
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->
+
+
+    <div class="modal fade" id="modalAdd">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Campaign Prioritas</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="prioritas">Prioritas</label>
+                        <input type="text" id="prioritas" name="prioritas"
+                            class="form-control @error('prioritas') is-invalid @enderror"
+                            value="{{ $data == '' ? old('prioritas') : old('prioritas', $data->prioritas) }}">
+                        @error('prioritas')
+                            <span id="prioritas" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEditcallhistory();">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('addScript')
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
@@ -226,6 +255,63 @@
         var cabang_id = "<?php echo auth()->user()->cabang_id; ?>";
         var hari = "<?php echo date('Y-m-d'); ?>";
         renderTable(hari);
+
+        function modalEdit(param) {
+            linkid = '';
+            tipe = '';
+            $('#prioritas').val('');
+            if (param != '') {
+                $.ajax({
+                    type: 'POST',
+                    url: "/dashboard/fileexcel/detail",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: param,
+                    },
+                    dataType: "json",
+                    encode: true,
+                }).done(function(data) {
+                    console.log('aaaa');
+                    tipe = param == '' ? 'POST' : 'PUT';
+                    linkid = param == '' ? '' : '/' + param;
+                    if (data.prioritas_date == hari) {
+                        console.log(data.prioritas);
+                        $('#prioritas').val(data.prioritas);
+                    }
+                });
+            } else {
+                tipe = param == '' ? 'POST' : 'PUT';
+                linkid = param == '' ? '' : '/' + param;
+            }
+            $('#modalAdd').modal({
+                backdrop: 'static',
+            });
+        }
+
+        function saveEditcallhistory() {
+            $.ajax({
+                type: tipe,
+                url: "/dashboard/fileexcel" + linkid,
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    prioritas: $('#prioritas').val(),
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                $('#modalAdd').modal('hide');
+                toastAlert(data);
+                $('#prioritas').val('').change();
+            });
+        }
+
+        function toastAlert(param) {
+            $(document).Toasts('create', {
+                class: 'bg-success',
+                title: 'Berhasil',
+                body: param
+            })
+        }
 
         function proses() {
             $("#dataTables").DataTable().off('click');
@@ -306,8 +392,13 @@
                     orderable: false,
                     searchable: false
                 }, {
-                    data: 'kode',
-                    name: 'kode',
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "kode",
+                        filter: "kode",
+                        display: "campaign"
+                    }
                 }, {
                     data: 'total_data',
                     name: 'total_data',

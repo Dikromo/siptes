@@ -124,6 +124,7 @@ class JmoController extends Controller
         $validateData['jmltenagakerja'] =  $request->jmltenagakerja;
         $validateData['saldo'] =  $request->saldo;
         $validateData['lastiuran'] =  $request->lastiuran;
+        $validateData['lastIuranDate_saldo'] =  $request->lastIuranDate_saldo;
         $validateData['segmenpeserta'] =  $request->segmenPeserta;
         $validateData['lastUpah'] =  $request->lastUpah;
         $validateData['lastIuranDate'] =  $request->lastIuranDate;

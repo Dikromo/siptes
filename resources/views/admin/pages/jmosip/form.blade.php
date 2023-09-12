@@ -150,15 +150,33 @@
                                             <span id="saldo" class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
                                     </div>
-                                    <div class="form-group">
-                                        <label for="lastiuran">Iuran Terakhir</label>
-                                        <input type="text" id="lastiuran" name="lastiuran"
-                                            class="form-control @error('lastiuran') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('lastiuran') : old('lastiuran', $data->lastiuran) }}"
-                                            required>
-                                        @error('lastiuran')
-                                            <span id="lastiuran" class="error invalid-feedback">{{ $message }}</span>
-                                        @enderror
+                                    <div class="row">
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="lastiuran">Iuran Terakhir Saldo</label>
+                                                <input type="text" id="lastiuran" name="lastiuran"
+                                                    class="form-control @error('lastiuran') is-invalid @enderror"
+                                                    value="{{ $data == '' ? old('lastiuran') : old('lastiuran', $data->lastiuran) }}"
+                                                    required>
+                                                @error('lastiuran')
+                                                    <span id="lastiuran"
+                                                        class="error invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <div class="form-group">
+                                                <label for="lastIuranDate_saldo">Pembayaran Iuran Terakhir Saldo</label>
+                                                <input type="text" id="lastIuranDate_saldo" name="lastIuranDate_saldo"
+                                                    class="form-control @error('lastIuranDate_saldo') is-invalid @enderror"
+                                                    value="{{ $data == '' ? old('lastIuranDate_saldo') : old('lastIuranDate_saldo', $data->lastIuranDate_saldo) }}"
+                                                    required>
+                                                @error('lastIuranDate_saldo')
+                                                    <span id="lastIuranDate_saldo"
+                                                        class="error invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div>
+                                        </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-md-6">

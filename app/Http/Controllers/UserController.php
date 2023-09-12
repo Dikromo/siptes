@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Cabang;
 use App\Models\Produk;
 use App\Models\Roleuser;
-use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
@@ -30,11 +31,18 @@ class UserController extends Controller
     {
         $data = User::select(
             'users.*',
+            DB::raw('date(users.join_date) as joindate'),
+            DB::raw('date(users.resign_date) as resigndate'),
             'roleusers.nama as roletext',
-            'spv.name as spvnama',
+            DB::raw('UPPER(IF(spv.name is not null, spv.name, users.name)) as spvnama'),
+            DB::raw('UPPER(IF(spv.nickname is not null, spv.nickname, users.nickname)) as spvnickname'),
+            'sm.name as smnama',
+            'um.name as umnama',
         )
             ->join('roleusers', 'roleusers.id', '=', 'users.roleuser_id')
-            ->leftjoin('users as spv', 'spv.id', '=', 'users.parentuser_id');
+            ->leftjoin('users as spv', 'spv.id', '=', 'users.parentuser_id')
+            ->leftjoin('users as sm', 'sm.id', '=', 'users.sm_id')
+            ->leftjoin('users as um', 'um.id', '=', 'users.um_id');
         switch (auth()->user()->roleuser_id) {
             case '1':
                 $data = $data->orderby('users.created_at', 'desc');
@@ -278,6 +286,10 @@ class UserController extends Controller
             $rules['username'] = 'required|unique:users';
         }
         $validateData = $request->validate($rules);
+        $validateData['refferal'] = $request->refferal;
+        $validateData['salescode'] = $request->salescode;
+        $validateData['join_date'] = $request->join_date;
+        $validateData['resign_date'] = $request->resign_date;
         switch ($validateData['status']) {
             case 'Active':
                 $validateData['status'] = '1';

@@ -42,7 +42,14 @@
                                     <th>Username</th>
                                     <th>Role</th>
                                     <th>Supervisor</th>
+                                    <th>SPV Kode</th>
+                                    <th>Sales Manager</th>
+                                    <th>Unit Manager</th>
+                                    <th>Sales Code</th>
+                                    <th>Refferal</th>
+                                    <th>Join Date</th>
                                     <th>Status</th>
+                                    <th>Resign Date</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
                                 </tr>
@@ -90,8 +97,18 @@
 @section('addScript')
     <script src="{{ asset('adminlte/plugins/datatables/jquery.dataTables.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-bs4/js/dataTables.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/datatables-buttons/js/dataTables.buttons.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.bootstrap4.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/jszip/jszip.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/pdfmake/pdfmake.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/pdfmake/vfs_fonts.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.html5.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     <script>
         // $(document).ready(function() {
+
+        var hari = "<?php echo date('Y-m-d'); ?>";
         $('#dataTables').DataTable({
             processing: true,
             serverside: true,
@@ -121,8 +138,35 @@
                 data: 'spvnama',
                 name: 'spv.name'
             }, {
+                data: 'spvnickname',
+                name: 'spv.nickname'
+            }, {
+                data: 'smnama',
+                name: 'sm.name',
+                visible: false
+            }, {
+                data: 'umnama',
+                name: 'um.name',
+                visible: false
+            }, {
+                data: 'salescode',
+                name: 'salescode',
+                visible: false
+            }, {
+                data: 'refferal',
+                name: 'refferal',
+                visible: false
+            }, {
+                data: 'joindate',
+                name: 'join_date',
+                visible: false
+            }, {
                 data: 'statusText',
                 name: 'statusText'
+            }, {
+                data: 'resigndate',
+                name: 'resign_date',
+                visible: false
             }, {
                 data: 'action',
                 name: 'action',
@@ -132,8 +176,22 @@
             columnDefs: [{
                 targets: 5,
                 className: "text-center",
-            }]
-        })
+            }],
+            deferRender: true,
+            lengthMenu: [
+                [10, 50, 100, 200, 500, -1],
+                [10, 50, 100, 200, 500, "All"]
+            ],
+            dom: 'lBfrtip',
+            buttons: [{
+                extend: 'excel',
+                text: 'Export Excel',
+                filename: 'export_users_' + hari,
+                exportOptions: {
+                    columns: 'th:not(:last-child)'
+                }
+            }, ]
+        }).buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');
         // })
     </script>
 @endsection

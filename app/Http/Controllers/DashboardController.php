@@ -705,6 +705,10 @@ class DashboardController extends Controller
                 $vToday .= ' ) ';
                 return $vToday;
             })
+            ->addColumn('campaign', function ($data) use ($today) {
+                $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                return $vToday;
+            })
             ->addColumn('today', function ($data) use ($today) {
                 $vtdt = $data->total_nocall + $data->total_call_today;
                 $vsisahkemarin = $vtdt - $data->total_call_distoday - $data->total_nocall_today;
@@ -738,7 +742,7 @@ class DashboardController extends Controller
             ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3.\' | \'.$total_nocallout_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
-            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4'])
+            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4', 'campaign'])
             ->make(true);
     }
     public function getCampaigncall_detail(Request $request)
@@ -829,5 +833,38 @@ class DashboardController extends Controller
         }
         $hasil .= '</tbody></table>';
         return json_encode($hasil);
+    }
+
+    public function prioritasEdit(Request $request)
+    {
+        $id = decrypt($request->id);
+        $data = Fileexcel::select(
+            'fileexcels.id',
+            DB::raw('date(fileexcels.prioritas_date) as prioritas_date'),
+            'fileexcels.prioritas',
+        )
+            ->without("Customer")
+            ->firstWhere('id', $id);
+        return $data;
+    }
+    public function prioritasStoremodal(Request $request, Fileexcel $fileexcel)
+    {
+        $result = '';
+        $checkdata = ['id' => $fileexcel->id];
+        $validateData = [];
+
+        if ($request->prioritas != '') {
+            $validateData['prioritas_date'] = date('Y-m-d');
+            $validateData['prioritas'] = $request->prioritas;
+        }
+
+        if (isset($fileexcel->id)) {
+            Fileexcel::updateOrInsert($checkdata, $validateData);
+            $result = 'Data Berhasil di Update!';
+        } else {
+            $result = 'Data Berhasil di Update!';
+        }
+
+        return json_encode($result);
     }
 }

@@ -85,13 +85,61 @@
                                     <span id="password" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="refferal">Refferal</label>
+                                        <input type="text" id="refferal" name="refferal"
+                                            class="form-control @error('refferal') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('refferal') : old('refferal', $data->refferal) }}">
+                                        @error('refferal')
+                                            <span id="refferal" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="salescode">Sales Code</label>
+                                        <input type="text" id="salescode" name="salescode"
+                                            class="form-control @error('salescode') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('salescode') : old('salescode', $data->salescode) }}">
+                                        @error('salescode')
+                                            <span id="salescode" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="join_date">Join Date</label>
+                                        <input type="datetime-local" step="1" id="join_date" name="join_date"
+                                            class="form-control @error('join_date') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('join_date') : old('join_date', $data->join_date) }}">
+                                        @error('join_date')
+                                            <span id="join_date" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                                <div class="col-md-6">
+                                    <div class="form-group">
+                                        <label for="resign_date">Resign Date</label>
+                                        <input type="datetime-local" step="1" id="resign_date" name="resign_date"
+                                            class="form-control @error('resign_date') is-invalid @enderror"
+                                            value="{{ $data == '' ? old('resign_date') : old('resign_date', $data->resign_date) }}">
+                                        @error('resign_date')
+                                            <span id="resign_date" class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                    </div>
+                                </div>
+                            </div>
                             <?php
                             $arrayStatus = ['Active', 'Not Active'];
                             ?>
                             <div class="form-group">
                                 <label for="status">Status</label>
-                                <select name="status" class="form-control select2 @error('status') is-invalid @enderror  "
-                                    id="status">
+                                <select name="status"
+                                    class="form-control select2 @error('status') is-invalid @enderror  " id="status">
                                     <option value="">-- Pilih --</option>
                                     @foreach ($arrayStatus as $item)
                                         @if ($data != '')

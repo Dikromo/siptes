@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Models\Distribusi;
+use App\Models\Fileexcel;
 use App\Models\Jmo;
 use App\Models\Mutasi;
 use App\Models\Mutasi_list;
@@ -46,6 +47,9 @@ class RouteServiceProvider extends ServiceProvider
         });
         Route::bind('callhistoryid', function (string $value) {
             return Distribusi::where('id', decrypt($value))->firstOrFail();
+        });
+        Route::bind('fileexcel_id', function (string $value) {
+            return Fileexcel::where('id', decrypt($value))->firstOrFail();
         });
         Route::bind('statuscallid', function (string $value) {
             return Statuscall::where('id', decrypt($value))->firstOrFail();

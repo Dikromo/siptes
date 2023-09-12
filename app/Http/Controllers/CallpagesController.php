@@ -43,12 +43,26 @@ class CallpagesController extends Controller
     }
     public function salesCallpages()
     {
+        //$cektoday = '2023-09-14';
+        $cektoday = date('Y-m-d');
         $hariini = $this->checkDay(date('Y-m-d'), 'today');
         $h2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($hariini))), '');
         $h3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($hariini))), '');
         //$hariini = date('Y-m-d', strtotime('2023-07-21'));
-        $data = Distribusi::where('user_id', auth()->user()->id)
-            ->where('status', 0)
+        $data = Distribusi::select(
+            'distribusis.id'
+        )
+            ->where('distribusis.user_id', auth()->user()->id)
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+            ->where('distribusis.status', 0)
+            ->orderByRaw(
+                "distribusis.call_time desc,
+                CASE date(fileexcels.prioritas_date)  
+                    WHEN '" . $cektoday . "' THEN 1
+                    ELSE 0
+                END desc,fileexcels.prioritas asc"
+            )
             ->without("Customer")
             ->without("User")
             ->limit(1)

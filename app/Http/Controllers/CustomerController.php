@@ -394,6 +394,7 @@ class CustomerController extends Controller
                     )
                     ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
                     ->where('distribusis.user_id', $user_id)
+                    ->whereNull('distribusis.call_time')
                     ->where(function ($query) {
                         $query->where('distribusis.status', '0')
                             ->orWhere('distribusis.status', null);

@@ -651,15 +651,16 @@ class DashboardController extends Controller
                 $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05" title="total contact">' . $data->total_callout . '(' . $persencallout . ')' . '</span></a>';
                 $vToday .= ' | ';
                 $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('4') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb0424" title="total not contact">' . $data->total_nocallout . '(' . $persennocallout . ')' . '</span></a>';
+                $vToday .= ' )( ';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek . '(' . $persenprospek . ')' . '</span></a>';
+                $vToday .= ' | ';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing . '(' . $persenclosing . ')' . '</span></a>';
                 $vToday .= ' ) ';
                 if ($data->upload_user == auth()->user()->id) {
                     $vToday .= ' ( ';
                     $vToday .= '<a href="#" target="_blank"><span style="color:#eb7904" title="total reload">' . $data->total_reload . '</span></a>';
                     $vToday .= ' ) ';
                 }
-                // $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek . '(' . $persenprospek . ')' . '</span></a>';
-                // $vToday .= ' | ';
-                // $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing . '(' . $persenclosing . ')' . '</span></a>';
                 return $vToday;
             })
             ->addColumn('today', function ($data) use ($today) {

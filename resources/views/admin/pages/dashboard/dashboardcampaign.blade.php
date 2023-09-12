@@ -132,7 +132,7 @@
                                     <th>All Call Out</th>
                                     <th>All Prospek</th>
                                     <th>Total Data (Terdistribusi | Belum Terdistribusi)(Telepon | Belum Ditelepon)(Contact
-                                        | Not Contact)(Reload)</th>
+                                        | Not Contact)(Prospek | Closing)(Reload)</th>
                                     <th>Distribusi</th>
                                     <th>Sisah Data</th>
                                     <th>Total Data</th>

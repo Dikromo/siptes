@@ -716,11 +716,11 @@ class DashboardController extends Controller
                 $persencallout =  ($data->total_callout_today == '0' && $data->total_call_today == '0') ? '0' : round(($data->total_callout_today / $data->total_call_today) * 100) . '%';
                 $persennocallout =  ($data->total_nocallout_today == '0' && $data->total_call_today == '0') ? '0' : round(($data->total_nocallout_today / $data->total_call_today) * 100) . '%';
 
-                $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vsisahkemarin . '(' . $persennodis . ')' . '</span>+<span title="data distribusi hari ini">' . $vdatatoday . '(' . $persendis . ')' . '</span>)</span>';
+                $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vsisahkemarin . '</span>+<span title="data distribusi hari ini">' . $vdatatoday . '</span>)</span>';
                 $vToday .= ' ( ';
-                $vToday .= '<a href="#"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '(' . $persencall . ')' . '</span></a>';
+                $vToday .= '<a href="#"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '(' . $persennocall . ')' . '</span>';
+                $vToday .= '<span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
                 $vToday .= ' )( ';
                 $vToday .= '<a href="#"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '(' . $persencallout . ')' . '</span></a>';
                 $vToday .= ' | ';

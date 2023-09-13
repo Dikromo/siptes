@@ -706,7 +706,11 @@ class DashboardController extends Controller
                 return $vToday;
             })
             ->addColumn('campaign', function ($data) use ($today) {
-                $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                if (auth()->user()->roleuser_id == '1' || $data->upload_user == auth()->user()->id) {
+                    $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                } else {
+                    $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                }
                 return $vToday;
             })
             ->addColumn('today', function ($data) use ($today) {

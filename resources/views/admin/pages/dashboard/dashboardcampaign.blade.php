@@ -288,6 +288,10 @@
             });
         }
 
+        function alertAdmin() {
+            alert('Please contact your administrator website.');
+        }
+
         function saveEditcallhistory() {
             $.ajax({
                 type: tipe,

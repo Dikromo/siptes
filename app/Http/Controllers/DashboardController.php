@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\User;
 use App\Models\Fileexcel;
 use App\Models\Distribusi;
+use App\Models\Log_distribusi;
 use App\Models\Statuscall;
 use Illuminate\Http\Request;
 
@@ -545,7 +546,9 @@ class DashboardController extends Controller
             ->select('customer_id', DB::raw('MAX(distribusis.id) as id'))
             ->join('users', 'users.id', '=', 'distribusis.user_id');
         if (auth()->user()->roleuser_id != '1') {
-            $lastDistribusi = $lastDistribusi->whereRaw('users.cabang_id = "' . auth()->user()->cabang_id . '"');
+            if ($request->jenis != 'All Site') {
+                $lastDistribusi = $lastDistribusi->whereRaw('users.cabang_id = "' . auth()->user()->cabang_id . '"');
+            }
         }
         $lastDistribusi = $lastDistribusi->groupBy('customer_id');
 
@@ -621,6 +624,11 @@ class DashboardController extends Controller
         //     $data = $data->where('users.parentuser_id', auth()->user()->id);
         // }
         if (auth()->user()->roleuser_id != '1') {
+            if ($request->jenis != 'All Site') {
+                $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
+            }
+        }
+        if (auth()->user()->roleuser_id != '1') {
             $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id, '31']);
         }
         $data = $data->orderby('sort_totaldata', 'desc')
@@ -629,6 +637,15 @@ class DashboardController extends Controller
 
         return DataTables::of($data->get())
             ->addIndexColumn()
+            ->addColumn('action', function ($data) use ($request) {
+                $vToday = '';
+                if ($data->upload_user == auth()->user()->id) {
+                    if ($request->jenis != 'All Site') {
+                        $vToday = '<a style="cursor: pointer;" onclick="tarikData(\'' . encrypt($data->id) . '\',\'' . $data->kode . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Action">Tarik Data</span></a>';
+                    }
+                }
+                return $vToday;
+            })
             ->addColumn('all1', function ($data) use ($today) {
                 $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
                 $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
@@ -733,10 +750,11 @@ class DashboardController extends Controller
                 $vToday .= '<a href="#"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '(' . $persencallout . ')' . '</span></a>';
                 $vToday .= ' | ';
                 $vToday .= '<a href="#"><span style="color:#eb0424" title="total diangkat hari ini">' . $data->total_nocallout_today . '(' . $persennocallout . ')' . '</span></a>';
+                $vToday .= ' )( ';
+                $vToday .= '<a href="#"><span style="color:#eb7904;font-weight: 600;" title="total prospek hari ini">' . $data->total_prospek_today . '</span></a>';
+                $vToday .= ' | ';
+                $vToday .= '<a href="#"><span style="color:#009b05;font-weight: 600;" title="total closing hari ini">' . $data->total_closing_today . '</span></a>';
                 $vToday .= ' ) ';
-                // $vToday .= '<a href="#"><span style="color:#eb7904;font-weight: 600;" title="total prospek hari ini">' . $data->total_prospek_today . '</span></a>';
-                // $vToday .= ' | ';
-                // $vToday .= '<a href="#"><span style="color:#009b05;font-weight: 600;" title="total closing hari ini">' . $data->total_closing_today . '</span></a>';
                 return $vToday;
             })
             ->addColumn('totData', '{{($total_nocall + $total_call_today)}}')
@@ -746,7 +764,7 @@ class DashboardController extends Controller
             ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3.\' | \'.$total_nocallout_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
-            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4', 'campaign'])
+            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4', 'campaign', 'action'])
             ->make(true);
     }
     public function getCampaigncall_detail(Request $request)
@@ -870,5 +888,55 @@ class DashboardController extends Controller
         }
 
         return json_encode($result);
+    }
+    public function tarikDatacampaign(Request $request)
+    {
+        $z = 0;
+        $fileexcel_id = $request->id != '' ? (string)decrypt($request->id) : '';
+        $data = Distribusi::inRandomOrder()
+            ->select(
+                'distribusis.id as distribusi_id'
+            )
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->join('fileexcels', 'customers.fileexcel_id', '=', 'fileexcels.id')
+            ->join('users', 'users.id', '=', 'distribusis.user_id')
+            ->whereNull('distribusis.call_time')
+            ->where(function ($query) {
+                $query->where('distribusis.status', '0')
+                    ->orWhere('distribusis.status', null);
+            })
+            ->where('customers.fileexcel_id', $fileexcel_id);
+        if (auth()->user()->roleuser_id != 1) {
+            $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
+        }
+        $data = $data
+            ->limit($request->total)
+            ->get();
+        foreach ($data as $item) {
+            $z++;
+            DB::table('distribusis')->where('id', $item->distribusi_id)->delete();
+        }
+
+        $getFileexcel = Fileexcel::firstWhere('id', $fileexcel_id)->kode;
+        if ($z > 0) {
+            $logInsert = [
+                'tipe' => 'Tarik Data',
+                'kode' => $getFileexcel,
+                'provider' => 'ALL-PROVIDER',
+                'nama_sales' => 'All Sales',
+                'deskripsi' => 'Sukses menarik semua data dari semua sales',
+                'total' => $z,
+                'user_id' => auth()->user()->id,
+                'created_at' => now(),
+            ];
+            Log_distribusi::create($logInsert);
+            $result = 'Data Berhasil di Tarik!';
+        } else {
+            $result = 'Data sudah kosong!';
+        }
+        return json_encode($result);
+        //         $msg .= '
+        // Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>';
+        //         $msglog = 'Sukses menarik data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
     }
 }

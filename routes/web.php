@@ -108,6 +108,7 @@ Route::post('/dashboard/ajaxcampaigncall', [DashboardController::class, 'getCamp
 Route::post('/dashboard/ajaxcampaigncall/detail', [DashboardController::class, 'getCampaigncall_detail'])->middleware('auth');
 Route::post('/dashboard/fileexcel/detail', [DashboardController::class, 'prioritasEdit'])->middleware('auth');
 Route::put('/dashboard/fileexcel/{fileexcel_id}', [DashboardController::class, 'prioritasStoremodal'])->middleware('auth');
+Route::post('/dashboard/tarikcampaign', [DashboardController::class, 'tarikDatacampaign'])->middleware('auth');
 
 Route::get('/admin', function () {
     if (auth()->user()->roleuser_id == '3') {

@@ -48,6 +48,10 @@ class UserController extends Controller
                 $data = $data->orderby('users.created_at', 'desc');
                 break;
             case '4':
+                $data = $data->where('users.roleuser_id', '<>', '1')
+                    ->where('users.cabang_id', auth()->user()->cabang_id)
+                    ->orderby('users.created_at', 'desc');
+                break;
             case '6':
                 $data = $data->where('users.roleuser_id', '<>', '1')
                     ->where('users.um_id', auth()->user()->id)

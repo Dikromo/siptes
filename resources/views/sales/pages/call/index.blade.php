@@ -41,8 +41,13 @@
                                     $runhour = '7';
                                 } else {
                                     if ($jarak->h <= '12') {
-                                        $runhour = ((int) $jarak->h + 1 - 10) * 60;
-                                        $runhour = ($runhour + (int) $jarak->i) / 60;
+                                        if ($jarak->h == '12') {
+                                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                                            $runhour = $runhour / 60;
+                                        } else {
+                                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                                            $runhour = ($runhour + (int) $jarak->i) / 60;
+                                        }
                                     } else {
                                         $runhour = ((int) $jarak->h - 10) * 60;
                                         $runhour = ($runhour + (int) $jarak->i) / 60;

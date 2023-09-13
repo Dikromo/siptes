@@ -40,14 +40,51 @@
                                 <span id="tipe" class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div> --}}
-                        <div class="form-group">
-                            <label for="tanggal">Tanggal</label>
-                            <input type="date" id="tanggal" name="tanggal"
-                                class="form-control @error('tanggal') is-invalid @enderror"
-                                value="{{ old('tanggal', date('Y-m-d')) }}" required>
-                            @error('tanggal')
-                                <span id="tanggal" class="error invalid-feedback">{{ $message }}</span>
-                            @enderror
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?php
+                                $arrayTipe = ['All Site', 'Your Site'];
+                                ?>
+                                <div class="form-group">
+                                    <label for="jenis">jenis</label>
+                                    <select name="jenis"
+                                        class="form-control select2 @error('jenis') is-invalid @enderror  " id="jenis">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($arrayTipe as $item)
+                                            @if (session('oldData') != '')
+                                                @if (session('oldData')['jenis'] == $item)
+                                                    <option value="{{ $item }}" selected>{{ $item }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item }}">
+                                                        {{ $item }}
+                                                    </option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item }}">
+                                                    {{ $item }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('jenis')
+                                        <span id="jenis" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="form-group">
+                                    <label for="tanggal">Tanggal</label>
+                                    <input type="date" id="tanggal" name="tanggal"
+                                        class="form-control @error('tanggal') is-invalid @enderror"
+                                        value="{{ old('tanggal', date('Y-m-d')) }}" required>
+                                    @error('tanggal')
+                                        <span id="tanggal" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
                         </div>
                         {{--                         
                         <?php
@@ -121,6 +158,7 @@
                                     <th>H-2 Call Out</th> --}}
                                     {{-- <th></th> --}}
                                     <th>NO</th>
+                                    <th>Action</th>
                                     <th>Nama</th>
                                     {{-- <th>SM</th>
                                     <th>supervisor</th> --}}
@@ -144,6 +182,8 @@
                                     <th>Today Sisah Data</th>
                                     <th>Today Call Out</th>
                                     <th>Today Prospek</th>
+                                    <th>Today Prospek</th>
+                                    <th>Today Closing</th>
                                     <th>Tanggal Data</th>
                                     <th>H-1 Data</th>
                                     <th>H-1 Call</th>
@@ -161,8 +201,11 @@
                                 <tr>
                                     {{-- <th></th> --}}
                                     <th></th>
+                                    <th></th>
                                     {{-- <th></th>
                                     <th></th> --}}
+                                    <th></th>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -256,6 +299,34 @@
         var hari = "<?php echo date('Y-m-d'); ?>";
         renderTable(hari);
 
+        function tarikData(id, judul) {
+            let text = "Apakah anda yakin, Akan Menarik Data " + judul + "?";
+            if (confirm(text) == true) {
+                $('#modal-overlay').modal({
+                    backdrop: 'static',
+                    keyboard: false
+                });
+                $.ajax({
+                    type: 'POST',
+                    url: "/dashboard/tarikcampaign",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: id,
+                    },
+                    dataType: "json",
+                    encode: true,
+                }).done(function(data) {
+                    setTimeout(() => {
+                        $('#modal-overlay').hide();
+                        $('body').removeClass('modal-open');
+                        $('.modal-backdrop').remove();
+                        toastAlert(data);
+                        renderTable(hari);
+                    }, 1000);
+                });
+            }
+        }
+
         function modalEdit(param) {
             linkid = '';
             tipe = '';
@@ -321,14 +392,14 @@
             $("#dataTables").DataTable().off('click');
             $("#dataTables").DataTable().clear().destroy();
             if ($('#tanggal').val() != '') {
-                renderTable($('#tanggal').val());
+                renderTable($('#tanggal').val(), $('#jenis').val());
             } else {
                 alert('Tidak dapat melakukan proses!');
             }
         }
 
 
-        function renderTable(param) {
+        function renderTable(param, param1) {
             switch ($('#tipe').val()) {
                 case 'Total Data':
                     paramSort = [
@@ -395,6 +466,14 @@
                     name: 'DT_RowIndex',
                     orderable: false,
                     searchable: false
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "kode",
+                        filter: "kode",
+                        display: "action"
+                    }
                 }, {
                     data: null,
                     name: null,
@@ -516,6 +595,16 @@
                     visible: false,
                     searchable: false
                 }, {
+                    data: 'total_prospek_today',
+                    name: 'total_prospek_today',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_closing_today',
+                    name: 'total_closing_today',
+                    visible: false,
+                    searchable: false
+                }, {
                     data: null,
                     name: null,
                     render: {
@@ -593,6 +682,7 @@
                     data: {
                         _token: '{{ csrf_token() }}',
                         tanggal: param,
+                        jenis: param1,
                     }
                 },
                 lengthMenu: [
@@ -640,61 +730,61 @@
 
                     // Total over all pages
                     total = api
-                        .column(6)
+                        .column(7)
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
 
                     // Total over this page
                     gtotalData = api
-                        .column(2, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalDistribusi = api
                         .column(3, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoDistribusi = api
+                    gtotalDistribusi = api
                         .column(4, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCall = api
+                    gtotalnoDistribusi = api
                         .column(5, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCall = api
+                    gtotalCall = api
                         .column(6, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallout = api
+                    gtotalnoCall = api
                         .column(7, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCallout = api
+                    gtotalCallout = api
                         .column(8, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalProspek = api
+                    gtotalnoCallout = api
                         .column(9, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalClosing = api
+                    gtotalProspek = api
                         .column(10, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalClosing = api
+                        .column(11, {
                             page: 'current'
                         })
                         .data()
@@ -711,7 +801,7 @@
                         100);
                     gpersennocallout = Math.round(parseFloat(gtotalnoCallout) / parseFloat(gtotalCall) *
                         100);
-                    api.column(11).footer().innerHTML =
+                    api.column(12).footer().innerHTML =
                         '<span style="color:#009b9b"><span title="total data">' + gtotalData + '</span>' +
                         ' (' +
                         '<span style="color:#eb7904" title="total data terdistribusi">' + gtotalDistribusi +
@@ -719,21 +809,21 @@
                         '<span style="color:#eb0424" title="total belum terdistribusi">' + gtotalnoDistribusi +
                         '</span>' + ')';
 
-                    api.column(12).footer().innerHTML =
+                    api.column(13).footer().innerHTML =
                         ' (' +
                         '<span style="color:#eb7904" title="total telepon">' + gtotalCall +
                         '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total belum telepon">' + gtotalnoCall +
                         '</span>' + ')';
 
-                    api.column(13).footer().innerHTML =
+                    api.column(14).footer().innerHTML =
                         ' (' +
                         '<span style="color:#009b05" title="total contact">' + gtotalCallout +
                         '(' + gpersencallout + '%)' + '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total not contact">' + gtotalnoCallout +
                         '(' + gpersennocallout + '%)' + '</span>' + ')';
 
-                    api.column(14).footer().innerHTML =
+                    api.column(15).footer().innerHTML =
                         ' (' +
                         '<span style="color:#eb7904" title="total contact">' + gtotalProspek +
                         '</span>' + ' | ' +
@@ -766,43 +856,55 @@
 
 
                     gtotalDatatoday = api
-                        .column(15, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalDistribusitoday = api
-                        .column(17, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoDistribusitoday = api
                         .column(16, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCalltoday = api
+                    gtotalDistribusitoday = api
                         .column(18, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCalltoday = api
+                    gtotalnoDistribusitoday = api
+                        .column(17, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalCalltoday = api
                         .column(19, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallouttoday = api
+                    gtotalnoCalltoday = api
                         .column(20, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCallouttoday = api
+                    gtotalCallouttoday = api
                         .column(21, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalnoCallouttoday = api
+                        .column(22, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalProspektoday = api
+                        .column(23, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalClosingtoday = api
+                        .column(24, {
                             page: 'current'
                         })
                         .data()
@@ -824,7 +926,7 @@
                     gpersennocallouttoday = Math.round(parseFloat(gtotalnoCallouttoday) / parseFloat(
                             gtotalCalltoday) *
                         100);
-                    api.column(22).footer().innerHTML =
+                    api.column(25).footer().innerHTML =
                         '<span style="color:#009b9b"><span title="total data">' + gtotalDatatoday + '</span>' +
                         ' (' +
                         '<span style="color:#009b9b" title="total data sisah kemarin">' +
@@ -843,7 +945,12 @@
                         '(' + gpersencallouttoday + '%)' + '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total not contact">' +
                         gtotalnoCallouttoday +
-                        '(' + gpersennocallouttoday + '%)' + '</span>' + ')';
+                        '(' + gpersennocallouttoday + '%)' + '</span>' + ')' +
+                        ' (' +
+                        '<span style="color:#eb7904" title="total telepon">' + gtotalProspektoday +
+                        '</span>' + ' | ' +
+                        '<span style="color:#009b05" title="total belum telepon">' + gtotalClosingtoday +
+                        '</span>' + ')';
 
                     // gtotalDatatoday + ' (' +
                     // gtotalnoDistribusitoday + '(' + gpersennodistribusitoday + '%)' + ' + ' +

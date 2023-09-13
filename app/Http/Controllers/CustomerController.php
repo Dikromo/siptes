@@ -382,7 +382,7 @@ class CustomerController extends Controller
         ';
 
                 $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
-            } else if ($request->tipe == 'TARIK DATA') {
+            } else if ($request->tipe == 'TARIK DATA' || $request->tipe == 'TARIK DATA BY ADMIN') {
                 $data = Distribusi::inRandomOrder()
                     ->select(
                         'distribusis.id as distribusi_id',
@@ -393,6 +393,7 @@ class CustomerController extends Controller
                         DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
                     )
                     ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+                    ->join('fileexcels', 'customers.fileexcel_id', '=', 'fileexcels.id')
                     ->where('distribusis.user_id', $user_id)
                     ->whereNull('distribusis.call_time')
                     ->where(function ($query) {
@@ -409,6 +410,11 @@ class CustomerController extends Controller
                 }
                 if ($request->fileexcel_id != 'today') {
                     $data = $data->where('customers.fileexcel_id', $request->fileexcel_id);
+                }
+                if ($request->fileexcel_id == 'today') {
+                    if ($request->tipe == 'TARIK DATA BY ADMIN') {
+                        $data = $data->where('fileexcels.user_id', '31');
+                    }
                 }
                 $data = $data
                     ->limit($request->total)

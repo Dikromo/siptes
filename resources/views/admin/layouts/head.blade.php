@@ -1,6 +1,6 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>SIP System</title>
+<title>SIP System - {{ $title }}</title>
 <link rel="icon" type="image/x-icon" href="/favicon.png">
 
 <!-- Google Font: Source Sans Pro -->

@@ -261,7 +261,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="prioritas">Prioritas</label>
-                        <input type="text" id="prioritas" name="prioritas"
+                        <input type="number" id="prioritas" name="prioritas"
                             class="form-control @error('prioritas') is-invalid @enderror"
                             value="{{ $data == '' ? old('prioritas') : old('prioritas', $data->prioritas) }}">
                         @error('prioritas')
@@ -470,8 +470,8 @@
                     data: null,
                     name: null,
                     render: {
-                        _: "prioritas",
-                        filter: "prioritas",
+                        _: "kode",
+                        filter: "kode",
                         display: "campaign"
                     }
                 }, {

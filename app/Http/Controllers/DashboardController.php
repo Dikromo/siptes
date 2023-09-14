@@ -554,7 +554,8 @@ class DashboardController extends Controller
 
         $data = Fileexcel::select(
             'fileexcels.id',
-            'fileexcels.kode',
+            //'fileexcels.kode',
+            DB::raw('IF(fileexcels.prioritas_date = CURDATE(), CONCAT(\'#\',fileexcels.prioritas,\'  \',fileexcels.kode), fileexcels.kode) AS kode'),
             DB::raw('IF(fileexcels.prioritas_date = CURDATE(), fileexcels.prioritas, 99) AS prioritas'),
             DB::raw('date(fileexcels.prioritas_date) as prioritas_date'),
             'fileexcels.user_id as upload_user',
@@ -726,17 +727,9 @@ class DashboardController extends Controller
             })
             ->addColumn('campaign', function ($data) use ($today) {
                 if (auth()->user()->roleuser_id == '1' || $data->upload_user == auth()->user()->id) {
-                    if ($data->prioritas_date == date('Y-m-d')) {
-                        $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->prioritas . ' - ' . $data->kode . '</span></a>';
-                    } else {
-                        $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
-                    }
+                    $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
                 } else {
-                    if ($data->prioritas_date == date('Y-m-d')) {
-                        $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->prioritas . ' - ' . $data->kode . '</span></a>';
-                    } else {
-                        $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
-                    }
+                    $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
                 }
                 return $vToday;
             })

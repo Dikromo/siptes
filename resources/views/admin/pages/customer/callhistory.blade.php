@@ -91,7 +91,10 @@
                                     <th>NO</th>
                                     <th>Sales</th>
                                     <th>Nama</th>
-                                    @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '6')
+                                    @if (auth()->user()->roleuser_id == '1' ||
+                                            auth()->user()->roleuser_id == '4' ||
+                                            auth()->user()->roleuser_id == '5' ||
+                                            auth()->user()->roleuser_id == '6')
                                         <th>Campaign</th>
                                         <th>4 Digit No Telp</th>
                                     @endif
@@ -102,7 +105,10 @@
                                     <th>MOB</th>
                                     <th>Bank CC</th>
                                     <th>Loan Apply</th>
-                                    @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '6')
+                                    @if (auth()->user()->roleuser_id == '1' ||
+                                            auth()->user()->roleuser_id == '4' ||
+                                            auth()->user()->roleuser_id == '5' ||
+                                            auth()->user()->roleuser_id == '6')
                                         <th>Subproduk</th>
                                     @endif
                                     <th>Deskripsi</th>
@@ -298,7 +304,7 @@
         }
 
         function renderTable(param1, param2) {
-            if (roleuser_id == '1' || roleuser_id == '4' || roleuser_id == '6') {
+            if (roleuser_id == '1' || roleuser_id == '4' || roleuser_id == '5' || roleuser_id == '6') {
                 sortPos = 15;
                 paramColumn = [{
                     data: 'DT_RowIndex',

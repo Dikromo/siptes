@@ -61,7 +61,7 @@ class CallpagesController extends Controller
                 CASE date(fileexcels.prioritas_date)  
                     WHEN '" . $cektoday . "' THEN 1
                     ELSE 0
-                END desc,fileexcels.prioritas asc"
+                END desc,CAST(fileexcels.prioritas AS UNSIGNED) ASC"
             )
             ->without("Customer")
             ->without("User")

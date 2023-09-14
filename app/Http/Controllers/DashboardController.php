@@ -648,11 +648,21 @@ class DashboardController extends Controller
         // }
         if (auth()->user()->roleuser_id != '1') {
             if ($request->jenis != 'All Site') {
-                $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
+                // $data = $data->orWhere(function ($query)  use ($today, $today2, $today3) {
+                //     $query->where('users.cabang_id', auth()->user()->cabang_id)
+                //         ->whereIn('fileexcels.user_id', [auth()->user()->id, '31']);
+                // });
             }
         }
         if (auth()->user()->roleuser_id != '1') {
-            $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id, '31']);
+            $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id]);
+        }
+
+        if (auth()->user()->roleuser_id != '1') {
+            $data = $data->orWhere(function ($query)  use ($today, $today2, $today3) {
+                $query->where('users.cabang_id', auth()->user()->cabang_id)
+                    ->whereIn('fileexcels.user_id', ['31']);
+            });
         }
         $data = $data->orderby('sort_totaldata', 'desc')
             ->groupBy(DB::raw('1,2,3,4,5'))

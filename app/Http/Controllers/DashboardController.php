@@ -386,6 +386,25 @@ class DashboardController extends Controller
         $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
         $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
         $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
+        $cektoday = date('Y-m-d');
+
+        $cekDatatele = Distribusi::select(
+            'fileexcels.id'
+        )
+            ->where('distribusis.user_id', $request->user_id)
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+            ->where('distribusis.status', 0)
+            ->orderByRaw(
+                "distribusis.call_time desc,
+                CASE date(fileexcels.prioritas_date)  
+                    WHEN '" . $cektoday . "' THEN 1
+                    ELSE 0
+                END desc,fileexcels.prioritas asc"
+            )
+            ->without("Customer")
+            ->without("User")
+            ->first()->id;
 
         $hasil = '<table class="table table-head-fixed text-nowrap text-center">
         <thead>
@@ -499,10 +518,11 @@ class DashboardController extends Controller
                 // $vToday .= '<span style="color:#eb0423">' . $item->total_nocall . '</span>';
                 // $vToday .= ' | ';
                 // $vToday .= '<span style="color:#009b05">' . $item->total_callout_today . '</span>';
+                $indikatorCall = ($item->id == $cekDatatele) ? '<span style="font-weight:bold;">' . $item->kode . '</span>' : $item->kode;
                 $hasil .= '<tr>
             <td></td>
             <td>' . $i . '</td>
-            <td>' . $item->kode . '</td>
+            <td>' . $indikatorCall . '</td>
             <td>' . $vToday . '</td>
             <td>' . $item->total_call_2 . ' | ' . $item->total_callout_2 . ' | ' . $item->total_prospek_2 . ' | ' . $item->total_closing_2 . '</td>
             <td>' . $item->total_call_3 . ' | ' . $item->total_callout_3 . ' | ' . $item->total_prospek_3 . ' | ' . $item->total_closing_3 . '</td>

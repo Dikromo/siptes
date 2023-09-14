@@ -430,7 +430,8 @@ class DashboardController extends Controller
 
         $data = Fileexcel::select(
             'fileexcels.id',
-            'fileexcels.kode',
+            DB::raw('IF(fileexcels.prioritas_date = CURDATE(), CONCAT(\'#\',fileexcels.prioritas,\'  \',fileexcels.kode), fileexcels.kode) AS kode'),
+            DB::raw('IF(fileexcels.prioritas_date = CURDATE(), fileexcels.prioritas, 99) AS prioritas'),
             DB::raw('COUNT(distribusis.id) AS total_data'),
             DB::raw('(COUNT(IF(distribusis.status = "0", 1, NULL)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL))) AS sort_totaldata'),
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
@@ -471,7 +472,7 @@ class DashboardController extends Controller
             ->join('users', 'users.id', '=', 'distribusis.user_id');
 
         $data = $data->orderby('sort_totaldata', 'desc')
-            ->groupBy(DB::raw('1,2'))
+            ->groupBy(DB::raw('1,2,3'))
             ->without('Customer');
 
         $i = 0;

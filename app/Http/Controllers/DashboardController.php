@@ -404,7 +404,9 @@ class DashboardController extends Controller
             )
             ->without("Customer")
             ->without("User")
-            ->first()->id;
+            ->first();
+
+        $cekDatatele = $cekDatatele <> null ? $cekDatatele->id : '0';
 
         $hasil = '<table class="table table-head-fixed text-nowrap text-center">
         <thead>

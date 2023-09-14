@@ -470,7 +470,7 @@
                     data: null,
                     name: null,
                     render: {
-                        _: "kode",
+                        _: "prioritas",
                         filter: "kode",
                         display: "campaign"
                     }

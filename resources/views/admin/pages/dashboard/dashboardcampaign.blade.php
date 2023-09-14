@@ -470,8 +470,8 @@
                     data: null,
                     name: null,
                     render: {
-                        _: "campaign",
-                        filter: "campaign",
+                        _: "prioritas",
+                        filter: "prioritas",
                         display: "campaign"
                     }
                 }, {

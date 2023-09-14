@@ -555,7 +555,7 @@ class DashboardController extends Controller
         $data = Fileexcel::select(
             'fileexcels.id',
             'fileexcels.kode',
-            'fileexcels.prioritas',
+            DB::raw('IF(fileexcels.prioritas_date = CURDATE(), fileexcels.prioritas, 99) AS prioritas'),
             DB::raw('date(fileexcels.prioritas_date) as prioritas_date'),
             'fileexcels.user_id as upload_user',
             DB::raw('(COUNT(IF(distribusis.status = "0", 1, NULL)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL))) AS sort_totaldata'),

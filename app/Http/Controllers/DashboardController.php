@@ -555,6 +555,8 @@ class DashboardController extends Controller
         $data = Fileexcel::select(
             'fileexcels.id',
             'fileexcels.kode',
+            'fileexcels.prioritas',
+            DB::raw('date(fileexcels.prioritas_date) as prioritas_date'),
             'fileexcels.user_id as upload_user',
             DB::raw('(COUNT(IF(distribusis.status = "0", 1, NULL)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL))) AS sort_totaldata'),
             DB::raw('COUNT(customers.id) AS total_data'),
@@ -632,7 +634,7 @@ class DashboardController extends Controller
             $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id, '31']);
         }
         $data = $data->orderby('sort_totaldata', 'desc')
-            ->groupBy(DB::raw('1,2,3'))
+            ->groupBy(DB::raw('1,2,3,4,5'))
             ->without("Customer");
 
         return DataTables::of($data->get())
@@ -682,7 +684,7 @@ class DashboardController extends Controller
                 $vToday = ' ( ';
                 $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904" title="total telepon">' . $data->total_call . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#eb0424" title="total belum telepon">' . $data->total_nocall . '</span>';
+                $vToday .= '<span style="color:#eb0424;cursor: pointer;" title="total belum telepon" onclick="tarikData(\'' . encrypt($data->id) . '\',\'' . $data->kode . '\')">' . $data->total_nocall . '</span>';
                 $vToday .= ' ) ';
 
                 return $vToday;
@@ -724,9 +726,17 @@ class DashboardController extends Controller
             })
             ->addColumn('campaign', function ($data) use ($today) {
                 if (auth()->user()->roleuser_id == '1' || $data->upload_user == auth()->user()->id) {
-                    $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                    if ($data->prioritas_date == date('Y-m-d')) {
+                        $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->prioritas . ' - ' . $data->kode . '</span></a>';
+                    } else {
+                        $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                    }
                 } else {
-                    $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                    if ($data->prioritas_date == date('Y-m-d')) {
+                        $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->prioritas . ' - ' . $data->kode . '</span></a>';
+                    } else {
+                        $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                    }
                 }
                 return $vToday;
             })

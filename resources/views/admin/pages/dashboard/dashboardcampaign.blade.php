@@ -158,7 +158,6 @@
                                     <th>H-2 Call Out</th> --}}
                                     {{-- <th></th> --}}
                                     <th>NO</th>
-                                    <th>Action</th>
                                     <th>Nama</th>
                                     {{-- <th>SM</th>
                                     <th>supervisor</th> --}}
@@ -171,6 +170,7 @@
                                     <th>All Not Call OUT</th>
                                     <th>All Prospek</th>
                                     <th>All Closing</th>
+                                    <th>All Reload</th>
                                     <th>Total Data (Terdistribusi | Belum Terdistribusi)(Reload)</th>
                                     <th>(Telepon | Belum Ditelepon)</th>
                                     <th>(Contact | Not Contact)</th>
@@ -201,9 +201,9 @@
                                 <tr>
                                     {{-- <th></th> --}}
                                     <th></th>
-                                    <th></th>
                                     {{-- <th></th>
                                     <th></th> --}}
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -470,16 +470,8 @@
                     data: null,
                     name: null,
                     render: {
-                        _: "kode",
-                        filter: "kode",
-                        display: "action"
-                    }
-                }, {
-                    data: null,
-                    name: null,
-                    render: {
-                        _: "kode",
-                        filter: "kode",
+                        _: "campaign",
+                        filter: "campaign",
                         display: "campaign"
                     }
                 }, {
@@ -525,6 +517,11 @@
                 }, {
                     data: 'total_closing',
                     name: 'total_closing',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'total_reload',
+                    name: 'total_reload',
                     visible: false,
                     searchable: false
                 }, {
@@ -730,60 +727,66 @@
 
                     // Total over all pages
                     total = api
-                        .column(7)
+                        .column(6)
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
 
                     // Total over this page
                     gtotalData = api
-                        .column(3, {
+                        .column(2, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
                     gtotalDistribusi = api
-                        .column(4, {
+                        .column(3, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
                     gtotalnoDistribusi = api
-                        .column(5, {
+                        .column(4, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
                     gtotalCall = api
-                        .column(6, {
+                        .column(5, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
                     gtotalnoCall = api
-                        .column(7, {
+                        .column(6, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
                     gtotalCallout = api
-                        .column(8, {
+                        .column(7, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
                     gtotalnoCallout = api
-                        .column(9, {
+                        .column(8, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
                     gtotalProspek = api
-                        .column(10, {
+                        .column(9, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
                     gtotalClosing = api
+                        .column(10, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalReload = api
                         .column(11, {
                             page: 'current'
                         })
@@ -807,6 +810,9 @@
                         '<span style="color:#eb7904" title="total data terdistribusi">' + gtotalDistribusi +
                         '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total belum terdistribusi">' + gtotalnoDistribusi +
+                        '</span>' + ')' +
+                        ' (' +
+                        '<span style="color:#eb7904" title="total reload">' + gtotalReload +
                         '</span>' + ')';
 
                     api.column(13).footer().innerHTML =

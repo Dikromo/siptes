@@ -74,7 +74,7 @@ class CustomerImport implements ToModel, WithHeadingRow, SkipsOnError, SkipsOnFa
         }
         return new Customer([
             //
-            'nama'          => trim($row['nama']),
+            'nama'          => trim(preg_replace('/[^A-Za-z0-9\-]/', ' ', $row['nama'])),
             'no_telp'       => $row['no_telp'],
             'perusahaan'    => $row['perusahaan'] == null ? '' : $row['perusahaan'],
             'kota'          => $row['kota'] == null ? '' : $row['kota'],

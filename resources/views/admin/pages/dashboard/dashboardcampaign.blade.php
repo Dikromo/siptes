@@ -43,7 +43,7 @@
                         <div class="row">
                             <div class="col-md-6">
                                 <?php
-                                $arrayTipe = ['All Site', 'Your Site'];
+                                $arrayTipe = ['All Site', 'Your Site', 'Today'];
                                 ?>
                                 <div class="form-group">
                                     <label for="jenis">jenis</label>

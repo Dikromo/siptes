@@ -660,7 +660,7 @@ class DashboardController extends Controller
         }
 
         if ($request->jenis == 'Today') {
-            $data = $data->whereRaw("date(distribusis.updated_at) = '" . $today . "'");
+            $data = $data->havingRaw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) > 0');
         }
         if (auth()->user()->roleuser_id != '1') {
             $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id]);

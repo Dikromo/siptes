@@ -184,7 +184,7 @@
                             </div>
                             <?php
                             if (count($fileExceldata) == '0') {
-                                $arrayProvider = ['SIMPATI', 'INDOSAT', 'XL', 'AXIS', 'THREE', 'SMART'];
+                                $arrayProvider = ['SIMPATI', 'NON-SIMPATI', 'ALL-PROVIDER', 'INDOSAT', 'XL', 'AXIS', 'THREE', 'SMART'];
                             } else {
                                 $arrayProvider = ['SIMPATI', 'NON-SIMPATI', 'ALL-PROVIDER', 'INDOSAT', 'XL', 'AXIS', 'THREE', 'SMART'];
                             }

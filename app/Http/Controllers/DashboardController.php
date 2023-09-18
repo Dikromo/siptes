@@ -180,7 +180,8 @@ class DashboardController extends Controller
             $timerun2 = date('Y-m-d H:i:s');
             $jarak = date_diff(date_create($timerun2), date_create($timerun1));
             if ($jarak->h <= '10') {
-                $runhour = '1';
+                $runhour = '1' * 60;
+                $runhour = ($runhour + (int) $jarak->i) / 60;
             } else {
                 if ($jarak->h >= '17') {
                     $runhour = '7';

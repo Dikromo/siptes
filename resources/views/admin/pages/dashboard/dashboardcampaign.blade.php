@@ -40,6 +40,40 @@
                                 <span id="tipe" class="error invalid-feedback">{{ $message }}</span>
                             @enderror
                         </div> --}}
+
+                        <div class="row">
+                            <div class="col-md-6">
+                                <?php
+                                $arrayTipe = ['Contact Rate'];
+                                ?>
+                                <div class="form-group">
+                                    <label for="tipe">Sort By</label>
+                                    <select name="tipe"
+                                        class="form-control select2 @error('tipe') is-invalid @enderror  " id="tipe">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($arrayTipe as $item)
+                                            @if (session('oldData') != '')
+                                                @if (session('oldData')['tipe'] == $item)
+                                                    <option value="{{ $item }}" selected>{{ $item }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item }}">
+                                                        {{ $item }}
+                                                    </option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item }}">
+                                                    {{ $item }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('tipe')
+                                        <span id="tipe" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
                         <div class="row">
                             <div class="col-md-6">
                                 <?php
@@ -195,6 +229,7 @@
                                     <th>H-2 Call Out</th>
                                     <th>H-2 Prospek</th>
                                     <th>H-2 closing</th>
+                                    <th>ALL contact Rate</th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -203,6 +238,7 @@
                                     <th></th>
                                     {{-- <th></th>
                                     <th></th> --}}
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -401,9 +437,9 @@
 
         function renderTable(param, param1) {
             switch ($('#tipe').val()) {
-                case 'Total Data':
+                case 'Contact Rate':
                     paramSort = [
-                        [5, 'desc']
+                        [36, 'desc']
                     ]
                     break;
                 case 'Sisah Data Sebelumnya':
@@ -663,6 +699,11 @@
                 }, {
                     data: 'total_closing_3',
                     name: 'total_closing_3',
+                    visible: false,
+                    searchable: false
+                }, {
+                    data: 'contactRate',
+                    name: 'contactRate',
                     visible: false,
                     searchable: false
                 }

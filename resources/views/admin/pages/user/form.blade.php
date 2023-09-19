@@ -171,6 +171,48 @@
                                     <span id="status" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+                            @if (auth()->user()->cabang_id == '4' || auth()->user()->roleuser_id == '1')
+                                <?php
+                                $arrayDistri = ['Yes', 'No'];
+                                ?>
+                                <div class="form-group">
+                                    <label for="flagdistri">Distribusi</label>
+                                    <select name="flagdistri"
+                                        class="form-control select2 @error('flagdistri') is-invalid @enderror  "
+                                        id="flagdistri">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($arrayDistri as $item)
+                                            @if ($data != '')
+                                                <?php
+                                                switch ($data->flagdistri) {
+                                                    case '1':
+                                                        $flagdistriUser = 'Yes';
+                                                        break;
+                                                    default:
+                                                        $flagdistriUser = 'No';
+                                                        break;
+                                                }
+                                                ?>
+                                                @if (old('flagdistri') == $item || $flagdistriUser == $item)
+                                                    <option value="{{ $item }}" selected>{{ $item }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item }}">
+                                                        {{ $item }}
+                                                    </option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item }}">
+                                                    {{ $item }}
+                                                </option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('flagdistri')
+                                        <span id="flagdistri" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endif
                             {{-- hidden input --}}
                             @if (auth()->user()->roleuser_id == '2')
                                 <input type="hidden" id="hroleuser_id" name="roleuser_id"

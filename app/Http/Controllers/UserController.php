@@ -290,6 +290,9 @@ class UserController extends Controller
             $rules['username'] = 'required|unique:users';
         }
         $validateData = $request->validate($rules);
+        if ($request->flagdistri != '') {
+            $validateData['flagdistri'] = $request->flagdistri == 'Yes' ? '1' : '0';
+        }
         $validateData['refferal'] = $request->refferal;
         $validateData['salescode'] = $request->salescode;
         $validateData['join_date'] = $request->join_date;

@@ -82,6 +82,7 @@ class CustomerController extends Controller
         )
             ->leftjoin('users as spv', 'spv.id', '=', 'users.parentuser_id')
             ->where('users.status', '1')
+            ->where('users.flagdistri', '1')
             ->where(function ($query) use ($hariini) {
                 $query->whereNull('users.flag_hadir')
                     ->orWhereRaw('date(users.flag_hadir) <> "' . $hariini . '"');

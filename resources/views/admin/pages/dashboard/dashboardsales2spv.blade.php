@@ -181,6 +181,20 @@
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->
+    <div class="modal fade" id="modalDetail">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Dashboard Telemarketing</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body tableDetails" style="overflow:auto;">
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('addScript')
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
@@ -288,8 +302,8 @@
                 name: 'sm.name as smname',
                 visible: false,
             }, {
-                data: 'spvname',
-                name: 'parentuser.name as spvname',
+                data: 'smname',
+                name: 'sm.name as smname',
                 visible: false,
             }, {
                 data: 'totData',
@@ -404,7 +418,7 @@
                 },
                 ajax: {
                     type: 'POST',
-                    url: '/dashboard/ajaxsalescall2spv',
+                    url: '/dashboard/ajaxsalescall2sm',
                     data: {
                         _token: '{{ csrf_token() }}',
                         tanggal: param,
@@ -625,7 +639,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '/dashboard/ajaxsalescall2spv/detail',
+                    url: '/dashboard/ajaxsalescall2spv',
                     data: {
                         _token: '{{ csrf_token() }}',
                         user_id: d.temp_id,
@@ -677,6 +691,36 @@
                 //     '</tr>'
                 // );
             }
+        }
+
+        function tablesDetail(tempid) {
+            $('#modalDetail').modal({
+                backdrop: 'static',
+            });
+            var div = $('<div/>')
+                .addClass('loading')
+                .text('Loading...');
+            $('.tableDetails').html(div);
+            $.ajax({
+                type: "POST",
+                url: '/dashboard/ajaxsalescall2spv/detail',
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    user_id: tempid,
+                    tipe: 'spv',
+                    tanggal: $('#tanggal').val(),
+                },
+                dataType: 'json',
+                success: function(json) {
+                    $('.tableDetails').html(json);
+                    // div
+                    //     .html(json)
+                    //     .removeClass('loading')
+                    //     .addClass('row');
+                    // $('.tableDetails').html(div);
+                }
+            });
+
         }
         $('#dataTables').on('search.dt', function() {
             var value = $('.dataTables_filter input').val();

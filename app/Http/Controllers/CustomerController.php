@@ -611,9 +611,11 @@ class CustomerController extends Controller
     {
         $paramStatus = $request->status != '' ? (string)decrypt($request->status) : '';
         $idcampaign = $request->idcampaign != '' ? (string)decrypt($request->idcampaign) : '';
-        if ($request->pageon == '' || $request->pageon == 'today') {
+        if ($request->pageon == '' || $request->pageon == 'today' || $request->pageon == 'reload') {
             if ($request->pageon == '') {
                 $pageon = '';
+            } else if ($request->pageon == 'reload') {
+                $pageon = 'reload';
             } else {
                 $pageon = 'today';
             }
@@ -693,7 +695,7 @@ class CustomerController extends Controller
                 $data = $data->whereIn('distribusis.status', ['2', '34']);
             }
         }
-        if ($pageon == '' || $pageon == 'today') {
+        if ($pageon == '' || $pageon == 'today' || $pageon == 'reload') {
             if (auth()->user()->roleuser_id == '2') {
                 $data = $data->where('sales.parentuser_id', auth()->user()->id);
             } else if (auth()->user()->roleuser_id == '5') {
@@ -718,6 +720,12 @@ class CustomerController extends Controller
                 if ($pageon == 'today') {
                     $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
                         ->whereDate('distribusis.updated_at', '<=', $request->totanggal);
+                }
+                if ($pageon == 'reload') {
+                    $cekStatus = '3,12,13,14,16,18,19,26,27,28,37';
+                    $myArray = explode(',', $cekStatus);
+                    $data = $data->whereIn('distribusis.status', $myArray)
+                        ->whereDate('distribusis.updated_at', '<>', $request->totanggal);
                 }
             } else {
                 $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)

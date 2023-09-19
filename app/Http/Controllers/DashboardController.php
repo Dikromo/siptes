@@ -462,7 +462,7 @@ class DashboardController extends Controller
 
         $data = Fileexcel::select(
             'fileexcels.id',
-            DB::raw('IF(fileexcels.prioritas_date = CURDATE(), CONCAT(\'#\',fileexcels.prioritas,\'  \',fileexcels.kode), fileexcels.kode) AS kode'),
+            DB::raw('IF(fileexcels.prioritas_date = CURDATE(), CONCAT(\'#\',fileexcels.prioritas,\'  \',IF(fileexcels.kodeedit is null , fileexcels.kode , fileexcels.kodeedit)), fileexcels.kode) AS kode'),
             DB::raw('IF(fileexcels.prioritas_date = CURDATE(), fileexcels.prioritas, 99) AS sort_prioritas'),
             DB::raw('COUNT(distribusis.id) AS total_data'),
             DB::raw('(COUNT(IF(distribusis.status = "0", 1, NULL)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL))) AS sort_totaldata'),
@@ -1076,7 +1076,7 @@ class DashboardController extends Controller
         $data = Fileexcel::select(
             'fileexcels.id',
             //'fileexcels.kode',
-            DB::raw('IF(fileexcels.prioritas_date = CURDATE(), CONCAT(\'#\',fileexcels.prioritas,\'  \',fileexcels.kode), fileexcels.kode) AS kode'),
+            DB::raw('IF(fileexcels.prioritas_date = CURDATE(), CONCAT(\'#\',fileexcels.prioritas,\'  \',IF(fileexcels.kodeedit is null , fileexcels.kode , fileexcels.kodeedit)), fileexcels.kode) AS kode'),
             DB::raw('IF(fileexcels.prioritas_date = CURDATE(), fileexcels.prioritas, 99) AS prioritas'),
             DB::raw('date(fileexcels.prioritas_date) as prioritas_date'),
             'fileexcels.user_id as upload_user',
@@ -1262,7 +1262,7 @@ class DashboardController extends Controller
             })
             ->addColumn('campaign', function ($data) use ($today) {
                 if (auth()->user()->roleuser_id == '1' || $data->upload_user == auth()->user()->id) {
-                    $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
+                    $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a><a style="cursor: pointer;"  onclick="modalEditkode(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;"> <i class="fa-solid fa-pen-to-square"></i></span></a>';
                 } else {
                     $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
                 }
@@ -1281,13 +1281,13 @@ class DashboardController extends Controller
 
                 $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vsisahkemarin . '</span>+<span title="data distribusi hari ini">' . $vdatatoday . '</span>)</span>';
                 $vToday .= ' ( ';
-                $vToday .= '<a href="#"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '&pageon=today"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
                 $vToday .= ' )( ';
-                $vToday .= '<a href="#"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '(' . $persencallout . ')' . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '&pageon=today"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '(' . $persencallout . ')' . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="#"><span style="color:#eb0424" title="total diangkat hari ini">' . $data->total_nocallout_today . '(' . $persennocallout . ')' . '</span></a>';
+                $vToday .= '<a href="#"><span style="color:#eb0424" title="total tidak diangkat hari ini">' . $data->total_nocallout_today . '(' . $persennocallout . ')' . '</span></a>';
                 $vToday .= ' )( ';
                 $vToday .= '<a href="#"><span style="color:#eb7904;font-weight: 600;" title="total prospek hari ini">' . $data->total_prospek_today . '</span></a>';
                 $vToday .= ' | ';
@@ -1405,6 +1405,7 @@ class DashboardController extends Controller
         $id = decrypt($request->id);
         $data = Fileexcel::select(
             'fileexcels.id',
+            'fileexcels.kodeedit',
             DB::raw('date(fileexcels.prioritas_date) as prioritas_date'),
             'fileexcels.prioritas',
         )
@@ -1421,6 +1422,9 @@ class DashboardController extends Controller
         if ($request->prioritas != '') {
             $validateData['prioritas_date'] = date('Y-m-d');
             $validateData['prioritas'] = $request->prioritas;
+        }
+        if ($request->kodeedit != '') {
+            $validateData['kodeedit'] = $request->kodeedit;
         }
 
         if (isset($fileexcel->id)) {

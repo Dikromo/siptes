@@ -312,6 +312,33 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="modalEdit">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h4 class="modal-title">Edit Campaign Kode</h4>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="kodeedit">Kode</label>
+                        <input type="text" id="kodeedit" name="kodeedit"
+                            class="form-control @error('kodeedit') is-invalid @enderror"
+                            value="{{ $data == '' ? old('kodeedit') : old('kodeedit', $data->kodeedit) }}">
+                        @error('kodeedit')
+                            <span id="kodeedit" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                <div class="modal-footer justify-content-between">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="saveEditcallhistory();">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('addScript')
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
@@ -363,6 +390,36 @@
             }
         }
 
+        function modalEditkode(param) {
+            linkid = '';
+            tipe = '';
+            $('#prioritas').val('');
+            $('#kodeedit').val('');
+            if (param != '') {
+                $.ajax({
+                    type: 'POST',
+                    url: "/dashboard/fileexcel/detail",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        id: param,
+                    },
+                    dataType: "json",
+                    encode: true,
+                }).done(function(data) {
+                    console.log('aaaa');
+                    tipe = param == '' ? 'POST' : 'PUT';
+                    linkid = param == '' ? '' : '/' + param;
+                    $('#kodeedit').val(data.kodeedit);
+                });
+            } else {
+                tipe = param == '' ? 'POST' : 'PUT';
+                linkid = param == '' ? '' : '/' + param;
+            }
+            $('#modalEdit').modal({
+                backdrop: 'static',
+            });
+        }
+
         function modalEdit(param) {
             linkid = '';
             tipe = '';
@@ -400,19 +457,24 @@
         }
 
         function saveEditcallhistory() {
+            console.log('aaaa');
             $.ajax({
                 type: tipe,
                 url: "/dashboard/fileexcel" + linkid,
                 data: {
                     _token: '{{ csrf_token() }}',
                     prioritas: $('#prioritas').val(),
+                    kodeedit: $('#kodeedit').val(),
                 },
                 dataType: "json",
                 encode: true,
             }).done(function(data) {
                 $('#modalAdd').modal('hide');
+                $('#modalEdit').modal('hide');
+                renderTable(hari);
                 toastAlert(data);
                 $('#prioritas').val('').change();
+                $('#prioritkodeeditas').val('').change();
             });
         }
 

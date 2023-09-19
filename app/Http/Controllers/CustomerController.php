@@ -611,7 +611,16 @@ class CustomerController extends Controller
     {
         $paramStatus = $request->status != '' ? (string)decrypt($request->status) : '';
         $idcampaign = $request->idcampaign != '' ? (string)decrypt($request->idcampaign) : '';
-        $pageon = $request->pageon != '' ? (string)decrypt($request->pageon) : '';
+        if ($request->pageon == '' || $request->pageon == 'today') {
+            if ($request->pageon == '') {
+                $pageon = '';
+            } else {
+                $pageon = 'today';
+            }
+        } else {
+            $pageon = (string)decrypt($request->pageon);
+        }
+        //$pageon = $request->pageon == '' || $request->pageon == 'today'  ? '' : (string)decrypt($request->pageon);
 
         if ($idcampaign != '') {
             $lastDistribusi = DB::table('distribusis')
@@ -632,6 +641,10 @@ class CustomerController extends Controller
             if (auth()->user()->roleuser_id != '1') {
                 $lastDistribusi = $lastDistribusi->whereRaw('users.cabang_id = "' . auth()->user()->cabang_id . '"')
                     ->whereRaw('fileexcels.id= "' . $idcampaign . '"');
+                // if ($pageon == 'today') {
+                //     $lastDistribusi = $lastDistribusi->whereRaw('DATE(distribusis.updated_at) >= "' . $request->fromtanggal . '" ')
+                //         ->whereRaw('DATE(distribusis.updated_at) <= "' . $request->totanggal . '" ');
+                // }
             }
             $lastDistribusi = $lastDistribusi->groupBy('customer_id');
         }
@@ -680,7 +693,7 @@ class CustomerController extends Controller
                 $data = $data->whereIn('distribusis.status', ['2', '34']);
             }
         }
-        if ($pageon == '') {
+        if ($pageon == '' || $pageon == 'today') {
             if (auth()->user()->roleuser_id == '2') {
                 $data = $data->where('sales.parentuser_id', auth()->user()->id);
             } else if (auth()->user()->roleuser_id == '5') {
@@ -692,9 +705,20 @@ class CustomerController extends Controller
                 $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
             }
             if ($idcampaign != '') {
-                $data = $data->join(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                //if ($pageon != 'today') {
+                $data = $data->join(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) use ($pageon, $idcampaign, $request) {
                     $join->on('distribusis.id', '=', 'a.id');
-                })->where('fileexcels.id', $idcampaign);
+                    // if ($pageon == 'today') {
+                    //     $join = $join->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
+                    //         ->whereDate('distribusis.updated_at', '<=', $request->totanggal);
+                    // }
+                });
+                //}
+                $data = $data->where('fileexcels.id', $idcampaign);
+                if ($pageon == 'today') {
+                    $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
+                        ->whereDate('distribusis.updated_at', '<=', $request->totanggal);
+                }
             } else {
                 $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
                     ->whereDate('distribusis.updated_at', '<=', $request->totanggal);

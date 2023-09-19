@@ -614,7 +614,17 @@ class CustomerController extends Controller
 
         if ($idcampaign != '') {
             $lastDistribusi = DB::table('distribusis')
-                ->select('customer_id', DB::raw('MAX(distribusis.id) as id'))
+                ->select(
+                    'customer_id',
+                    DB::raw(
+                        "COALESCE(
+                            MAX(
+                                CASE
+                                WHEN distribusis.status = '1' OR distribusis.status = '15' 
+                                THEN distribusis.id
+                            END), MAX(distribusis.id)) AS id"
+                    )
+                )
                 ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
                 ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
                 ->join('users', 'users.id', '=', 'distribusis.user_id');

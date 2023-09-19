@@ -568,14 +568,14 @@ class DashboardController extends Controller
         $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
 
         $lastDistribusi = DB::table('distribusis')
-            ->select('customer_id', 'distribusis.id', DB::raw('MAX(distribusis.updated_at) as tgl'))
+            ->select('customer_id',  DB::raw('MAX(distribusis.id) as id'))
             ->join('users', 'users.id', '=', 'distribusis.user_id');
         if (auth()->user()->roleuser_id != '1') {
             if ($request->jenis != 'All Site') {
                 $lastDistribusi = $lastDistribusi->whereRaw('users.cabang_id = "' . auth()->user()->cabang_id . '"');
             }
         }
-        $lastDistribusi = $lastDistribusi->groupBy('customer_id', 'distribusis.id');
+        $lastDistribusi = $lastDistribusi->groupBy('customer_id');
 
         $data = Fileexcel::select(
             'fileexcels.id',

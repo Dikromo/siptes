@@ -266,8 +266,7 @@
                     break;
                 default:
                     paramSort = [
-                        [3, 'asc'],
-                        [4, 'asc']
+                        [5, 'desc']
                     ]
                     break;
             }

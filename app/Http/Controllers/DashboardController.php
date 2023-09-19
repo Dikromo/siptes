@@ -723,7 +723,7 @@ class DashboardController extends Controller
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
             ->addColumn('name', function ($data) use ($cektoday2, $runhour) {
-                $signalPercent = round((int)$data->total_call_today * $data->total_tele / (float)$runhour);
+                $signalPercent = round((int)$data->total_call_today / (float)$runhour);
                 $signalBar = 'C' . $data->total_closing_today + $data->total_closing_2 + $data->total_closing_3 . ' ';
                 $signalBar .=   $data->spvname;
                 $signalBar .= $data->smnickname == '' ? '(' . $data->smname . ')' : '(' . $data->smnickname . ')';

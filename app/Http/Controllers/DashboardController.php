@@ -729,8 +729,8 @@ class DashboardController extends Controller
                 $signalBar .=   $data->spvname;
                 $signalBar .= $data->smnickname == '' ? '(' . $data->smname . ')' : '(' . $data->smnickname . ')';
                 if (date('l', strtotime($cektoday2)) != 'Sunday') {
-                    if ($signalPercent >= (26 * $data->total_tele)) {
-                        if ($signalPercent <= (34 * $data->total_tele)) {
+                    if ($signalPercent >= (26 * ($data->total_tele - 1))) {
+                        if ($signalPercent <= (34 * ($data->total_tele - 1))) {
                             $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
                             <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                             </div>
@@ -742,8 +742,8 @@ class DashboardController extends Controller
                             </div>';
                         }
                     }
-                    if ($signalPercent >= (30 * $data->total_tele)) {
-                        if ($signalPercent <= (34 * $data->total_tele)) {
+                    if ($signalPercent >= (30 * ($data->total_tele - 1))) {
+                        if ($signalPercent <= (34 * ($data->total_tele - 1))) {
                             $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
                             <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                             </div>
@@ -755,8 +755,8 @@ class DashboardController extends Controller
                             </div>';
                         }
                     }
-                    if ($signalPercent >= (34 * $data->total_tele)) {
-                        if ($signalPercent <= (34 * $data->total_tele)) {
+                    if ($signalPercent >= (34 * ($data->total_tele - 1))) {
+                        if ($signalPercent <= (34 * ($data->total_tele - 1))) {
                             $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
                             <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                             </div>
@@ -768,13 +768,13 @@ class DashboardController extends Controller
                             </div>';
                         }
                     }
-                    if ($signalPercent >= (39 * $data->total_tele)) {
+                    if ($signalPercent >= (39 * ($data->total_tele - 1))) {
                         $signalBar .= '<div class="progress vertical" style="height:25px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>
                 </div>';
                     }
-                    if ($signalPercent >= (43 * $data->total_tele)) {
+                    if ($signalPercent >= (43 * ($data->total_tele - 1))) {
                         $signalBar .= '<div class="progress vertical" style="height:30px;width:5px;margin-left:1px;">
                 <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
                 </div>

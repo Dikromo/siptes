@@ -626,7 +626,7 @@
 
                 $.ajax({
                     type: "POST",
-                    url: '/dashboard/ajaxsalescall2/detail',
+                    url: '/dashboard/ajaxsalescall2spv/detail',
                     data: {
                         _token: '{{ csrf_token() }}',
                         user_id: d.temp_id,

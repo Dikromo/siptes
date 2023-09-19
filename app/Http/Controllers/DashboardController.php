@@ -663,7 +663,8 @@ class DashboardController extends Controller
                     ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
             });
         if (auth()->user()->roleuser_id == '2') {
-            $data = $data->where('users.parentuser_id', auth()->user()->id);
+            // $data = $data->where('users.parentuser_id', auth()->user()->id);
+            $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
         } else if (auth()->user()->roleuser_id == '4') {
             $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
         } else if (auth()->user()->roleuser_id == '5') {
@@ -781,6 +782,243 @@ class DashboardController extends Controller
             })
             ->rawColumns(['today', 'name'])
             ->make(true);
+    }
+    public function getSalescall2_spvdetail(Request $request)
+    {
+
+        $cektoday = date('Y-m-d');
+        $cektoday2 = date('Y-m-d', strtotime($request->tanggal));
+        $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
+        $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
+        $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
+
+        if ($request->tanggal == $cektoday) {
+            $timerun1 = date('Y-m-d 00:00:00');
+            $timerun2 = date('Y-m-d H:i:s');
+            $jarak = date_diff(date_create($timerun2), date_create($timerun1));
+            if ($jarak->h <= '10') {
+                $runhour = '1' * 60;
+                $runhour = ($runhour + (int) $jarak->i) / 60;
+            } else {
+                if ($jarak->h >= '17') {
+                    $runhour = '7';
+                } else {
+                    if ($jarak->h <= '12') {
+                        if ($jarak->h == '12') {
+                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                            $runhour = ($runhour) / 60;
+                        } else {
+                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                            $runhour = ($runhour + (int) $jarak->i) / 60;
+                        }
+                    } else {
+                        $runhour = ((int) $jarak->h - 10) * 60;
+                        $runhour = ($runhour + (int) $jarak->i) / 60;
+                    }
+                }
+            }
+        } else {
+            $timerun1 = date('H:i:s', strtotime($request->tanggal . ' 00:00:00'));
+            $timerun2 = date('H:i:s', strtotime($request->tanggal . ' 17:00:00'));
+            $jarak = date_diff(date_create($timerun2), date_create($timerun1));
+            $runhour = '7';
+        }
+
+        $hasil = '<table class="table table-head-fixed text-nowrap text-center">
+        <thead>
+            <tr>
+                <th></th>
+                <th>NO</th>
+                <th>Nama</th>
+                <th>' . date('l, d-M-Y', strtotime($today)) . '</th>
+                <th>' . date('l, d-M-Y', strtotime($today2)) . '</th>
+                <th>' . date('l, d-M-Y', strtotime($today3)) . '</th>
+                <!--th>Tanggal Call Out</th>
+                <th>H-1 Data</th>
+                <th>H-1 Sudah Di Telepon</th>
+                <th>H-1 Belum Di Telepon</th>
+                <th>H-1 Call Out</th>
+                <th>H-2 Data</th>
+                <th>H-2 Sudah Di Telepon</th>
+                <th>H-2 Belum Di Telepon</th>
+                <th>H-2 Call Out</th-->
+            </tr>
+        </thead>
+        <tbody>';
+
+        $data = User::select(
+            'users.id',
+            'users.name',
+            DB::raw('IF(parentuser.name is not null, parentuser.name, users.name) as spvname'),
+            DB::raw('IF(parentuser.nickname is not null, parentuser.nickname, users.nickname) as spvnickname'),
+            'sm.name as smname',
+            'sm.nickname as smnickname',
+            'users.roleuser_id',
+            DB::raw('COUNT(distribusis.id) AS total_data'),
+            DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
+            DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, NULL)) AS total_callout'),
+            DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $today . '",1, NULL)) AS total_data_today'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_call_today'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today . '" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_call_distoday'),
+            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today . '", 1, NULL)) AS total_nocall_today'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_callout_today'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_closing_today'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_prospek_today'),
+            DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today2 . '",1, NULL)) AS total_data_2'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_2'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_call_dis2'),
+            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today2 . '", 1, NULL)) AS total_nocall_2'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_callout_2'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_closing_2'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today2 . '", 1, NULL)) AS total_prospek_2'),
+            DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today3 . '",1, NULL)) AS total_data_3'),
+            DB::raw('COUNT(IF(distribusis.status <> "0"  AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_3'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_call_dis3'),
+            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today3 . '", 1, NULL)) AS total_nocall_3'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_callout_3'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_closing_3'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_prospek_3'),
+        )
+            ->leftjoin('distribusis', function ($join) use ($today, $today2, $today3) {
+                $join->on('distribusis.user_id', '=', 'users.id');
+                // ->where(function ($query)  use ($today, $today2, $today3) {
+                //     $query->whereDate('distribusis.distribusi_at', '>=', $today3)
+                //         ->whereDate('distribusis.distribusi_at', '<=', $today);
+                // });
+            })
+            ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
+            ->leftjoin('users as sm', 'sm.id', '=', 'users.sm_id')
+            ->where('users.status', '1')
+            ->whereDate('distribusis.distribusi_at', '<=', $today)
+            ->where(function ($query) {
+                $query->where('users.roleuser_id', '2')
+                    ->orWhere('users.roleuser_id', '3');
+            })
+            ->where(function ($query) use ($cektoday) {
+                $query->whereNull('users.flag_hadir')
+                    ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
+            });
+        $myArray = explode(',', $request->user_id);
+        $data = $data->whereIn('users.id',  $myArray);
+        $data = $data->orderby('users.parentuser_id', 'asc')
+            ->groupBy(DB::raw('1,2,3,4,5,6,7'));
+
+        $i = 0;
+        //echo $data->toSql();
+        //exit;
+        foreach ($data->get() as $item) {
+            $signalPercent = round((int)$item->total_call_today / (float)$runhour);
+            $signalBar = 'C' . $item->total_closing_today + $item->total_closing_2 + $item->total_closing_3 . ' ';
+            $signalBar .= $item->roleuser_id == '2' ? '<i class="fas fa-star" style="color: #e7af13;"></i>' . $item->name : $item->name;
+            $signalBar .=  $item->spvnickname == '' ? '(' . $item->spvname . ')' : '(' . $item->spvnickname . ')';
+            $signalBar .= $item->smnickname == '' ? '(' . $item->smname . ')' : '(' . $item->smnickname . ')';
+            if (date('l', strtotime($cektoday2)) != 'Sunday') {
+                if ($signalPercent >= (26)) {
+                    if ($signalPercent <= (34)) {
+                        $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
+                            <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                    } else {
+                        $signalBar .= '<div class="progress vertical" style="height:10px;width:5px; margin-left:15px;">
+                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                    }
+                }
+                if ($signalPercent >= (30)) {
+                    if ($signalPercent <= (34)) {
+                        $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
+                            <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                    } else {
+                        $signalBar .= '<div class="progress vertical" style="height:15px;width:5px;margin-left:1px;">
+                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                    }
+                }
+                if ($signalPercent >= (34)) {
+                    if ($signalPercent <= (34)) {
+                        $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
+                            <div class="progress-bar bg-danger" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                    } else {
+                        $signalBar .= '<div class="progress vertical" style="height:20px;width:5px;margin-left:1px;">
+                            <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                            </div>
+                            </div>';
+                    }
+                }
+                if ($signalPercent >= (39)) {
+                    $signalBar .= '<div class="progress vertical" style="height:25px;width:5px;margin-left:1px;">
+                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                </div>
+                </div>';
+                }
+                if ($signalPercent >= (43)) {
+                    $signalBar .= '<div class="progress vertical" style="height:30px;width:5px;margin-left:1px;">
+                <div class="progress-bar bg-success" role="progressbar" aria-valuenow="42" aria-valuemin="0" aria-valuemax="42" style="height: 100%">
+                </div>
+                </div>';
+                }
+            }
+            //     $hasil .= '<tr>
+            //     <td></td>
+            //     <td>' . $i . '</td>
+            //     <td>' . $item->kode . '</td>
+            //     <td>' . $item->total_call_today + $item->total_nocall . '</td>
+            //     <td>' . $item->total_call_today . '</td>
+            //     <td>' . $item->total_nocall . '</td>
+            //     <td>' . $item->total_callout_today . '</td>
+            //     <td>' . $item->total_item_2 . '</td>
+            //     <td>' . $item->total_call_2 . '</td>
+            //     <td>' . $item->total_nocall_2 . '</td>
+            //     <td>' . $item->total_callout_2 . '</td>
+            //     <td>' . $item->total_item_3 . '</td>
+            //     <td>' . $item->total_call_3 . '</td>
+            //     <td>' . $item->total_nocall_3 . '</td>
+            //     <td>' . $item->total_callout_3 . '</td>
+            // </tr>';
+
+            $vtdt = $item->total_nocall + $item->total_call_today;
+            $cvtdt = $vtdt + $item->total_call_2 + $item->total_callout_2 + $item->total_call_3 + $item->total_callout_3;
+            if ($cvtdt > '0') {
+                $i++;
+                $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . '</span>)</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#eb7904" title="total telepon hari ini">' . $item->total_call_today . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#eb0423" title="total belum telepon hari ini">' . $item->total_nocall . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#009b05" title="total diangkat hari ini">' . $item->total_callout_today . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#eb7904;font-weight: 400;" title="total prospek">' . $item->total_prospek_today . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#009b05;font-weight: 400;" title="total closing">' . $item->total_closing_today . '</span>';
+                // $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . ')</span>';
+                // $vToday .= ' | ';
+                // $vToday .= '<span style="color:#eb7904">' . $item->total_call_today . '</span>';
+                // $vToday .= ' | ';
+                // $vToday .= '<span style="color:#eb0423">' . $item->total_nocall . '</span>';
+                // $vToday .= ' | ';
+                // $vToday .= '<span style="color:#009b05">' . $item->total_callout_today . '</span>';
+                $hasil .= '<tr>
+            <td></td>
+            <td>' . $i . '</td>
+            <td>' . $signalBar . '</td>
+            <td>' . $vToday . '</td>
+            <td>' . $item->total_call_2 . ' | ' . $item->total_callout_2 . ' | ' . $item->total_prospek_2 . ' | ' . $item->total_closing_2 . '</td>
+            <td>' . $item->total_call_3 . ' | ' . $item->total_callout_3 . ' | ' . $item->total_prospek_3 . ' | ' . $item->total_closing_3 . '</td>
+        </tr>';
+            }
+        }
+        $hasil .= '</tbody></table>';
+        return json_encode($hasil);
     }
     public function campaigncall()
     {

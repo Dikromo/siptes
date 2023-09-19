@@ -286,7 +286,8 @@ class DashboardController extends Controller
                     ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
             });
         if (auth()->user()->roleuser_id == '2') {
-            $data = $data->where('users.parentuser_id', auth()->user()->id);
+            $data = $data->where('users.parentuser_id', auth()->user()->id)
+                ->orWhere('users.id', auth()->user()->id);
         } else if (auth()->user()->roleuser_id == '4') {
             $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
         } else if (auth()->user()->roleuser_id == '5') {
@@ -680,19 +681,20 @@ class DashboardController extends Controller
                 $vtdt = $data->total_nocall + $data->total_call_today;
                 $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '" target="_blank"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->temp_id) . '&param=' . encrypt('0') . '&tanggal=' . encrypt($today) .  '&pageon=' . encrypt($data->temp_id) .  '" target="_blank"><span style="color:#eb7904" title="total telepon hari ini">' . $data->total_call_today . '</span></a>';
                 $vToday .= ' | ';
                 if (auth()->user()->roleuser_id == '4') {
                     $vToday .= '<span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
                 } else {
-                    $vToday .= '<a href="/customer/distribusi?id=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span></a>';
+                    $vToday .= '<span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span>';
+                    // $vToday .= '<a href="/customer/distribusi?id=' . encrypt($data->temp_id) . '" target="_blank"><span style="color:#eb0424" title="total belum telepon hari ini">' . $data->total_nocall . '</span></a>';
                 }
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '" target="_blank"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->temp_id) . '&param=' . encrypt('1') . '&tanggal=' . encrypt($today) .  '&pageon=' . encrypt($data->temp_id) . '" target="_blank"><span style="color:#009b05" title="total diangkat hari ini">' . $data->total_callout_today . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek_today . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->temp_id) . '&param=' . encrypt('3') . '&tanggal=' . encrypt($today) .  '&pageon=' . encrypt($data->temp_id) .  '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek_today . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->id) . '&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing_today . '</span></a>';
+                $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->temp_id) . '&param=' . encrypt('2') . '&tanggal=' . encrypt($today) .  '&pageon=' . encrypt($data->temp_id) .  '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing_today . '</span></a>';
 
                 // $vtdt = $data->total_nocall + $data->total_call_today;
                 // $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';

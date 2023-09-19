@@ -611,6 +611,7 @@ class CustomerController extends Controller
     {
         $paramStatus = $request->status != '' ? (string)decrypt($request->status) : '';
         $idcampaign = $request->idcampaign != '' ? (string)decrypt($request->idcampaign) : '';
+        $pageon = $request->pageon != '' ? (string)decrypt($request->pageon) : '';
 
         if ($idcampaign != '') {
             $lastDistribusi = DB::table('distribusis')
@@ -679,22 +680,29 @@ class CustomerController extends Controller
                 $data = $data->whereIn('distribusis.status', ['2', '34']);
             }
         }
-        if (auth()->user()->roleuser_id == '2') {
-            $data = $data->where('sales.parentuser_id', auth()->user()->id);
-        } else if (auth()->user()->roleuser_id == '5') {
-            $data = $data->where('sales.sm_id', auth()->user()->id);
-        } else if (auth()->user()->roleuser_id == '6') {
-            $data = $data->where('sales.um_id', auth()->user()->id);
-        }
-        if (auth()->user()->roleuser_id != '1') {
-            $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
-        }
-        if ($idcampaign != '') {
-            $data = $data->join(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
-                $join->on('distribusis.id', '=', 'a.id');
-            })->where('fileexcels.id', $idcampaign);
+        if ($pageon == '') {
+            if (auth()->user()->roleuser_id == '2') {
+                $data = $data->where('sales.parentuser_id', auth()->user()->id);
+            } else if (auth()->user()->roleuser_id == '5') {
+                $data = $data->where('sales.sm_id', auth()->user()->id);
+            } else if (auth()->user()->roleuser_id == '6') {
+                $data = $data->where('sales.um_id', auth()->user()->id);
+            }
+            if (auth()->user()->roleuser_id != '1') {
+                $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
+            }
+            if ($idcampaign != '') {
+                $data = $data->join(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                    $join->on('distribusis.id', '=', 'a.id');
+                })->where('fileexcels.id', $idcampaign);
+            } else {
+                $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
+                    ->whereDate('distribusis.updated_at', '<=', $request->totanggal);
+            }
         } else {
-            $data = $data->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
+            $myArray = explode(',', $pageon);
+            $data = $data->whereIn('sales.id', $myArray)
+                ->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
                 ->whereDate('distribusis.updated_at', '<=', $request->totanggal);
         }
         $data = $data->without("Customer")

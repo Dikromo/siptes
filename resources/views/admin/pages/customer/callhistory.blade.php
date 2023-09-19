@@ -229,6 +229,7 @@
         var paramHistory = "<?php echo $get->param; ?>";
         var idcampaign = "<?php echo $get->idcampaign; ?>";
         var searchHistory = "<?php echo $get->search; ?>";
+        var pageon = "<?php echo $get->pageon; ?>";
 
         renderTable(fromTanggal, toTanggal);
 
@@ -501,6 +502,7 @@
                         user_id: $('#user_id').val(),
                         status: paramHistory,
                         idcampaign: idcampaign,
+                        pageon: pageon,
                     }
                 },
 

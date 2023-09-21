@@ -537,7 +537,7 @@ class DashboardController extends Controller
 
             $vtdt = $item->total_nocall + $item->total_call_today;
             $cvtdt = $vtdt + $item->total_call_2 + $item->total_callout_2 + $item->total_call_3 + $item->total_callout_3;
-            $contactRate = ($data->total_callout_today == '0' && $data->total_call_today == '0') ? '0' : round(($data->total_callout_today / $data->total_call_today) * 100) . '%';
+            $contactRate = ($item->total_callout_today == '0' && $item->total_call_today == '0') ? '0' : round(($item->total_callout_today / $item->total_call_today) * 100) . '%';
             if ($cvtdt > '0') {
                 $i++;
                 $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . '</span>)</span>';

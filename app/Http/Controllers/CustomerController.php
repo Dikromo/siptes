@@ -383,17 +383,25 @@ class CustomerController extends Controller
         ';
 
                 $msglog = 'Sukses mendistribusi data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
-            } else if ($request->tipe == 'TARIK DATA' || $request->tipe == 'TARIK DATA BY ADMIN') {
-                $data = Distribusi::inRandomOrder()
-                    ->select(
+            } else if ($request->tipe == 'TARIK DATA' || $request->tipe == 'TARIK DATA BY ADMIN' || $request->tipe == 'TARIK DATA ALL CAMPAIGN') {
+                $data = Distribusi::inRandomOrder();
+                if ($request->tipe == 'TARIK DATA ALL CAMPAIGN') {
+                    $data->select(
+                        'distribusis.user_id as user_id',
+                        DB::raw('GROUP_CONCAT(distribusis.id) distribusi_id')
+
+                    );
+                } else {
+                    $data = $data->select(
                         'distribusis.id as distribusi_id',
                         DB::raw('CONCAT("' . auth()->user()->id . '") as user_id'),
                         DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
                         DB::raw('CONCAT("1") as bank_id'),
                         DB::raw('CONCAT("0") as status'),
                         DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
-                    )
-                    ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+                    );
+                }
+                $data = $data->join('customers', 'customers.id', '=', 'distribusis.customer_id')
                     ->join('fileexcels', 'customers.fileexcel_id', '=', 'fileexcels.id')
                     ->where('distribusis.user_id', $user_id)
                     ->whereNull('distribusis.call_time')
@@ -417,15 +425,26 @@ class CustomerController extends Controller
                         $data = $data->where('fileexcels.user_id', '31');
                     }
                 }
-                $data = $data
-                    ->limit($request->total)
-                    ->get();
+                $data = $data->limit($request->total);
+                if ($request->tipe == 'TARIK DATA ALL CAMPAIGN') {
+                    $data = $data->groupBy(DB::raw('1'));
+                }
+                $data = $data->get();
                 if ($request->fileexcel_id == 'today') {
                     foreach ($data as $item) {
                         # code...
-                        DB::table('distribusis')
-                            ->where('id', $item->distribusi_id)
-                            ->update(['user_id' => auth()->user()->id, 'updated_at' => now()]);
+                        if ($request->tipe == 'TARIK DATA ALL CAMPAIGN') {
+                            foreach ($data as $item) {
+                                $myArray = explode(',', $item->distribusi_id);
+                            }
+                            if (count($myArray) > 0) {
+                                DB::table('distribusis')->whereIn('id', $myArray)->delete();
+                            }
+                        } else {
+                            DB::table('distribusis')
+                                ->where('id', $item->distribusi_id)
+                                ->update(['user_id' => auth()->user()->id, 'updated_at' => now()]);
+                        }
                     }
                 } else {
                     foreach ($data as $item) {

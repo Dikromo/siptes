@@ -118,7 +118,7 @@
                             if (count($fileExceldata) == '0') {
                                 $arrayTipe = ['DISTRIBUSI', 'TARIK DATA'];
                             } else {
-                                $arrayTipe = ['DISTRIBUSI', 'TARIK DATA', 'TARIK DATA BY ADMIN', 'RELOAD'];
+                                $arrayTipe = ['DISTRIBUSI', 'TARIK DATA', 'TARIK DATA BY ADMIN', 'TARIK DATA ALL CAMPAIGN', 'RELOAD'];
                             }
                             ?>
                             <div class="form-group">
@@ -369,6 +369,9 @@
                 case 'TARIK DATA BY ADMIN':
                     prosesData = 'menarik dari admin';
                     break;
+                case 'TARIK DATA ALL CAMPAIGN':
+                    prosesData = 'menarik semua campaign';
+                    break;
                 case 'RELOAD':
                     prosesData = 'mereload';
                     break;
@@ -392,7 +395,8 @@
                     }
                 }
 
-                if ($('#tipe').val() == 'TARIK DATA' || $('#tipe').val() == 'TARIK DATA BY ADMIN') {
+                if ($('#tipe').val() == 'TARIK DATA' || $('#tipe').val() == 'TARIK DATA BY ADMIN' || $('#tipe')
+                    .val() == 'TARIK DATA ALL CAMPAIGN') {
                     if (toTabel != 0 && $('#total').val() != '0' && $('#total').val() <= toTabel) {
                         $('#modal-overlay').modal({
                             backdrop: 'static',

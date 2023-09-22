@@ -230,6 +230,8 @@
                                     <th>H-2 Prospek</th>
                                     <th>H-2 closing</th>
                                     <th>ALL contact Rate</th>
+                                    <th>H-3 Data</th>
+                                    <th>H-4 Data</th>
                                 </tr>
                             </thead>
                             <tfoot>
@@ -238,6 +240,9 @@
                                     <th></th>
                                     {{-- <th></th>
                                     <th></th> --}}
+                                    <th></th>
+                                    <th></th>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -768,6 +773,22 @@
                     name: 'contactRate',
                     visible: false,
                     searchable: false
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_data_4",
+                        filter: "total_data_4",
+                        display: "h4"
+                    }
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "total_data_5",
+                        filter: "total_data_5",
+                        display: "h5"
+                    }
                 }
             ];
             var tables1 = new $('#dataTables').DataTable({

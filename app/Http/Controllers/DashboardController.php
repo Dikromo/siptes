@@ -622,6 +622,8 @@ class DashboardController extends Controller
                 WHEN parentuser.roleuser_id = \'2\' THEN parentuser.id
                 END) temp_id'),
             DB::raw('COUNT(DISTINCT users.name) AS total_tele'),
+            DB::raw('COUNT(DISTINCT users.name) AS total_hadir'),
+            DB::raw('COUNT(DISTINCT CASE WHEN users.flag_hadir = "' . $today . '" THEN users.id END) AS total_nohadir'),
             DB::raw('COUNT(distribusis.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
@@ -663,11 +665,11 @@ class DashboardController extends Controller
             ->where(function ($query) {
                 $query->where('users.roleuser_id', '2')
                     ->orWhere('users.roleuser_id', '3');
-            })
-            ->where(function ($query) use ($cektoday) {
-                $query->whereNull('users.flag_hadir')
-                    ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
             });
+        // ->where(function ($query) use ($cektoday) {
+        //     $query->whereNull('users.flag_hadir')
+        //         ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
+        // });
         if (auth()->user()->roleuser_id == '2') {
             // $data = $data->where('users.parentuser_id', auth()->user()->id);
             $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
@@ -702,6 +704,10 @@ class DashboardController extends Controller
                 $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->temp_id) . '&param=' . encrypt('3') . '&tanggal=' . encrypt($today) .  '&pageon=' . encrypt($data->temp_id) .  '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek_today . '</span></a>';
                 $vToday .= ' | ';
                 $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->temp_id) . '&param=' . encrypt('2') . '&tanggal=' . encrypt($today) .  '&pageon=' . encrypt($data->temp_id) .  '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing_today . '</span></a>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#009b9b" title="total hadir">' . $data->total_hadir . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#eb0424" title="total tidak hadir">' . $data->total_nohadir . '</span>';
 
                 // $vtdt = $data->total_nocall + $data->total_call_today;
                 // $vToday = '<span style="color:#009b9b"><span title="total data hari ini">' . $vtdt . '</span>(<span title="sisah data kemarin">' . $vtdt - $data->total_call_distoday - $data->total_nocall_today  . '</span>+<span title="data distribusi hari ini">' . $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today) . '</span>)</span>';
@@ -862,6 +868,8 @@ class DashboardController extends Controller
             DB::raw('GROUP_CONCAT(
                 DISTINCT  users.id ) temp_id'),
             DB::raw('COUNT(DISTINCT users.name) AS total_tele'),
+            DB::raw('COUNT(DISTINCT users.name) AS total_hadir'),
+            DB::raw('COUNT(DISTINCT CASE WHEN users.flag_hadir = "' . $today . '" THEN users.id END) AS total_nohadir'),
             DB::raw('COUNT(distribusis.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
@@ -1013,6 +1021,10 @@ class DashboardController extends Controller
                 $vToday .= '<span style="color:#eb7904;font-weight: 400;" title="total prospek">' . $item->total_prospek_today . '</span>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#009b05;font-weight: 400;" title="total closing">' . $item->total_closing_today . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#009b9b;font-weight: 400;" title="total hadir">' . $item->total_hadir . '</span>';
+                $vToday .= ' | ';
+                $vToday .= '<span style="color:#eb0423;font-weight: 400;" title="total tidak hadir">' . $item->total_nohadir . '</span>';
                 // $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . ')</span>';
                 // $vToday .= ' | ';
                 // $vToday .= '<span style="color:#eb7904">' . $item->total_call_today . '</span>';
@@ -1300,6 +1312,8 @@ class DashboardController extends Controller
         $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
         $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
         $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
+        $today4 = $this->checkDay(date('Y-m-d', strtotime('-3 days', strtotime($today))), '');
+        $today5 = $this->checkDay(date('Y-m-d', strtotime('-4 days', strtotime($today))), '');
 
         $lastDistribusi = DB::table('distribusis')
             ->select(
@@ -1377,6 +1391,22 @@ class DashboardController extends Controller
             DB::raw('COUNT(IF(statuscalls.jenis = "2" AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_nocallout_3'),
             DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_closing_3'),
             DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today3 . '", 1, NULL)) AS total_prospek_3'),
+            DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today4 . '",1, NULL)) AS total_data_4'),
+            DB::raw('COUNT(IF(distribusis.status <> "0"  AND DATE(distribusis.updated_at) = "' . $today4 . '", 1, NULL)) AS total_call_4'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today4 . '" AND DATE(distribusis.updated_at) = "' . $today4 . '", 1, NULL)) AS total_call_dis4'),
+            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today4 . '", 1, NULL)) AS total_nocall_4'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today4 . '", 1, NULL)) AS total_callout_4'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "2" AND DATE(distribusis.updated_at) = "' . $today4 . '", 1, NULL)) AS total_nocallout_4'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today4 . '", 1, NULL)) AS total_closing_4'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today4 . '", 1, NULL)) AS total_prospek_4'),
+            DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $today5 . '",1, NULL)) AS total_data_5'),
+            DB::raw('COUNT(IF(distribusis.status <> "0"  AND DATE(distribusis.updated_at) = "' . $today5 . '", 1, NULL)) AS total_call_5'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today5 . '" AND DATE(distribusis.updated_at) = "' . $today5 . '", 1, NULL)) AS total_call_dis5'),
+            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today5 . '", 1, NULL)) AS total_nocall_5'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today5 . '", 1, NULL)) AS total_callout_5'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "2" AND DATE(distribusis.updated_at) = "' . $today5 . '", 1, NULL)) AS total_nocallout_5'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today5 . '", 1, NULL)) AS total_closing_5'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today5 . '", 1, NULL)) AS total_prospek_5'),
         )
             ->join('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
             ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
@@ -1543,11 +1573,57 @@ class DashboardController extends Controller
                 $vToday .= ' ) ';
                 return $vToday;
             })
+            ->addColumn('h2', function ($data) use ($today) {
+                $contactRate = ($data->total_callout_2 == '0' && $data->total_call_2 == '0') ? '0%' : round(($data->total_callout_2 / $data->total_call_2) * 100) . '%';
+                $vToday = $data->total_call_2;
+                $vToday .= ' | ';
+                $vToday .= $data->total_callout_2 . '(' . $contactRate . ')';
+                $vToday .= ' | ';
+                $vToday .= $data->total_nocall_2;
+                $vToday .= ' | ';
+                $vToday .= $data->total_closing_2;
+                return $vToday;
+            })
+            ->addColumn('h3', function ($data) use ($today) {
+                $contactRate = ($data->total_callout_3 == '0' && $data->total_call_3 == '0') ? '0%' : round(($data->total_callout_3 / $data->total_call_3) * 100) . '%';
+                $vToday = $data->total_call_3;
+                $vToday .= ' | ';
+                $vToday .= $data->total_callout_3 . '(' . $contactRate . ')';
+                $vToday .= ' | ';
+                $vToday .= $data->total_nocall_3;
+                $vToday .= ' | ';
+                $vToday .= $data->total_closing_3;
+                return $vToday;
+            })
+            ->addColumn('h4', function ($data) use ($today) {
+                $contactRate = ($data->total_callout_4 == '0' && $data->total_call_4 == '0') ? '0%' : round(($data->total_callout_4 / $data->total_call_4) * 100) . '%';
+                $vToday = $data->total_call_4;
+                $vToday .= ' | ';
+                $vToday .= $data->total_callout_4 . '(' . $contactRate . ')';
+                $vToday .= ' | ';
+                $vToday .= $data->total_nocall_4;
+                $vToday .= ' | ';
+                $vToday .= $data->total_closing_4;
+                return $vToday;
+            })
+            ->addColumn('h5', function ($data) use ($today) {
+                $contactRate = ($data->total_callout_5 == '0' && $data->total_call_5 == '0') ? '0%' : round(($data->total_callout_5 / $data->total_call_5) * 100) . '%';
+                $vToday = $data->total_call_5;
+                $vToday .= ' | ';
+                $vToday .= $data->total_callout_5 . '(' . $contactRate . ')';
+                $vToday .= ' | ';
+                $vToday .= $data->total_nocall_5;
+                $vToday .= ' | ';
+                $vToday .= $data->total_closing_5;
+                return $vToday;
+            })
             ->addColumn('totData', '{{($total_nocall + $total_call_today)}}')
             ->addColumn('totSisah', '{{($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today}}')
             ->addColumn('totToday', '{{($total_nocall + $total_call_today)-(($total_nocall + $total_call_today) - $total_call_distoday - $total_nocall_today)}}')
-            ->addColumn('h2', '{{$total_call_2.\' | \'.$total_callout_2.\' | \'.$total_nocallout_2}}')
-            ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3.\' | \'.$total_nocallout_3}}')
+            // ->addColumn('h2', '{{$total_call_2.\' | \'.$total_callout_2.\'(\'.$total_callout_2/$total_call_2.\') | \'.$total_nocallout_2.\' | \'.$total_closing_2}}')
+            // ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3.\'(\'.$total_callout_3/$total_call_3.\') | \'.$total_nocallout_3.\' | \'.$total_closing_3}}')
+            // ->addColumn('h4', '{{$total_call_4.\' | \'.$total_callout_4.\'(\'.$total_callout_4/$total_call_4.\') | \'.$total_nocallout_4.\' | \'.$total_closing_4}}')
+            // ->addColumn('h5', '{{$total_call_5.\' | \'.$total_callout_5.\'(\'.$total_callout_5/$total_call_5.\') | \'.$total_nocallout_5.\' | \'.$total_closing_5}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
 
             ->addColumn('contactRate', function ($data) use ($today) {
@@ -1555,7 +1631,7 @@ class DashboardController extends Controller
                 return $persencallout;
             })
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
-            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4', 'campaign', 'action'])
+            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4', 'h2', 'h3', 'h4', 'h5', 'campaign', 'action'])
             ->make(true);
     }
     public function getCampaigncall_detail(Request $request)

@@ -705,7 +705,7 @@ class DashboardController extends Controller
                 $vToday .= ' | ';
                 $vToday .= '<a href="/customer/callhistory?id=' . encrypt($data->temp_id) . '&param=' . encrypt('2') . '&tanggal=' . encrypt($today) .  '&pageon=' . encrypt($data->temp_id) .  '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing_today . '</span></a>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#009b9b" title="total hadir">' . $data->total_hadir . '</span>';
+                $vToday .= '<span style="color:#009b9b" title="total hadir">' . ($data->total_hadir - $data->total_nohadir) . '</span>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#eb0424" title="total tidak hadir">' . $data->total_nohadir . '</span>';
 
@@ -1022,7 +1022,7 @@ class DashboardController extends Controller
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#009b05;font-weight: 400;" title="total closing">' . $item->total_closing_today . '</span>';
                 $vToday .= ' | ';
-                $vToday .= '<span style="color:#009b9b;font-weight: 400;" title="total hadir">' . $item->total_hadir . '</span>';
+                $vToday .= '<span style="color:#009b9b;font-weight: 400;" title="total hadir">' . ($item->total_hadir - $item->total_nohadir) . '</span>';
                 $vToday .= ' | ';
                 $vToday .= '<span style="color:#eb0423;font-weight: 400;" title="total tidak hadir">' . $item->total_nohadir . '</span>';
                 // $vToday = '<span style="color:#009b9b">' . $vtdt . '(' . $vtdt - $item->total_call_distoday - $item->total_nocall_today  . ' + ' . $vtdt - ($vtdt - $item->total_call_distoday - $item->total_nocall_today) . ')</span>';

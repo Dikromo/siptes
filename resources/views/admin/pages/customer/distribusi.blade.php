@@ -146,6 +146,36 @@
                                     <span id="tipe" class="error invalid-feedback">{{ $message }}</span>
                                 @enderror
                             </div>
+                            @if (count($groupfileexcelsdata) > '0')
+                                <div class="form-group">
+                                    <label for="Group">Group Campaign</label>
+                                    <select name="group_fileexcels_id"
+                                        class="form-control select2 @error('group_fileexcels_id') is-invalid @enderror  "
+                                        id="group_fileexcels_id">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($groupfileexcelsdata as $item)
+                                            @if (session('oldData') != '')
+                                                @if (session('oldData')['group_fileexcels_id'] == $item->id)
+                                                    {{-- <option value="{{ $item->id }}" selected>
+                                                        {{ $item->nama . '(' . $item->total_data . ')' }}</option> --}}
+                                                    <option value="{{ $item->id }}" selected>
+                                                        {{ $item->nama }}</option>
+                                                @else
+                                                    <option value="{{ $item->id }}">
+                                                        {{ $item->nama }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item->id }}">
+                                                    {{ $item->nama }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('group_fileexcels_id')
+                                        <span id="group_fileexcels_id"
+                                            class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            @endif
                             <div class="form-group">
                                 <label for="kode">Kode</label>
                                 <select name="fileexcel_id"
@@ -332,9 +362,22 @@
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script> --}}
     <script>
         var totalFileexcel = '{{ count($fileExceldata) }}';
+        var totalGroupfile = '{{ count($groupfileexcelsdata) }}';
         var fromTabel = 0;
         var toTabel = 0;
         var rolecek = '{{ auth()->user()->roleuser_id }}';
+        if (totalGroupfile > '0') {
+            if ($("#group_fileexcels_id").val() != '') {
+                $("#fileexcel_id").prop("disabled", true);
+            } else {
+                $("#fileexcel_id").prop("disabled", false);
+            }
+            if ($("#group_fileexcels_id").val() != '') {
+                $("#fileexcel_id").prop("disabled", true);
+            } else {
+                $("#fileexcel_id").prop("disabled", false);
+            }
+        }
         $('.select2').select2();
         $('#user_id').select2({
             allowClear: true,
@@ -440,28 +483,50 @@
                 }
             });
             setTimeout(() => {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                if ($("#produk_id").val() != '' && ($("#fileexcel_id").val() != '' || $(
+                        "#group_fileexcels_id").val() != '') && $("#provider")
                     .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             }, 2000);
             $("#produk_id").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                if ($("#produk_id").val() != '' && ($("#fileexcel_id").val() != '' || $(
+                        "#group_fileexcels_id").val() != '') && $("#provider")
                     .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
             $("#fileexcel_id").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                if ($("#fileexcel_id").val() != '') {
+                    $("#group_fileexcels_id").prop("disabled", true);
+                } else {
+                    $("#group_fileexcels_id").prop("disabled", false);
+                }
+                if ($("#produk_id").val() != '' && ($("#fileexcel_id").val() != '' || $(
+                        "#group_fileexcels_id").val() != '') && $("#provider")
+                    .val() !=
+                    '' && $("#tipe").val() != '') {
+                    dataTablesfrom();
+                }
+            });
+            $("#group_fileexcels_id").change(function() {
+                if ($("#group_fileexcels_id").val() != '') {
+                    $("#fileexcel_id").prop("disabled", true);
+                } else {
+                    $("#fileexcel_id").prop("disabled", false);
+                }
+                if ($("#produk_id").val() != '' && ($("#fileexcel_id").val() != '' || $(
+                        "#group_fileexcels_id").val() != '') && $("#provider")
                     .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
                 }
             });
             $("#provider").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                if ($("#produk_id").val() != '' && ($("#fileexcel_id").val() != '' || $(
+                        "#group_fileexcels_id").val() != '') && $("#provider")
                     .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
@@ -469,7 +534,8 @@
             });
 
             $("#tipe").change(function() {
-                if ($("#produk_id").val() != '' && $("#fileexcel_id").val() != '' && $("#provider")
+                if ($("#produk_id").val() != '' && ($("#fileexcel_id").val() != '' || $(
+                        "#group_fileexcels_id").val() != '') && $("#provider")
                     .val() !=
                     '' && $("#tipe").val() != '') {
                     dataTablesfrom();
@@ -563,6 +629,7 @@
                         _token: '{{ csrf_token() }}',
                         produk_id: $("#produk_id").val(),
                         fileexcel_id: $("#fileexcel_id").val(),
+                        group_fileexcels_id: $("#group_fileexcels_id").val(),
                         provider: $("#provider").val(),
                         tipe: $("#tipe").val(),
                         user_id: $("#user_id").val(),

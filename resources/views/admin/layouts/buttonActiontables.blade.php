@@ -25,6 +25,13 @@
                     $aktif = false;
                     $slug = encrypt($data->id);
                     break;
+                case 'campaign/group':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $aktif = false;
+                    $slug = encrypt($data->id);
+                    break;
         
                 case 'statuscall':
                     $view = false;
@@ -63,6 +70,13 @@
                     $slug = encrypt($data->id);
                     break;
                 case 'mutasi':
+                    $view = false;
+                    $edit = true;
+                    $delete = false;
+                    $aktif = false;
+                    $slug = encrypt($data->id);
+                    break;
+                case 'campaign/group':
                     $view = false;
                     $edit = true;
                     $delete = false;

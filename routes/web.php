@@ -58,6 +58,15 @@ Route::post('/customer/ajax/logdistribusi', [CustomerController::class, 'logDist
 
 Route::get('/campaign', [CampaignController::class, 'index'])->middleware('auth');
 Route::post('/campaign/ajax', [CampaignController::class, 'dataTables'])->middleware('auth');
+Route::get('/campaign/group', [CampaignController::class, 'indexGroup'])->middleware('auth');
+Route::post('/campaign/ajaxgroup', [CampaignController::class, 'dataTablesgroup'])->middleware('auth');
+Route::post('/campaign/ajaxgroup/list', [CampaignController::class, 'dataTablesgrouplist'])->middleware('auth');
+Route::get('/campaign/group/create', [CampaignController::class, 'groupFormadd'])->middleware('auth');
+Route::post('/campaign/group', [CampaignController::class, 'groupCampaignStore'])->middleware('auth');
+Route::put('/campaign/group/{campaigngroup_id}', [CampaignController::class, 'groupCampaignStore'])->middleware('auth');
+Route::get('/campaign/group/{id}/edit', [CampaignController::class, 'groupFormedit'])->middleware('auth');
+Route::get('/campaign/group/list', [CampaignController::class, 'getCampaignmodal'])->middleware('auth');
+Route::post('/campaign/group/list', [CampaignController::class, 'campaigngrouplistSave'])->middleware('auth');
 
 Route::get('/call', [CallpagesController::class, 'salesCallpages'])->middleware('auth');
 Route::get('/call/detail/{id}', [CallpagesController::class, 'salesCallshow'])->middleware('auth');

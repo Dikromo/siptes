@@ -124,6 +124,18 @@
                                 </a>
                             </li>
                         @endif
+                        @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '6')
+                            <li class="nav-item">
+                                <a href="/campaign/group"
+                                    class="nav-link {{ $active === 'campaigngroup' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-database"></i>
+                                    <p>
+                                        Campaign Group
+                                        <!--span class="right badge badge-danger">New</span-->
+                                    </p>
+                                </a>
+                            </li>
+                        @endif
                         <li class="nav-item">
                             <a href="/customer/distribusi"
                                 class="nav-link {{ $active === 'distribusi' ? 'active' : '' }}">

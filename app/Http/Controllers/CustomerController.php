@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
+use App\Models\group_fileexcel;
 
 class CustomerController extends Controller
 {
@@ -140,12 +141,30 @@ class CustomerController extends Controller
             ->orderby('fileexcels.id', 'desc')
             ->groupBy(DB::raw('1,2'))
             ->get();
+
+        $group_fileexcels = DB::table('group_fileexcels')
+            ->select(
+                'group_fileexcels.id',
+                'group_fileexcels.nama',
+                DB::raw('COUNT(IF(customers.status = "0", 1, NULL)) AS total_data'),
+            )
+            ->join('fileexcels', 'group_fileexcels.id', '=', 'fileexcels.group_id')
+            ->join('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
+            ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                $join->on('customers.id', '=', 'a.customer_id');
+            });
+        $group_fileexcels = $group_fileexcels->where('group_fileexcels.created_id', auth()->user()->id)
+            ->where('customers.provider', '<>', 'Tidak Ditemukan')
+            ->orderby('fileexcels.id', 'desc')
+            ->groupBy(DB::raw('1,2'))
+            ->get();
         return view('admin.pages.customer.distribusi', [
             'title' => 'Distribusi',
             'active' => 'distribusi',
             'active_sub' => 'import',
             "userData" => $userSelect->get(),
             "fileExceldata" => $fileExcel,
+            "groupfileexcelsdata" => $group_fileexcels,
             "produkSelect" => $produkSelect,
             "data" => '',
             "get" => isset($request) ? $request : '',
@@ -181,8 +200,12 @@ class CustomerController extends Controller
                     // jika server status nya 12 dan 13
                     ->whereIn('b.status', ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'])
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
-                    ->where('b.produk_id', $produk_id)
-                    ->where('customers.fileexcel_id', $request->fileexcel_id);
+                    ->where('b.produk_id', $produk_id);
+                if ($request->group_fileexcels_id != '') {
+                    $data = $data->where('fileexcels.group_id', $request->group_fileexcels_id);
+                } else {
+                    $data = $data->where('customers.fileexcel_id', $request->fileexcel_id);
+                }
                 if (isset($request->user_id)) {
                     $data =   $data->whereNotIn('b.user_id', $request->user_id);
                 }
@@ -222,8 +245,13 @@ class CustomerController extends Controller
                 } else {
                     $data =   $data->where('provider', $request->provider);
                 }
-                $data = $data->where('customers.fileexcel_id', $request->fileexcel_id)
-                    ->where('distribusis.produk_id', null);
+
+                if ($request->group_fileexcels_id != '') {
+                    $data = $data->where('fileexcels.group_id', $request->group_fileexcels_id);
+                } else {
+                    $data = $data->where('customers.fileexcel_id', $request->fileexcel_id);
+                }
+                $data = $data->where('distribusis.produk_id', null);
 
                 return DataTables::of($data->get())
                     ->addIndexColumn()
@@ -342,15 +370,20 @@ class CustomerController extends Controller
                             DB::raw('CONCAT("0") as status'),
                             DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
                         )
+                        ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
                         ->leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
                             $join->on('customers.id', '=', 'distribusis.customer_id')
                                 ->where(function ($query)  use ($produk_id, $tanggal) {
                                     $query->where('distribusis.produk_id', '=', $produk_id)
                                         ->orwhereDate('distribusis.distribusi_at', $tanggal);
                                 });
-                        })
-                        ->where('customers.fileexcel_id', $request->fileexcel_id)
-                        ->where('distribusis.produk_id', null);
+                        });
+                    if ($request->group_fileexcels_id != '') {
+                        $data = $data->where('fileexcels.group_id', $request->group_fileexcels_id);
+                    } else {
+                        $data = $data->where('customers.fileexcel_id', $request->fileexcel_id);
+                    }
+                    $data = $data->where('distribusis.produk_id', null);
                     if ($request->provider == 'NON-SIMPATI') {
                         $data =   $data->where('customers.provider', '<>', 'SIMPATI')
                             ->where('customers.provider', '<>', 'Tidak Ditemukan');
@@ -372,9 +405,15 @@ class CustomerController extends Controller
                     $distribusiInsert = $data->toArray();
                     Distribusi::insert($distribusiInsert);
 
-                    $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
-                    $msglog2 = ' campaign ' . $getfileexcel->kode;
-                    $msglogFileexcel = $getfileexcel->kode;
+                    if ($request->group_fileexcels_id != '') {
+                        $getfileexcel = group_fileexcel::firstWhere('id', $request->group_fileexcels_id);
+                        $msglog2 = ' Group campaign ' . $getfileexcel->nama;
+                        $msglogFileexcel = $getfileexcel->nama;
+                    } else {
+                        $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
+                        $msglog2 = ' campaign ' . $getfileexcel->kode;
+                        $msglogFileexcel = $getfileexcel->kode;
+                    }
                 }
                 // $data->update(['status' => 1]);
                 $getUser = User::firstWhere('id', $user_id)->name;
@@ -418,7 +457,11 @@ class CustomerController extends Controller
                     $data =   $data->where('customers.provider', $request->provider);
                 }
                 if ($request->fileexcel_id != 'today') {
-                    $data = $data->where('customers.fileexcel_id', $request->fileexcel_id);
+                    if ($request->group_fileexcels_id != '') {
+                        $data = $data->where('fileexcels.group_id', $request->group_fileexcels_id);
+                    } else {
+                        $data = $data->where('customers.fileexcel_id', $request->fileexcel_id);
+                    }
                 }
                 if ($request->fileexcel_id == 'today') {
                     if ($request->tipe == 'TARIK DATA BY ADMIN') {
@@ -472,6 +515,7 @@ class CustomerController extends Controller
                         DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
                     )
                     ->join('customers', 'customers.id', '=', 'a.customer_id')
+                    ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
                     ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                     // jika local status nya 4 dan 5
                     // jika server status nya 12 dan 13
@@ -482,8 +526,12 @@ class CustomerController extends Controller
                     //->whereIn('b.status', ['12', '13', '18', '26'])
                     ->whereIn('b.status', ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'])
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
-                    ->where('b.produk_id', $produk_id)
-                    ->where('customers.fileexcel_id', $request->fileexcel_id);
+                    ->where('b.produk_id', $produk_id);
+                if ($request->group_fileexcels_id != '') {
+                    $data = $data->where('fileexcels.group_id', $request->group_fileexcels_id);
+                } else {
+                    $data = $data->where('customers.fileexcel_id', $request->fileexcel_id);
+                }
                 if (isset($request->user_id)) {
                     $data =   $data->whereNotIn('b.user_id', $request->user_id);
                 }
@@ -501,9 +549,15 @@ class CustomerController extends Controller
                 $distribusiInsert = json_decode(json_encode($distribusiInsert), true);
                 Distribusi::insert($distribusiInsert);
 
-                $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
-                $msglog2 = ' campaign ' . $getfileexcel->kode;
-                $msglogFileexcel = $getfileexcel->kode;
+                if ($request->group_fileexcels_id != '') {
+                    $getfileexcel = group_fileexcel::firstWhere('id', $request->group_fileexcels_id);
+                    $msglog2 = ' Group campaign ' . $getfileexcel->nama;
+                    $msglogFileexcel = $getfileexcel->nama;
+                } else {
+                    $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
+                    $msglog2 = ' campaign ' . $getfileexcel->kode;
+                    $msglogFileexcel = $getfileexcel->kode;
+                }
 
                 $getUser = User::firstWhere('id', $user_id)->name;
                 $msg .= '
@@ -525,7 +579,7 @@ class CustomerController extends Controller
             ];
             Log_distribusi::create($logInsert);
         }
-        $oldData = ['tipe' => $request->tipe, 'fileexcel_id' => $request->fileexcel_id, 'provider' => $request->provider];
+        $oldData = ['tipe' => $request->tipe, 'group_fileexcels_id' => $request->group_fileexcels_id, 'fileexcel_id' => $request->fileexcel_id, 'provider' => $request->provider];
         return back()->with(['msg' => $msg])->with(['oldData' => $oldData]);
     }
     //**Tabel Log Distribusi */

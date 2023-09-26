@@ -502,7 +502,7 @@ class CustomerController extends Controller
                 $msglog = 'Sukses menarik data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
             } else if ($request->tipe == 'RELOAD') {
                 $lastDistribusi = DB::table('distribusis')
-                    ->select('customer_id', DB::raw('MAX(id) as id'))
+                    ->select('customer_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
                     ->where('produk_id', $produk_id)
                     ->groupBy('customer_id')
                     ->orderBy('tot', 'asc');

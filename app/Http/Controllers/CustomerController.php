@@ -823,7 +823,7 @@ class CustomerController extends Controller
             ->editColumn('csalesnama', '{{{$csalesnama == null ? $salesnama : $csalesnama;}}}')
             ->editColumn('updated_tgl', '{{{date("Y-m-d",strtotime($updated_at));}}}')
             ->addColumn('action', function ($data) {
-                if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
+                if ((auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') && $data->statusadmin == null) {
                     return view('admin.layouts.buttonActiontables')
                         ->with(['data' => $data, 'links' => 'modalEdit(\'' . encrypt($data->id) . '\')', 'type' => 'onclick']);
                 } else {

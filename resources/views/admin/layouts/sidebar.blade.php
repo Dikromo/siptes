@@ -178,6 +178,16 @@
                     </li>
                 @endif
                 @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
+                    <li class="nav-item">
+                        <a href="/administrator/calltracking"
+                            class="nav-link {{ $active === 'updatenasabah' ? 'active' : '' }}">
+                            <i class="nav-icon fas fa-list"></i>
+                            <p>
+                                Call Tracking
+                                <!--span class="right badge badge-danger">New</span-->
+                            </p>
+                        </a>
+                    </li>
                     @if (auth()->user()->cabang_id != '4')
                         <li class="nav-item">
                             <a href="/customer/cekdbr" class="nav-link {{ $active === 'cekdbr' ? 'active' : '' }}">

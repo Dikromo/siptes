@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\AdministratorController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\JmoController;
 use App\Http\Controllers\UserController;
@@ -40,6 +41,12 @@ Route::put('/user/{user:username}', [UserController::class, 'userStore'])->middl
 Route::get('/user/{user:username}', [UserController::class, 'userShow'])->middleware('auth');
 Route::get('/user/{user:username}/edit', [UserController::class, 'userEdit'])->middleware('auth');
 Route::delete('/user', [UserController::class, 'userDestroy'])->middleware('auth');
+
+Route::get('/administrator/calltracking', [AdministratorController::class, 'viewCalltracking'])->middleware('auth');
+Route::post('/administrator/ajax/calltracking', [AdministratorController::class, 'getCustomer'])->middleware('auth');
+Route::post('/administrator/calltracking/detail', [AdministratorController::class, 'statusadminEdit'])->middleware('auth');
+Route::put('/administrator/calltracking/{callhistoryid}', [AdministratorController::class, 'statusadminStoremodal'])->middleware('auth');
+
 
 Route::get('/customer/import', [CustomerController::class, 'customerFormimport'])->middleware('auth');
 Route::post('/customer/import', [CustomerController::class, 'customerImport'])->middleware('auth');

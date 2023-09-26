@@ -182,9 +182,10 @@ class CustomerController extends Controller
         if ($request->fileexcel_id != 'today') {
             if ($request->tipe == 'RELOAD') {
                 $lastDistribusi = DB::table('distribusis')
-                    ->select('customer_id', DB::raw('MAX(id) as id'))
+                    ->select('customer_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
                     ->where('produk_id', $produk_id)
-                    ->groupBy('customer_id');
+                    ->groupBy('customer_id')
+                    ->orderBy('tot', 'asc');
 
                 $data = DB::table($lastDistribusi, 'a')
                     ->select(
@@ -503,7 +504,8 @@ class CustomerController extends Controller
                 $lastDistribusi = DB::table('distribusis')
                     ->select('customer_id', DB::raw('MAX(id) as id'))
                     ->where('produk_id', $produk_id)
-                    ->groupBy('customer_id');
+                    ->groupBy('customer_id')
+                    ->orderBy('tot', 'asc');
 
                 $data = DB::table($lastDistribusi, 'a')
                     ->select(

@@ -292,6 +292,10 @@ class UserController extends Controller
         $validateData = $request->validate($rules);
         if ($request->flagdistri != '') {
             $validateData['flagdistri'] = $request->flagdistri == 'Yes' ? '1' : '0';
+        } else {
+            if (auth()->user()->roleuser_id != '1' || auth()->user()->cabang_id != '4') {
+                $validateData['flagdistri'] = '1';
+            }
         }
         $validateData['refferal'] = $request->refferal;
         $validateData['salescode'] = $request->salescode;

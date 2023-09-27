@@ -99,6 +99,7 @@
                                         <th>4 Digit No Telp</th>
                                     @endif
                                     <th>Provider</th>
+                                    <th>Status Tipe</th>
                                     <th>Status</th>
                                     <th>Status Date</th>
                                     <th>Limit</th>
@@ -117,6 +118,7 @@
                                     <th>Interval</th>
                                     <th>Sales</th>
                                     <th>SPV</th>
+                                    <th>SPV Kode</th>
                                     <th>SM</th>
                                     <th>Site</th>
                                     {{-- <th>Reason</th> --}}
@@ -306,7 +308,7 @@
 
         function renderTable(param1, param2) {
             if (roleuser_id == '1' || roleuser_id == '4' || roleuser_id == '5' || roleuser_id == '6') {
-                sortPos = 15;
+                sortPos = 16;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -328,6 +330,10 @@
                 }, {
                     data: 'provider',
                     name: 'customers.provider',
+                }, {
+                    data: 'statuscall_jenis',
+                    name: 'statuscall_jenis',
+                    visible: false
                 }, {
                     data: 'statustext',
                     name: 'statuscalls.nama as statustext'
@@ -376,6 +382,10 @@
                     name: 'parentuser.name as spvnama',
                     visible: false
                 }, {
+                    data: 'spvnickname',
+                    name: 'spvnickname',
+                    visible: false
+                }, {
                     data: 'smname',
                     name: 'sm.name as smname',
                     visible: false
@@ -390,7 +400,7 @@
                     orderable: false
                 }];
             } else {
-                sortPos = 12;
+                sortPos = 13;
                 paramColumn = [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
@@ -406,6 +416,10 @@
                 }, {
                     data: 'provider',
                     name: 'customers.provider',
+                }, {
+                    data: 'statuscall_jenis',
+                    name: 'statuscall_jenis',
+                    visible: false
                 }, {
                     data: 'statustext',
                     name: 'statuscalls.nama as statustext'
@@ -449,6 +463,10 @@
                 }, {
                     data: 'spvnama',
                     name: 'parentuser.name as spvnama',
+                    visible: false
+                }, {
+                    data: 'spvnickname',
+                    name: 'spvnickname',
                     visible: false
                 }, {
                     data: 'smname',
@@ -516,6 +534,7 @@
                 dom: 'lBfrtip',
                 buttons: [{
                     extend: 'excel',
+                    title: '',
                     text: 'Export Excel',
                     filename: 'export_callhistory_' + hari
                 }, ],

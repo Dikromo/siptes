@@ -736,6 +736,7 @@ class CustomerController extends Controller
             DB::raw('UPPER(sales.name) as salesnama'),
             DB::raw('UPPER(IF(parentuser.name is not null, parentuser.name, sales.name)) as spvnama'),
             DB::raw('UPPER(IF(parentuser.nickname is not null, parentuser.nickname, sales.nickname)) as spvnickname'),
+            DB::raw('UPPER(IF(statuscalls.jenis = "1", "Terhubung", "Tidak Terhubung")) as statuscall_jenis'),
             DB::raw('UPPER(sm.name) as smname'),
             DB::raw('UPPER(sm.nickname) as smnickname'),
             DB::raw('CONCAT(sales.name," (",parentuser.name,") ") AS csalesnama'),

@@ -332,7 +332,7 @@
                     name: 'customers.provider',
                 }, {
                     data: 'statuscall_jenis',
-                    name: 'statuscall_jenis',
+                    name: 'statuscalls.jenis',
                     visible: false
                 }, {
                     data: 'statustext',
@@ -383,7 +383,7 @@
                     visible: false
                 }, {
                     data: 'spvnickname',
-                    name: 'spvnickname',
+                    name: 'parentuser.nickname',
                     visible: false
                 }, {
                     data: 'smname',
@@ -418,7 +418,7 @@
                     name: 'customers.provider',
                 }, {
                     data: 'statuscall_jenis',
-                    name: 'statuscall_jenis',
+                    name: 'statuscalls.jenis',
                     visible: false
                 }, {
                     data: 'statustext',
@@ -466,7 +466,7 @@
                     visible: false
                 }, {
                     data: 'spvnickname',
-                    name: 'spvnickname',
+                    name: 'parentuser.nickname',
                     visible: false
                 }, {
                     data: 'smname',

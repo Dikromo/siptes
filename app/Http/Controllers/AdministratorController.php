@@ -43,12 +43,16 @@ class AdministratorController extends Controller
         }
         $statusSelect = Statuscall::where('status', '1')
             ->where('jenis', '1');
-        if (auth()->user()->cabang_id == '4') {
-            $statusSelect =    $statusSelect->whereIn('id', ['15']);
-            //$statusSelect =    $statusSelect->whereIn('id', ['15', '16', '34']);
+        if (auth()->user()->roleuser_id != '1') {
+            if (auth()->user()->cabang_id == '4') {
+                $statusSelect =    $statusSelect->whereIn('id', ['15']);
+                //$statusSelect =    $statusSelect->whereIn('id', ['15', '16', '34']);
+            } else {
+                $statusSelect =    $statusSelect->whereIn('id', ['1']);
+                //$statusSelect =    $statusSelect->whereIn('id', ['1', '2', '3']);
+            }
         } else {
-            $statusSelect =    $statusSelect->whereIn('id', ['1']);
-            //$statusSelect =    $statusSelect->whereIn('id', ['1', '2', '3']);
+            $statusSelect =    $statusSelect->whereIn('id', ['1', '15']);
         }
         $produkSelect = Produk::where('status', '1')
             ->get();
@@ -131,8 +135,16 @@ class AdministratorController extends Controller
         $validateData = [];
         $data = Distribusi::select(
             'distribusis.id',
+            'distribusis.produk_id',
+            'distribusis.subproduk_id',
             'distribusis.statusadmin',
-            DB::raw('date_format(statusadmin_date, "%Y-%m-%d") as editgl'),
+            'distribusis.remarksadmin',
+            DB::raw('date_format(statusadmin_date, "%Y-%m-%d") as admintgl'),
+            'distribusis.statusbank',
+            'distribusis.remarksbank',
+            DB::raw('date_format(statusbank_date, "%Y-%m-%d") as banktgl'),
+            'distribusis.temp_limit',
+            'distribusis.disburse_limit',
         )
             ->firstWhere('id', $id);
         return $data;
@@ -147,6 +159,24 @@ class AdministratorController extends Controller
         }
         if ($request->statusadmin_date != '') {
             $validateData['statusadmin_date'] = $request->statusadmin_date;
+        }
+        if ($request->remarksadmin != '') {
+            $validateData['remarksadmin'] = $request->remarksadmin;
+        }
+        if ($request->statusbank != '') {
+            $validateData['statusbank'] = $request->statusbank;
+        }
+        if ($request->statusbank_date != '') {
+            $validateData['statusbank_date'] = $request->statusbank_date;
+        }
+        if ($request->remarksbank != '') {
+            $validateData['remarksbank'] = $request->remarksbank;
+        }
+        if ($request->temp_limit != '') {
+            $validateData['temp_limit'] = $request->temp_limit;
+        }
+        if ($request->disburse_limit != '') {
+            $validateData['disburse_limit'] = $request->disburse_limit;
         }
         if (isset($distribusi->id)) {
             Distribusi::updateOrInsert($checkdata, $validateData);

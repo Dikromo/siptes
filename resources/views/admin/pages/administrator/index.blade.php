@@ -180,12 +180,16 @@
                 </div>
                 <div class="modal-body">
                     <?php
-                    $arrayTipe = ['Verifikator', 'Submit', 'Disetujui', 'On Proses', 'Ditolak'];
+                    $arrayTipe = ['Verifikasi', 'Submit', 'Pending', 'Cancel'];
                     ?>
                     <div class="form-group">
                         <label for="statusadmin">Status Admin</label>
-                        <select name="statusadmin" class="form-control select2 @error('statusadmin') is-invalid @enderror  "
-                            id="statusadmin" style="width: 100%">
+                        <input type="hidden" id="mproduk_id" name="mproduk_id">
+                        <input type="hidden" id="msubproduk_id" name="msubproduk_id">
+                        <input type="hidden" id="mtahap" name="mtahap">
+                        <select name="statusadmin"
+                            class="form-control select2 @error('statusadmin') is-invalid @enderror  " id="statusadmin"
+                            style="width: 100%">
                             <option value="">-- Pilih --</option>
                             @foreach ($arrayTipe as $item)
                                 <option value="{{ $item }}">
@@ -198,7 +202,7 @@
                         @enderror
                     </div>
                     <div class="form-group">
-                        <label for="statusadmin_date">Tanggal Status</label>
+                        <label for="statusadmin_date">Tanggal Status Admin</label>
                         <input type="date" step="1" id="statusadmin_date" name="statusadmin_date"
                             class="form-control @error('statusadmin_date') is-invalid @enderror"
                             value="{{ $data == '' ? old('statusadmin_date') : old('statusadmin_date', $data->statusadmin_date) }}">
@@ -206,10 +210,83 @@
                             <span id="statusadmin_date" class="error invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
+                    <div class="form-group">
+                        <label for="temp_limit">Temporary Limit</label>
+                        <input type="text" id="temp_limit" name="temp_limit"
+                            class="form-control @error('temp_limit') is-invalid @enderror"
+                            value="{{ $data == '' ? old('temp_limit') : old('temp_limit', $data->temp_limit) }}"
+                            data-inputmask="'alias': 'currency', 'placeholder': '', 'digits': '0','digitsOptional':'!1', 
+                            'rightAlign':'false', 'allowMinus': 'false', 'showMaskOnFocus': 'false', 
+                            'showMaskOnHover': 'false','groupSeparator':'.','removeMaskOnSubmit': 'true'"
+                            data-mask>
+                        @error('temp_limit')
+                            <span id="temp_limit" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="remarksadmin">Remarks Admin</label>
+                        <input type="text" id="remarksadmin" name="remarksadmin"
+                            class="form-control @error('remarksadmin') is-invalid @enderror"
+                            value="{{ $data == '' ? old('remarksadmin') : old('remarksadmin', $data->remarksadmin) }}"
+                            required>
+                        @error('remarksadmin')
+                            <span id="remarksadmin" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <?php
+                    $arrayTipe = ['Verifikasi', 'Disetujui', 'Ditolak', 'Cancel'];
+                    ?>
+                    <div class="form-group">
+                        <label for="statusbank">Status Bank</label>
+                        <select name="statusbank"
+                            class="fbank form-control select2 @error('statusbank') is-invalid @enderror  " id="statusbank"
+                            style="width: 100%">
+                            <option value="">-- Pilih --</option>
+                            @foreach ($arrayTipe as $item)
+                                <option value="{{ $item }}">
+                                    {{ $item }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('statusbank')
+                            <span id="statusbank" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="statusbank_date">Tanggal Status</label>
+                        <input type="date" step="1" id="statusbank_date" name="statusbank_date"
+                            class="fbank form-control @error('statusbank_date') is-invalid @enderror"
+                            value="{{ $data == '' ? old('statusbank_date') : old('statusbank_date', $data->statusbank_date) }}">
+                        @error('statusbank_date')
+                            <span id="statusbank_date" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="disburse_limit">Disbursed Limit</label>
+                        <input type="text" id="disburse_limit" name="disburse_limit"
+                            class="fbank form-control @error('disburse_limit') is-invalid @enderror"
+                            value="{{ $data == '' ? old('disburse_limit') : old('disburse_limit', $data->disburse_limit) }}"
+                            data-inputmask="'alias': 'currency', 'placeholder': '', 'digits': '0','digitsOptional':'!1', 
+                                                    'rightAlign':'false', 'allowMinus': 'false', 'showMaskOnFocus': 'false', 
+                                                    'showMaskOnHover': 'false','groupSeparator':'.','removeMaskOnSubmit': 'true'"
+                            data-mask>
+                        @error('disburse_limit')
+                            <span id="disburse_limit" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    <div class="form-group">
+                        <label for="remarksbank">Remarks Bank</label>
+                        <input type="text" id="remarksbank" name="remarksbank"
+                            class="fbank form-control @error('remarksbank') is-invalid @enderror"
+                            value="{{ $data == '' ? old('remarksbank') : old('remarksbank', $data->remarksbank) }}">
+                        @error('remarksbank')
+                            <span id="remarksbank" class="error invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
                 </div>
                 <div class="modal-footer justify-content-between">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-                    <button type="button" class="btn btn-primary" onclick="saveEditcallhistory();">Save changes</button>
+                    <button type="button" class="btn btn-primary" onclick="checkbeforeSave();">Save changes</button>
                 </div>
             </div>
         </div>
@@ -227,8 +304,11 @@
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.print.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/datatables-buttons/js/buttons.colVis.min.js') }}"></script>
     <script src="{{ asset('adminlte/plugins/select2/js/select2.full.min.js') }}"></script>
+    <script src="{{ asset('adminlte/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
+
     <script type="text/javascript">
-        $('.select2').select2()
+        $('.select2').select2();
+        $('[data-mask]').inputmask();
         // $(document).ready(function() {
         var linkid = "";
         var tipe = "";
@@ -250,6 +330,15 @@
             tipe = '';
             $('#statusadmin').val('').change();
             $('#statusadmin_date').val('');
+            $('#remarksadmin').val('');
+            $('#statusbank').val('').change();
+            $('#statusbank_date').val('');
+            $('#remarksbank').val('');
+            $('#temp_limit').val('');
+            $('#disburse_limit').val('');
+            $('#mproduk_id').val('');
+            $('#msubproduk_id').val('');
+            $('#mtahap').val('');
             if (param != '') {
                 $.ajax({
                     type: 'POST',
@@ -264,7 +353,23 @@
                     tipe = param == '' ? 'POST' : 'PUT';
                     linkid = param == '' ? '' : '/' + param;
                     $('#statusadmin').val(data.statusadmin).change();
-                    $('#statusadmin_date').val(data.editgl);
+                    $('#statusadmin_date').val(data.admintgl);
+                    $('#remarksadmin').val(data.remarksadmin);
+                    $('#statusbank').val(data.statusbank).change();
+                    $('#statusbank_date').val(data.banktgl);
+                    $('#remarksbank').val(data.remarksbank);
+                    $('#temp_limit').val(data.temp_limit);
+                    $('#disburse_limit').val(data.disburse_limit);
+                    $('#mproduk_id').val(data.produk_id);
+                    $('#msubproduk_id').val(data.subproduk_id);
+
+                    if (data.statusadmin == 'Submit') {
+                        $('#mtahap').val('2');
+                        $(".fbank").prop("disabled", false);
+                    } else {
+                        $(".fbank").prop("disabled", true);
+                    }
+
                 });
             } else {
                 tipe = param == '' ? 'POST' : 'PUT';
@@ -275,6 +380,44 @@
             });
         }
 
+        function checkbeforeSave() {
+            if ($('#mtahap').val() == '' && $('#statusadmin').val() != '' && $('#statusadmin_date').val() != '') {
+                if ($('#statusadmin').val() == 'Submit') {
+                    if ($('#mproduk_id').val() == '6' && ($('#temp_limit').val() == '' || $('#temp_limit').val() == null) &&
+                        $('#msubproduk_id').val() == '1') {
+                        alert('Mohon isikan temporary limit');
+                    } else {
+                        saveEditcallhistory();
+                    }
+                } else {
+                    if ($('#statusadmin').val() == '' || $('#statusadmin_date').val() == '' || $('#remarksadmin').val() ==
+                        '') {
+                        alert('Mohon isikan form dengan benar');
+                    } else {
+                        saveEditcallhistory();
+                    }
+                }
+            } else if ($('#mtahap').val() == '2' && $('#statusbank').val() != '' && $('#statusbank_date').val() != '') {
+                if ($('#statusbank').val() == 'Disetujui') {
+                    if ($('#mproduk_id').val() == '6' && ($('#disburse_limit').val() == '' || $('#disburse_limit').val() ==
+                            null)) {
+                        alert('Mohon isikan disburse limit');
+                    } else {
+                        saveEditcallhistory();
+                    }
+                } else {
+                    if ($('#statusbank').val() == '' || $('#statusbank_date').val() == '' || $('#remarksbank').val() ==
+                        '') {
+                        alert('Mohon isikan form dengan benar');
+                    } else {
+                        saveEditcallhistory();
+                    }
+                }
+            } else {
+                alert('Mohon isikan form dengan benar');
+            }
+        }
+
         function saveEditcallhistory() {
             $.ajax({
                 type: tipe,
@@ -283,6 +426,12 @@
                     _token: '{{ csrf_token() }}',
                     statusadmin: $('#statusadmin').val(),
                     statusadmin_date: $('#statusadmin_date').val(),
+                    remarksadmin: $('#remarksadmin').val(),
+                    statusbank: $('#statusbank').val(),
+                    statusbank_date: $('#statusbank_date').val(),
+                    remarksbank: $('#remarksbank').val(),
+                    temp_limit: $('#temp_limit').inputmask('unmaskedvalue'),
+                    disburse_limit: $('#disburse_limit').inputmask('unmaskedvalue'),
                 },
                 dataType: "json",
                 encode: true,
@@ -292,6 +441,13 @@
                 renderTable($('#fromTanggal').val(), $('#toTanggal').val());
                 $('#statusadmin').val('').change();
                 $('#statusadmin_date').val('');
+                $('#remarksadmin').val('');
+                $('#statusbank').val('').change();
+                $('#statusbank_date').val('');
+                $('#remarksbank').val('');
+                $('#temp_limit').val('');
+                $('#disburse_limit').val('');
+                $('#mproduk_id').val('');
             });
         }
 

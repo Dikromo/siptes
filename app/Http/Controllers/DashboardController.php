@@ -160,7 +160,7 @@ class DashboardController extends Controller
         if ($param2 == 'today') {
             switch (date('l', strtotime($param))) {
                 case 'Sunday':
-                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
                     break;
                 default:
                     $hasil = $param;
@@ -169,11 +169,11 @@ class DashboardController extends Controller
         } else {
             switch (date('l', strtotime($param))) {
                 case 'Saturday':
-                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
                     break;
 
                 case 'Sunday':
-                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
                     break;
                     //     // Tanggalan merah
                     // case 'Thursday':

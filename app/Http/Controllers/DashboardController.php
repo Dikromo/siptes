@@ -176,9 +176,9 @@ class DashboardController extends Controller
                     $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
                     break;
                     //     // Tanggalan merah
-                    // case 'Thursday':
-                    //     $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
-                    //     break;
+                case 'Thursday':
+                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                    break;
                     // case 'Wednesday':
                     //     $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
                     //     break;

@@ -370,11 +370,15 @@ class UserController extends Controller
                     'produk_id' => $request->produk_id,
                 ];
                 $getDownlineuser = User::where('sm_id', $user->id);
+            } else {
+                $getDownlineuser = '';
             }
             /** Update downline */
-            foreach ($getDownlineuser->get() as $items) {
-                User::where('id', $items->id)
-                    ->Update($upData);
+            if ($getDownlineuser != '') {
+                foreach ($getDownlineuser->get() as $items) {
+                    User::where('id', $items->id)
+                        ->Update($upData);
+                }
             }
         }
         //dd($upData);

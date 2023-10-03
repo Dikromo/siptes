@@ -355,6 +355,29 @@ class UserController extends Controller
         $validateData['updated_at'] =  now();
 
         User::updateOrInsert($checkdata, $validateData);
+
+        if (isset($user->id)) {
+            if ($request->roleuser_id == '2') {
+                $upData = [
+                    'sm_id'     => $request->sm_id,
+                    'um_id'     => $request->um_id,
+                    'produk_id' => $request->produk_id,
+                ];
+                $getDownlineuser = User::where('parentuser_id', $user->id);
+            } else if ($request->roleuser_id == '5') {
+                $upData = [
+                    'um_id'     => $request->um_id,
+                    'produk_id' => $request->produk_id,
+                ];
+                $getDownlineuser = User::where('sm_id', $user->id);
+            }
+            /** Update downline */
+            foreach ($getDownlineuser->get() as $items) {
+                User::where('id', $items->id)
+                    ->Update($upData);
+            }
+        }
+        //dd($upData);
         if (isset($user->id)) {
             Session::flash('success', 'Data Berhasil diupdate!');
         } else {

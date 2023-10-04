@@ -300,6 +300,8 @@ class DashboardController extends Controller
         } else if (auth()->user()->roleuser_id == '5') {
             if (auth()->user()->cabang_id != '4') {
                 $data = $data->where('users.sm_id', auth()->user()->id);
+            } else {
+                $data = $data->where('users.cabang_id', auth()->user()->cabang_id);
             }
         } else if (auth()->user()->roleuser_id == '6') {
             $data = $data->where('users.um_id', auth()->user()->id);

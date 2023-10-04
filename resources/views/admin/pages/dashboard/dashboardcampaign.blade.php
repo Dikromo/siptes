@@ -193,6 +193,7 @@
                                     {{-- <th></th> --}}
                                     <th>NO</th>
                                     <th>Nama</th>
+                                    <th>Group</th>
                                     {{-- <th>SM</th>
                                     <th>supervisor</th> --}}
                                     <th>Distribusi</th>
@@ -240,6 +241,7 @@
                                     <th></th>
                                     {{-- <th></th>
                                     <th></th> --}}
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -506,49 +508,49 @@
             switch ($('#tipe').val()) {
                 case 'Contact Rate':
                     paramSort = [
-                        [36, 'desc']
+                        [37, 'desc']
                     ]
                     break;
                 case 'Sisah Data Sebelumnya':
                     paramSort = [
-                        [6, 'desc']
+                        [7, 'desc']
                     ]
                     break;
                 case 'Distribusi Hari Ini':
                     paramSort = [
-                        [7, 'desc']
+                        [8, 'desc']
                     ]
                     break;
                 case 'Sudah di Telepon':
                     paramSort = [
-                        [8, 'desc']
+                        [9, 'desc']
                     ]
                     break;
                 case 'Sisah Data':
                     paramSort = [
-                        [9, 'desc']
+                        [10, 'desc']
                     ]
                     break;
                 case 'Telepon Di Angkat':
                     paramSort = [
-                        [10, 'desc']
+                        [11, 'desc']
                     ]
                     break;
                 case 'Prospek':
                     paramSort = [
-                        [11, 'desc']
+                        [12, 'desc']
                     ]
                     break;
                 case 'Closing':
                     paramSort = [
-                        [12, 'desc']
+                        [13, 'desc']
                     ]
                     break;
                 case 'Closing 3 hari':
                     paramSort = [
-                        [12, 'desc'],
-                        [18, 'desc'],
-                        [23, 'desc'],
+                        [13, 'desc'],
+                        [19, 'desc'],
+                        [24, 'desc'],
                     ]
                     break;
                 default:
@@ -576,6 +578,14 @@
                         _: "prioritas",
                         filter: "kode",
                         display: "campaign"
+                    }
+                }, {
+                    data: null,
+                    name: null,
+                    render: {
+                        _: "grouptext",
+                        filter: "grouptext",
+                        display: "grouptext"
                     }
                 }, {
                     data: 'total_data',
@@ -851,67 +861,67 @@
 
                     // Total over all pages
                     total = api
-                        .column(6)
+                        .column(7)
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
 
                     // Total over this page
                     gtotalData = api
-                        .column(2, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalDistribusi = api
                         .column(3, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoDistribusi = api
+                    gtotalDistribusi = api
                         .column(4, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCall = api
+                    gtotalnoDistribusi = api
                         .column(5, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCall = api
+                    gtotalCall = api
                         .column(6, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallout = api
+                    gtotalnoCall = api
                         .column(7, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCallout = api
+                    gtotalCallout = api
                         .column(8, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalProspek = api
+                    gtotalnoCallout = api
                         .column(9, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalClosing = api
+                    gtotalProspek = api
                         .column(10, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalReload = api
+                    gtotalClosing = api
                         .column(11, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalReload = api
+                        .column(12, {
                             page: 'current'
                         })
                         .data()
@@ -928,7 +938,7 @@
                         100);
                     gpersennocallout = Math.round(parseFloat(gtotalnoCallout) / parseFloat(gtotalCall) *
                         100);
-                    api.column(12).footer().innerHTML =
+                    api.column(13).footer().innerHTML =
                         '<span style="color:#009b9b"><span title="total data">' + gtotalData + '</span>' +
                         ' (' +
                         '<span style="color:#eb7904" title="total data terdistribusi">' + gtotalDistribusi +
@@ -939,21 +949,21 @@
                         '<span style="color:#eb7904" title="total reload">' + gtotalReload +
                         '</span>' + ')';
 
-                    api.column(13).footer().innerHTML =
+                    api.column(14).footer().innerHTML =
                         ' (' +
                         '<span style="color:#eb7904" title="total telepon">' + gtotalCall +
                         '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total belum telepon">' + gtotalnoCall +
                         '</span>' + ')';
 
-                    api.column(14).footer().innerHTML =
+                    api.column(15).footer().innerHTML =
                         ' (' +
                         '<span style="color:#009b05" title="total contact">' + gtotalCallout +
                         '(' + gpersencallout + '%)' + '</span>' + ' | ' +
                         '<span style="color:#eb0424" title="total not contact">' + gtotalnoCallout +
                         '(' + gpersennocallout + '%)' + '</span>' + ')';
 
-                    api.column(15).footer().innerHTML =
+                    api.column(16).footer().innerHTML =
                         ' (' +
                         '<span style="color:#eb7904" title="total contact">' + gtotalProspek +
                         '</span>' + ' | ' +
@@ -986,55 +996,55 @@
 
 
                     gtotalDatatoday = api
-                        .column(16, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalDistribusitoday = api
-                        .column(18, {
-                            page: 'current'
-                        })
-                        .data()
-                        .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoDistribusitoday = api
                         .column(17, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCalltoday = api
+                    gtotalDistribusitoday = api
                         .column(19, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCalltoday = api
+                    gtotalnoDistribusitoday = api
+                        .column(18, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalCalltoday = api
                         .column(20, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalCallouttoday = api
+                    gtotalnoCalltoday = api
                         .column(21, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalnoCallouttoday = api
+                    gtotalCallouttoday = api
                         .column(22, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalProspektoday = api
+                    gtotalnoCallouttoday = api
                         .column(23, {
                             page: 'current'
                         })
                         .data()
                         .reduce((a, b) => intVal(a) + intVal(b), 0);
-                    gtotalClosingtoday = api
+                    gtotalProspektoday = api
                         .column(24, {
+                            page: 'current'
+                        })
+                        .data()
+                        .reduce((a, b) => intVal(a) + intVal(b), 0);
+                    gtotalClosingtoday = api
+                        .column(25, {
                             page: 'current'
                         })
                         .data()
@@ -1056,7 +1066,7 @@
                     gpersennocallouttoday = Math.round(parseFloat(gtotalnoCallouttoday) / parseFloat(
                             gtotalCalltoday) *
                         100);
-                    api.column(25).footer().innerHTML =
+                    api.column(26).footer().innerHTML =
                         '<span style="color:#009b9b"><span title="total data">' + gtotalDatatoday + '</span>' +
                         ' (' +
                         '<span style="color:#009b9b" title="total data sisah kemarin">' +

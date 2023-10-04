@@ -1353,6 +1353,7 @@ class DashboardController extends Controller
             DB::raw('IF(fileexcels.prioritas_date = CURDATE(), fileexcels.prioritas, 99) AS prioritas'),
             DB::raw('date(fileexcels.prioritas_date) as prioritas_date'),
             'fileexcels.user_id as upload_user',
+            'group_fileexcels.nama as groupnama',
             DB::raw('(COUNT(IF(distribusis.status = "0", 1, NULL)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL))) AS sort_totaldata'),
             DB::raw('COUNT(customers.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status is null, 1, NULL)) AS total_nodistribusi'),
@@ -1431,6 +1432,7 @@ class DashboardController extends Controller
                 // });
             })
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->leftjoin('group_fileexcels', 'group_fileexcels.id', '=', 'fileexcels.group_id')
             ->leftjoin('users', 'users.id', '=', 'distribusis.user_id');
         //     ->where('users.roleuser_id', '3');
         // if (auth()->user()->roleuser_id != '1') {
@@ -1459,7 +1461,7 @@ class DashboardController extends Controller
             });
         }
         $data = $data->orderby('sort_totaldata', 'desc')
-            ->groupBy(DB::raw('1,2,3,4,5'))
+            ->groupBy(DB::raw('1,2,3,4,5,6'))
             ->without("Customer");
 
         return DataTables::of($data->get())
@@ -1547,6 +1549,10 @@ class DashboardController extends Controller
                 $vToday .= ' | ';
                 $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('2') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05;font-weight: 600;" title="total closing">' . $data->total_closing . '</span></a>';
                 $vToday .= ' ) ';
+                return $vToday;
+            })
+            ->addColumn('grouptext', function ($data) use ($today) {
+                $vToday = $data->groupnama != null && $data->groupnama != '' ? '{' . $data->groupnama . '}' : '';
                 return $vToday;
             })
             ->addColumn('campaign', function ($data) use ($today) {
@@ -1642,7 +1648,7 @@ class DashboardController extends Controller
                 return $persencallout;
             })
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
-            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4', 'h2', 'h3', 'h4', 'h5', 'campaign', 'action'])
+            ->rawColumns(['today', 'all1', 'all2', 'all3', 'all4', 'h2', 'h3', 'h4', 'h5', 'campaign', 'grouptext', 'action'])
             ->make(true);
     }
     public function getCampaigncall_detail(Request $request)

@@ -11,6 +11,7 @@ use App\Http\Controllers\CampaignController;
 use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\CallpagesController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\ReloadController;
 use App\Http\Controllers\StatuscallController;
 
 /*
@@ -62,6 +63,8 @@ Route::post('/customer/callhistory/detail', [CustomerController::class, 'callhis
 Route::put('/customer/callhistory/{callhistoryid}', [CustomerController::class, 'callhistoryStoremodal'])->middleware('auth');
 Route::get('/customer/logdistribusi', [CustomerController::class, 'viewlogDistribusi'])->middleware('auth');
 Route::post('/customer/ajax/logdistribusi', [CustomerController::class, 'logDistribusi'])->middleware('auth');
+
+Route::get('/setting/reload', [ReloadController::class, 'viewCalltracking'])->middleware('auth');
 
 Route::get('/campaign', [CampaignController::class, 'index'])->middleware('auth');
 Route::post('/campaign/ajax', [CampaignController::class, 'dataTables'])->middleware('auth');

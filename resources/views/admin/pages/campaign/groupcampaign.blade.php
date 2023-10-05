@@ -39,7 +39,10 @@
                                 <tr>
                                     <th>NO</th>
                                     <th>Nama Group</th>
-                                    <th>List Kode</th>
+                                    <th>Total Data (Terdistribusi | Belum Terdistribusi)(Reload)</th>
+                                    <th>(Telepon | Belum Ditelepon)</th>
+                                    <th>(Contact | Not Contact)</th>
+                                    <th>(Prospek | Closing)</th>
                                     {{-- <th>Reason</th> --}}
                                     <th></th>
                                 </tr>
@@ -104,11 +107,40 @@
                 data: 'DT_RowIndex',
                 name: 'DT_RowIndex',
             }, {
-                data: 'nama',
-                name: 'nama'
+                data: 'groupnama',
+                name: 'group_fileexcels.nama AS groupnama'
             }, {
-                data: 'grouplist',
-                name: 'grouplist'
+                data: null,
+                name: null,
+                render: {
+                    _: "total_data1",
+                    filter: "total_data1",
+                    display: "all1"
+                }
+            }, {
+                data: null,
+                name: null,
+                render: {
+                    _: "total_call",
+                    filter: "total_call",
+                    display: "all2"
+                }
+            }, {
+                data: null,
+                name: null,
+                render: {
+                    _: "total_callout",
+                    filter: "total_callout",
+                    display: "all3"
+                }
+            }, {
+                data: null,
+                name: null,
+                render: {
+                    _: "total_closing",
+                    filter: "total_closing",
+                    display: "all4"
+                }
             }, {
                 data: 'action',
                 name: 'action',
@@ -116,7 +148,7 @@
                 searchable: false,
             }],
             columnDefs: [{
-                targets: 3,
+                targets: '_all',
                 className: "text-center",
             }]
         })

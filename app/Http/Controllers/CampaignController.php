@@ -129,14 +129,14 @@ class CampaignController extends Controller
             //'fileexcels.kode',
             DB::raw('group_fileexcels.nama AS groupnama'),
             'fileexcels.user_id as upload_user',
-            DB::raw('(COUNT(IF(distribusis.status = "0", 1, NULL)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL))) AS sort_totaldata'),
+            DB::raw('(COUNT(IF(distribusis.status = "0", 1, 0)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, 0))) AS sort_totaldata'),
             DB::raw('COUNT(customers.id) AS total_data'),
-            DB::raw('COUNT(IF(distribusis.status is null, 1, NULL)) AS total_nodistribusi'),
+            DB::raw('COUNT(IF(distribusis.status is null, 1,0)) AS total_nodistribusi'),
             DB::raw('COUNT(distribusis.id) AS total_data1'),
-            DB::raw('COUNT(IF(distribusis.status <> "0", 1, NULL)) AS total_call'),
-            DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS total_nocall'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, NULL)) AS total_callout'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "2", 1, NULL)) AS total_nocallout'),
+            DB::raw('COUNT(IF(distribusis.status <> "0", 1,0)) AS total_call'),
+            DB::raw('COUNT(IF(distribusis.status = "0", 1,0)) AS total_nocall'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1", 1,0)) AS total_callout'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "2", 1,0)) AS total_nocallout'),
             DB::raw('COUNT(IF(
                 DATE(distribusis.distribusi_at) <> "' . $today . '" AND
                 (distribusis.status = "3" OR
@@ -150,21 +150,21 @@ class CampaignController extends Controller
                 distribusis.status = "27" OR
                 distribusis.status = "28" OR
                 distribusis.status = "37")
-                , 1, NULL)
+                , 1,0)
                 ) AS total_reload'),
-            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1, NULL)) AS total_closing'),
-            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34"), 1, NULL)) AS total_prospek'),
-            DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $today . '",1, NULL)) AS total_data_today'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_call_today'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today . '" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_call_distoday'),
-            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today . '", 1, NULL)) AS total_nocall_today'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_callout_today'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "2" AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_nocallout_today'),
-            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_closing_today'),
-            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today . '", 1, NULL)) AS total_prospek_today'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1,0)) AS total_closing'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34"), 1,0)) AS total_prospek'),
+            DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $today . '",1,0)) AS total_data_today'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_call_today'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today . '" AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_call_distoday'),
+            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today . '", 1,0)) AS total_nocall_today'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_callout_today'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "2" AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_nocallout_today'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_closing_today'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_prospek_today'),
         )
-            ->join('fileexcels', 'group_fileexcels.id', '=', 'fileexcels.group_id')
-            ->join('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
+            ->leftjoin('fileexcels', 'group_fileexcels.id', '=', 'fileexcels.group_id')
+            ->leftjoin('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
             ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
                 $join->on('customers.id', '=', 'a.customer_id');
             })
@@ -199,14 +199,6 @@ class CampaignController extends Controller
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('all1', function ($data) use ($today) {
-                $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
-                $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
-                $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
-                $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
-                $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
-                $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
-                $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
-                $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
                 $vToday = '<span style="color:#009b9b"><span title="total data">' . $data->total_data . '</span>';
                 $vToday .= ' ( ';
                 $vToday .= '<span style="color:#eb7904" title="total data terdistribusi">' . $data->total_data1  . '</span>';
@@ -222,14 +214,14 @@ class CampaignController extends Controller
             })
 
             ->addColumn('all2', function ($data) use ($today) {
-                $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
-                $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
-                $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
-                $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
-                $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
-                $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
-                $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
-                $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
+                // $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
+                // $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
+                // $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
+                // $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
+                // $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
+                // $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
+                // $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
+                // $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
 
                 $vToday = ' ( ';
                 $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('0') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904" title="total telepon">' . $data->total_call . '</span></a>';
@@ -240,14 +232,14 @@ class CampaignController extends Controller
                 return $vToday;
             })
             ->addColumn('all3', function ($data) use ($today) {
-                $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
-                $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
-                $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
-                $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
+                // $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
+                // $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
+                // $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
+                // $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
                 $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
                 $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
-                $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
-                $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
+                // $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
+                // $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
 
                 $vToday = ' ( ';
                 $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('1') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#009b05" title="total contact">' . $data->total_callout . '(' . $persencallout . ')' . '</span></a>';
@@ -258,14 +250,14 @@ class CampaignController extends Controller
                 return $vToday;
             })
             ->addColumn('all4', function ($data) use ($today) {
-                $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
-                $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
-                $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
-                $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
-                $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
-                $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
-                $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
-                $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
+                // $persendis =  ($data->total_data == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_data1 / $data->total_data) * 100) . '%';
+                // $persennodis =  ($data->total_data == '0' && $data->total_nodistribusi == '0') ? '0' : round(($data->total_nodistribusi / $data->total_data) * 100) . '%';
+                // $persencall =  ($data->total_call == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_call / $data->total_data1) * 100) . '%';
+                // $persennocall =  ($data->total_nocall == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_nocall / $data->total_data1) * 100) . '%';
+                // $persencallout =  ($data->total_callout == '0' && $data->total_call == '0') ? '0' : round(($data->total_callout / $data->total_call) * 100) . '%';
+                // $persennocallout =  ($data->total_nocallout == '0' && $data->total_call == '0') ? '0' : round(($data->total_nocallout / $data->total_call) * 100) . '%';
+                // $persenprospek =  ($data->total_prospek == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_prospek / $data->total_data1) * 100) . '%';
+                // $persenclosing =  ($data->total_closing == '0' && $data->total_data1 == '0') ? '0' : round(($data->total_closing / $data->total_data1) * 100) . '%';
 
                 $vToday = '( ';
                 $vToday .= '<a href="/customer/callhistory?id=&param=' . encrypt('3') . '&tanggal=' . encrypt($today) . '&idcampaign=' . encrypt($data->id) . '" target="_blank"><span style="color:#eb7904;font-weight: 600;" title="total prospek">' . $data->total_prospek . '</span></a>';
@@ -278,10 +270,10 @@ class CampaignController extends Controller
                 $vtdt = $data->total_nocall + $data->total_call_today;
                 $vsisahkemarin = $vtdt - $data->total_call_distoday - $data->total_nocall_today;
                 $vdatatoday = $vtdt - ($vtdt - $data->total_call_distoday - $data->total_nocall_today);
-                $persennodis =  ($vtdt == '0' && $vsisahkemarin == '0') ? '0' : round(($vsisahkemarin / $vtdt) * 100) . '%';
-                $persendis =  ($vtdt == '0' && $vdatatoday == '0') ? '0' : round(($vdatatoday / $vtdt) * 100) . '%';
-                $persencall =  ($data->total_call_today == '0' && $vtdt == '0') ? '0' : round(($data->total_call_today / $vtdt) * 100) . '%';
-                $persennocall =  ($data->total_nocall == '0' && $vtdt == '0') ? '0' : round(($data->total_nocall / $vtdt) * 100) . '%';
+                // $persennodis =  ($vtdt == '0' && $vsisahkemarin == '0') ? '0' : round(($vsisahkemarin / $vtdt) * 100) . '%';
+                // $persendis =  ($vtdt == '0' && $vdatatoday == '0') ? '0' : round(($vdatatoday / $vtdt) * 100) . '%';
+                // $persencall =  ($data->total_call_today == '0' && $vtdt == '0') ? '0' : round(($data->total_call_today / $vtdt) * 100) . '%';
+                // $persennocall =  ($data->total_nocall == '0' && $vtdt == '0') ? '0' : round(($data->total_nocall / $vtdt) * 100) . '%';
                 $persencallout =  ($data->total_callout_today == '0' && $data->total_call_today == '0') ? '0' : round(($data->total_callout_today / $data->total_call_today) * 100) . '%';
                 $persennocallout =  ($data->total_nocallout_today == '0' && $data->total_call_today == '0') ? '0' : round(($data->total_nocallout_today / $data->total_call_today) * 100) . '%';
 

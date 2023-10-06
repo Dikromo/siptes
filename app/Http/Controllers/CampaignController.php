@@ -129,14 +129,14 @@ class CampaignController extends Controller
             //'fileexcels.kode',
             DB::raw('group_fileexcels.nama AS groupnama'),
             'fileexcels.user_id as upload_user',
-            DB::raw('(COUNT(IF(distribusis.status = "0", 1, 0)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, 0))) AS sort_totaldata'),
+            DB::raw('(COUNT(IF(distribusis.status = "0", 1, null)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null))) AS sort_totaldata'),
             DB::raw('COUNT(customers.id) AS total_data'),
-            DB::raw('COUNT(IF(distribusis.status is null, 1,0)) AS total_nodistribusi'),
+            DB::raw('COUNT(IF(distribusis.status is null, 1, null)) AS total_nodistribusi'),
             DB::raw('COUNT(distribusis.id) AS total_data1'),
-            DB::raw('COUNT(IF(distribusis.status <> "0", 1,0)) AS total_call'),
-            DB::raw('COUNT(IF(distribusis.status = "0", 1,0)) AS total_nocall'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "1", 1,0)) AS total_callout'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "2", 1,0)) AS total_nocallout'),
+            DB::raw('COUNT(IF(distribusis.status <> "0", 1, null)) AS total_call'),
+            DB::raw('COUNT(IF(distribusis.status = "0", 1, null)) AS total_nocall'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, null)) AS total_callout'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "2", 1, null)) AS total_nocallout'),
             DB::raw('COUNT(IF(
                 DATE(distribusis.distribusi_at) <> "' . $today . '" AND
                 (distribusis.status = "3" OR
@@ -150,18 +150,18 @@ class CampaignController extends Controller
                 distribusis.status = "27" OR
                 distribusis.status = "28" OR
                 distribusis.status = "37")
-                , 1,0)
+                , 1, null)
                 ) AS total_reload'),
-            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1,0)) AS total_closing'),
-            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34"), 1,0)) AS total_prospek'),
-            DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $today . '",1,0)) AS total_data_today'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_call_today'),
-            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today . '" AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_call_distoday'),
-            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today . '", 1,0)) AS total_nocall_today'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_callout_today'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "2" AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_nocallout_today'),
-            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_closing_today'),
-            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today . '", 1,0)) AS total_prospek_today'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1, null)) AS total_closing'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34"), 1, null)) AS total_prospek'),
+            DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $today . '",1, null)) AS total_data_today'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null)) AS total_call_today'),
+            DB::raw('COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.distribusi_at) = "' . $today . '" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null)) AS total_call_distoday'),
+            DB::raw('COUNT(IF(distribusis.status = "0" AND DATE(distribusis.distribusi_at) = "' . $today . '", 1, null)) AS total_nocall_today'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "1" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null)) AS total_callout_today'),
+            DB::raw('COUNT(IF(statuscalls.jenis = "2" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null)) AS total_nocallout_today'),
+            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $today . '", 1, null)) AS total_closing_today'),
+            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34") AND DATE(distribusis.updated_at) = "' . $today . '", 1, null)) AS total_prospek_today'),
         )
             ->leftjoin('fileexcels', 'group_fileexcels.id', '=', 'fileexcels.group_id')
             ->leftjoin('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')

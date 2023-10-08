@@ -115,6 +115,36 @@
                                                         class="error invalid-feedback">{{ $message }}</span>
                                                 @enderror
                                             </div>
+                                            @if (auth()->user()->produk_id == '2' || auth()->user()->produk_id == '4')
+                                                <div class="form-group">
+                                                    <label for="subproduk_id">Produk</label>
+                                                    <select name="subproduk_id"
+                                                        class="form-control select2 @error('subproduk_id') is-invalid @enderror  "
+                                                        id="subproduk_id">
+                                                        <option value="">-- Pilih --</option>
+                                                        @foreach ($subprodukSelect as $item)
+                                                            @if ($data != '')
+                                                                @if (old('subproduk_id') == $item->id || $data->subproduk_id == $item->id)
+                                                                    <option value="{{ $item->id }}" selected>
+                                                                        {{ $item->nama }}
+                                                                    </option>
+                                                                @else
+                                                                    <option value="{{ $item->id }}">
+                                                                        {{ $item->nama }}
+                                                                    </option>
+                                                                @endif
+                                                            @else
+                                                                <option value="{{ $item->id }}">{{ $item->nama }}
+                                                                </option>
+                                                            @endif
+                                                        @endforeach
+                                                    </select>
+                                                    @error('subproduk_id')
+                                                        <span id="subproduk_id"
+                                                            class="error invalid-feedback">{{ $message }}</span>
+                                                    @enderror
+                                                </div>
+                                            @endif
                                         @endif
                                         @if (auth()->user()->cabang_id == '4')
                                             <div class="form-group text-center">

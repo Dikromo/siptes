@@ -65,6 +65,8 @@ Route::get('/customer/logdistribusi', [CustomerController::class, 'viewlogDistri
 Route::post('/customer/ajax/logdistribusi', [CustomerController::class, 'logDistribusi'])->middleware('auth');
 
 Route::get('/setting/reload', [ReloadController::class, 'viewCalltracking'])->middleware('auth');
+Route::post('/setting/reload/ajax', [ReloadController::class, 'ajaxRendercampaign'])->middleware('auth');
+Route::put('/setting/reload/save', [ReloadController::class, 'saveSetupreload'])->middleware('auth');
 
 Route::get('/campaign', [CampaignController::class, 'index'])->middleware('auth');
 Route::post('/campaign/ajax', [CampaignController::class, 'dataTables'])->middleware('auth');

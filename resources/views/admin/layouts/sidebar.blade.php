@@ -123,6 +123,16 @@
                                     </p>
                                 </a>
                             </li>
+                            <li class="nav-item">
+                                <a href="/setting/reload"
+                                    class="nav-link {{ $active === 'reloadsetting' ? 'active' : '' }}">
+                                    <i class="nav-icon fas fa-database"></i>
+                                    <p>
+                                        Reload Setting
+                                        <!--span class="right badge badge-danger">New</span-->
+                                    </p>
+                                </a>
+                            </li>
                         @endif
                         @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '6')
                             <li class="nav-item">

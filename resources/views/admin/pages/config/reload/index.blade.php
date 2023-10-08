@@ -36,7 +36,7 @@
                             <div class="col-8">
                             </div>
                             <div class="col-4">
-                                <a class="btn btn-primary btn-block" onclick="proses()">Proses</a>
+                                <a class="btn btn-primary btn-block" onclick="renderData()">Proses</a>
                             </div>
                         </div>
                     </div>
@@ -56,8 +56,28 @@
                                         TOTAL DATA
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totData ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center border-bottom mb-1 mt-3">
+                                    <p class="text-success text-medium">
+                                        Sudah Distribusi
+                                    </p>
+                                    <p class="d-flex flex-column text-right">
+                                        <span class="font-weight-bold totDistribusi ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center border-bottom mb-1 mt-3">
+                                    <p class="text-success text-medium">
+                                        Belum Distribusi
+                                    </p>
+                                    <p class="d-flex flex-column text-right">
+                                        <span class="font-weight-bold totNodistribusi ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -66,8 +86,8 @@
                                         Sudah Ditelepon
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totCall ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -76,8 +96,8 @@
                                         Belum Ditelepon
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totNocall ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -86,8 +106,8 @@
                                         Reload
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totReload ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -96,8 +116,8 @@
                                         THREE
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totProvthree ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -106,8 +126,8 @@
                                         SIMPATI
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totProvsimpati ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -116,8 +136,8 @@
                                         INDOSAT
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totProvindosat ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -126,8 +146,8 @@
                                         XL
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totProvxl ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -136,8 +156,8 @@
                                         SMART
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totProvsmart ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -146,8 +166,8 @@
                                         TIDAK DITEMUKAN
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totNoprov ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -156,8 +176,8 @@
                                         TOTAL
                                     </p>
                                     <p class="d-flex flex-column text-right">
-                                        <span class="font-weight-bold">
-                                            <i class="ion ion-android-arrow-up text-success"></i> 27654
+                                        <span class="font-weight-bold totProv ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
                                         </span>
                                     </p>
                                 </div>
@@ -176,138 +196,37 @@
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
-                                {{-- looping --}}
-                                <div class="form-group row">
-                                    <label for="teleponkembali" class="col-sm-6 col-form-label">Telepon Kembali</label>
-                                    <div class="col-sm-3">
-                                        <input type="text" id="teleponkembali" name="teleponkembali"
-                                            class="form-control @error('teleponkembali') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('teleponkembali') : old('teleponkembali', $data->teleponkembali) }}"readonly>
+                                @foreach ($statusSelect as $item)
+                                    <div class="form-group row">
+                                        <label for="inputbox_{{ $item->id }}"
+                                            class="col-sm-6 col-form-label">{{ $item->nama }}</label>
+                                        <div class="col-sm-3">
+                                            <input type="text" id="inputbox_{{ $item->id }}"
+                                                name="inputbox_{{ $item->id }}"
+                                                class="form-control @error('inputbox_{{ $item->id }}') is-invalid @enderror"
+                                                value="{{ $data == '' ? old('inputbox_' . $item->id) : old('inputbox_' . $item->id, $data->teleponkembali) }}"readonly>
+                                        </div>
+                                        @error('inputbox_{{ $item->id }}')
+                                            <span id="inputbox_{{ $item->id }}"
+                                                class="error invalid-feedback">{{ $message }}</span>
+                                        @enderror
+                                        <div class="col-sm-3">
+                                            <?php
+                                            $arrayYesno = ['YES', 'NO'];
+                                            ?>
+                                            <select name="yesno"
+                                                class="selbox form-control select2 @error('yesno_{{ $item->id }}') is-invalid @enderror  "
+                                                id="yesno_{{ $item->id }}">
+                                                <option value="">-- Pilih --</option>
+                                                @foreach ($arrayYesno as $item)
+                                                    <option value="{{ $item }}">
+                                                        {{ $item }}
+                                                    </option>
+                                                @endforeach
+                                            </select>
+                                        </div>
                                     </div>
-                                    @error('teleponkembali')
-                                        <span id="username" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                    <div class="col-sm-3">
-                                        <?php
-                                        $arrayYesno = ['YES', 'NO'];
-                                        ?>
-                                        <select name="yesno"
-                                            class="form-control select2 @error('yesno') is-invalid @enderror  "
-                                            id="yesno">
-                                            <option value="">-- Pilih --</option>
-                                            @foreach ($arrayYesno as $item)
-                                                <option value="{{ $item }}">
-                                                    {{ $item }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="teleponkembali" class="col-sm-6 col-form-label">Telepon Kembali</label>
-                                    <div class="col-sm-3">
-                                        <input type="text" id="teleponkembali" name="teleponkembali"
-                                            class="form-control @error('teleponkembali') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('teleponkembali') : old('teleponkembali', $data->teleponkembali) }}"readonly>
-                                    </div>
-                                    @error('teleponkembali')
-                                        <span id="username" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                    <div class="col-sm-3">
-                                        <?php
-                                        $arrayYesno = ['YES', 'NO'];
-                                        ?>
-                                        <select name="yesno"
-                                            class="form-control select2 @error('yesno') is-invalid @enderror  "
-                                            id="yesno">
-                                            <option value="">-- Pilih --</option>
-                                            @foreach ($arrayYesno as $item)
-                                                <option value="{{ $item }}">
-                                                    {{ $item }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="teleponkembali" class="col-sm-6 col-form-label">Telepon Kembali</label>
-                                    <div class="col-sm-3">
-                                        <input type="text" id="teleponkembali" name="teleponkembali"
-                                            class="form-control @error('teleponkembali') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('teleponkembali') : old('teleponkembali', $data->teleponkembali) }}"readonly>
-                                    </div>
-                                    @error('teleponkembali')
-                                        <span id="username" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                    <div class="col-sm-3">
-                                        <?php
-                                        $arrayYesno = ['YES', 'NO'];
-                                        ?>
-                                        <select name="yesno"
-                                            class="form-control select2 @error('yesno') is-invalid @enderror  "
-                                            id="yesno">
-                                            <option value="">-- Pilih --</option>
-                                            @foreach ($arrayYesno as $item)
-                                                <option value="{{ $item }}">
-                                                    {{ $item }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="teleponkembali" class="col-sm-6 col-form-label">Telepon Kembali</label>
-                                    <div class="col-sm-3">
-                                        <input type="text" id="teleponkembali" name="teleponkembali"
-                                            class="form-control @error('teleponkembali') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('teleponkembali') : old('teleponkembali', $data->teleponkembali) }}"readonly>
-                                    </div>
-                                    @error('teleponkembali')
-                                        <span id="username" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                    <div class="col-sm-3">
-                                        <?php
-                                        $arrayYesno = ['YES', 'NO'];
-                                        ?>
-                                        <select name="yesno"
-                                            class="form-control select2 @error('yesno') is-invalid @enderror  "
-                                            id="yesno">
-                                            <option value="">-- Pilih --</option>
-                                            @foreach ($arrayYesno as $item)
-                                                <option value="{{ $item }}">
-                                                    {{ $item }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label for="teleponkembali" class="col-sm-6 col-form-label">Telepon Kembali</label>
-                                    <div class="col-sm-3">
-                                        <input type="text" id="teleponkembali" name="teleponkembali"
-                                            class="form-control @error('teleponkembali') is-invalid @enderror"
-                                            value="{{ $data == '' ? old('teleponkembali') : old('teleponkembali', $data->teleponkembali) }}"
-                                            readonly>
-                                    </div>
-                                    @error('teleponkembali')
-                                        <span id="username" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                    <div class="col-sm-3">
-                                        <?php
-                                        $arrayYesno = ['YES', 'NO'];
-                                        ?>
-                                        <select name="yesno"
-                                            class="form-control select2 @error('yesno') is-invalid @enderror  "
-                                            id="yesno">
-                                            <option value="">-- Pilih --</option>
-                                            @foreach ($arrayYesno as $item)
-                                                <option value="{{ $item }}">
-                                                    {{ $item }}
-                                                </option>
-                                            @endforeach
-                                        </select>
-                                    </div>
-                                </div>
+                                @endforeach
                             </div>
                             <!-- /.card-body -->
                             <div class="list-data card-footer">
@@ -345,5 +264,103 @@
 
     <script type="text/javascript">
         $('.select2').select2();
+        var arrayInputbox = [];
+        var cekSelect = 0;
+
+        function renderData() {
+            cekSelect = 0;
+            var div = $('<div/>')
+                .addClass('loading')
+                .text('Loading...');
+            $('.ajaxLoading').html(div);
+            $.ajax({
+                type: 'POST',
+                url: "/setting/reload/ajax",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    fileexcel_id: $("#fileexcel_id").val(),
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                $('.totData').html(data.provider['0'].total_data);
+                $('.totDistribusi').html(data.provider['0'].total_data1);
+                $('.totNodistribusi').html(data.provider['0'].total_nodistribusi);
+                $('.totCall').html(data.provider['0'].total_call);
+                $('.totNocall').html(data.provider['0'].total_nocall);
+                $('.totReload').html(data.provider['0'].total_reload);
+
+
+                $('.totProvthree').html(data.provider['0'].total_three);
+                $('.totProvsimpati').html(data.provider['0'].total_simpati);
+                $('.totProvindosat').html(data.provider['0'].total_indosat);
+                $('.totProvxl').html(data.provider['0'].total_xl);
+                $('.totProvaxis').html(data.provider['0'].total_axis);
+                $('.totProvsmart').html(data.provider['0'].total_smart);
+                $('.totNoprov').html(data.provider['0'].total_noprovider);
+                $('.totProv').html(data.provider['0'].total_data);
+                var palangSelect = 1;
+                console.log(data.status.length);
+                $.each(data.status, function(index, obj) {
+                    arrayInputbox = data.status;
+                    $('#inputbox_' + obj.id).val(obj.total_data);
+                    if (obj.status == '0') {
+                        var statusyesno = 'NO';
+                    } else {
+                        var statusyesno = 'YES';
+                    }
+                    $('#yesno_' + obj.id).val(statusyesno).change();
+                    if (palangSelect == data.status.length) {
+                        cekSelect = 1;
+                        console.log(cekSelect);
+                    }
+                    console.log('palangselect = ' + palangSelect);
+                    palangSelect++;
+                });
+            });
+        }
+
+        $(".selbox").change(function(event) {
+            if (cekSelect != 0) {
+                var id = (event.target.id);
+                var statuscall_id = id.replace('yesno_', '');
+                $.ajax({
+                    type: 'PUT',
+                    url: "/setting/reload/save",
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        fileexcel_id: $("#fileexcel_id").val(),
+                        inputbox: $("#yesno_" + statuscall_id).val(),
+                        statuscall_id: statuscall_id,
+                    },
+                    dataType: "json",
+                    encode: true,
+                }).done(function(data) {
+                    if (data == 'done') {
+                        console.log('okelah');
+                        renderData();
+                    }
+                });
+            }
+        });
+
+
+        function saveData() {
+            console.log(this.id);
+            console.log(this.value);
+            // $.ajax({
+            //     type: 'POST',
+            //     url: "/setting/reload/ajax",
+            //     data: {
+            //         _token: '{{ csrf_token() }}',
+            //         fileexcel_id: $("#fileexcel_id").val(),
+            //         statuscall_id: $("#fileexcel_id").val(),
+            //     },
+            //     dataType: "json",
+            //     encode: true,
+            // }).done(function(data) {
+
+            // });
+        }
     </script>
 @endsection

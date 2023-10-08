@@ -8,9 +8,11 @@ use App\Models\Customer;
 use App\Models\Fileexcel;
 use App\Models\Distribusi;
 use App\Models\Statuscall;
+use App\Models\Setupreload;
 use Illuminate\Http\Request;
 use App\Models\Log_distribusi;
 use App\Imports\CustomerImport;
+use App\Models\group_fileexcel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -19,7 +21,6 @@ use Illuminate\Support\Facades\Session;
 use Yajra\DataTables\Facades\DataTables;
 use App\Http\Requests\StoreCustomerRequest;
 use App\Http\Requests\UpdateCustomerRequest;
-use App\Models\group_fileexcel;
 
 class CustomerController extends Controller
 {
@@ -181,6 +182,17 @@ class CustomerController extends Controller
         // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->fileexcel_id != 'today') {
             if ($request->tipe == 'RELOAD') {
+                $defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
+                $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+                if ($setupReloaddata->count() > 0) {
+                    $defaultreload = [];
+                    foreach ($setupReloaddata->get() as $item) {
+                        # code...
+                        $defaultreload[] = $item->statuscall_id;
+                    }
+                }
+
+
                 $lastDistribusi = DB::table('distribusis')
                     ->select('customer_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
                     ->where('produk_id', $produk_id)
@@ -199,7 +211,7 @@ class CustomerController extends Controller
                     ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                     // jika local status nya 4 dan 5
                     // jika server status nya 12 dan 13
-                    ->whereIn('b.status', ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'])
+                    ->whereIn('b.status', $defaultreload)
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
                     ->where('b.produk_id', $produk_id);
                 if ($request->group_fileexcels_id != '') {
@@ -501,6 +513,16 @@ class CustomerController extends Controller
         Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>';
                 $msglog = 'Sukses menarik data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
             } else if ($request->tipe == 'RELOAD') {
+                $defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
+                $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+                if ($setupReloaddata->count() > 0) {
+                    $defaultreload = [];
+                    foreach ($setupReloaddata->get() as $item) {
+                        # code...
+                        $defaultreload[] = $item->statuscall_id;
+                    }
+                }
+
                 $lastDistribusi = DB::table('distribusis')
                     ->select('customer_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
                     ->where('produk_id', $produk_id)
@@ -526,7 +548,7 @@ class CustomerController extends Controller
                     //         ->orWhere('b.status', '13');
                     // })
                     //->whereIn('b.status', ['12', '13', '18', '26'])
-                    ->whereIn('b.status', ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'])
+                    ->whereIn('b.status', $defaultreload)
                     ->whereDate('b.distribusi_at', '<>', $tanggal)
                     ->where('b.produk_id', $produk_id);
                 if ($request->group_fileexcels_id != '') {

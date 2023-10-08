@@ -113,6 +113,22 @@ class CallpagesController extends Controller
             ->without("Customer")
             ->without("User")
             ->get();
+        // $datastatistik = Distribusi::select(
+        //     'distribusis.user_id',
+        //     DB::raw('COUNT(IF(DATE(distribusis.updated_at) = "' . $hariini . '", 1, NULL)) AS distribusi_today'),
+        //     DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS nocall'),
+        //     DB::raw('COUNT(IF((distribusis.status <> "0" OR statuscalls.jenis = "1") AND DATE(distribusis.updated_at) = "' . $hariini . '", 1, NULL)) AS callout'),
+        //     DB::raw('COUNT(IF((distribusis.status <> "0" OR statuscalls.jenis = "2") AND DATE(distribusis.updated_at) = "' . $hariini . '", 1, NULL)) AS nocallout'),
+        //     DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $hariini . '", 1, NULL)) AS closing1'),
+        //     DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $h2 . '", 1, NULL)) AS closing2'),
+        //     DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $h3 . '", 1, NULL)) AS closing3'),
+        // )
+        //     ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+        //     ->where('user_id', auth()->user()->id)
+        //     ->groupBy(DB::raw('1'))
+        //     ->without("Customer")
+        //     ->without("User")
+        //     ->get();
         return view('sales.pages.call.index', [
             'title' => 'Call Page',
             'active' => 'call',
@@ -123,6 +139,7 @@ class CallpagesController extends Controller
             "dataCall" => $dataCall->count(),
             "dataCallout" => $dataCallout->count(),
             "dataClosing" => $dataClosing,
+            // "datastatistik" => $datastatistik,
             //"category" => User::all(),
         ]);
     }
@@ -313,6 +330,9 @@ class CallpagesController extends Controller
             $rules = [
                 'status'     => ['required'],
             ];
+            if (auth()->user()->produk_id == '2' || auth()->user()->produk_id == '4') {
+                $rules['subproduk_id'] = ['required'];
+            }
             if ($request->tipeproses == 'VIP') {
                 $rules['tipeproses'] = 'required';
                 $rules['nik'] = 'required';

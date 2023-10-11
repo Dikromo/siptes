@@ -27,104 +27,105 @@
                                 <img class="img-fluid" src="{{ asset('assets/img/logo.png') }}" alt="Photo">
                             </div>
 
-                            <h3 class="profile-username text-center">{{ auth()->user()->name }}</h3>
-                            <?php
-                            $signalBar = '';
-                            $signalText = '';
-                            $timerun1 = date('Y-m-d 00:00:00');
-                            $timerun2 = date('Y-m-d H:i:s');
-                            $jarak = date_diff(date_create($timerun2), date_create($timerun1));
-                            if ($jarak->h <= '10') {
-                                $runhour = '1' * 60;
-                                $runhour = ($runhour + (int) $jarak->i) / 60;
-                            } else {
-                                if ($jarak->h >= '17') {
-                                    $runhour = '7';
+                            @foreach ($datastatistik as $items)
+                                <h3 class="profile-username text-center">{{ auth()->user()->name }}</h3>
+                                <?php
+                                $signalBar = '';
+                                $signalText = '';
+                                $timerun1 = date('Y-m-d 00:00:00');
+                                $timerun2 = date('Y-m-d H:i:s');
+                                $jarak = date_diff(date_create($timerun2), date_create($timerun1));
+                                if ($jarak->h <= '10') {
+                                    $runhour = '1' * 60;
+                                    $runhour = ($runhour + (int) $jarak->i) / 60;
                                 } else {
-                                    if ($jarak->h <= '12') {
-                                        if ($jarak->h == '12') {
-                                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
-                                            $runhour = $runhour / 60;
+                                    if ($jarak->h >= '17') {
+                                        $runhour = '7';
+                                    } else {
+                                        if ($jarak->h <= '12') {
+                                            if ($jarak->h == '12') {
+                                                $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                                                $runhour = $runhour / 60;
+                                            } else {
+                                                $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                                                $runhour = ($runhour + (int) $jarak->i) / 60;
+                                            }
                                         } else {
-                                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                                            $runhour = ((int) $jarak->h - 10) * 60;
                                             $runhour = ($runhour + (int) $jarak->i) / 60;
                                         }
-                                    } else {
-                                        $runhour = ((int) $jarak->h - 10) * 60;
-                                        $runhour = ($runhour + (int) $jarak->i) / 60;
                                     }
                                 }
-                            }
-                            $signalPercent = round(((int) $dataCall + (int) $dataCallout) / (float) $runhour);
-                            if ($signalPercent >= '0' && $signalPercent < '26') {
-                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">-__-</span>';
-                            } elseif ($signalPercent >= '26' && $signalPercent < '30') {
-                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Sangat Lambat</span>';
-                            } elseif ($signalPercent >= '30' && $signalPercent < '34') {
-                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Lambat</span>';
-                            } elseif ($signalPercent >= '34' && $signalPercent < '39') {
-                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb7904;">Kurang Cepat</span>';
-                            } elseif ($signalPercent >= '39' && $signalPercent < '43') {
-                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">OK</span>';
-                            } elseif ($signalPercent >= '43') {
-                                $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">Cepat</span>';
-                            }
-                            ?>
-                            <p class="text-muted text-center">
-                                {{ auth()->user()->roleuser_id == '3' ? 'TELEMARKETING' : '' }}
-                            </p>
-                            <div class="row justify-content-md-center">
-                                <div class="col-md-3 col-sm-6 col-12">
-                                    <div class="info-box">
-                                        <span class="info-box-icon bg-success"><i class="fas fa-headset"></i></span>
-                                        <div class="info-box-content">
-                                            <div class="row">
-                                                <div class="col-md-6 col-12">
-                                                    <span class="info-box-text">Total Calls Out</span>
-                                                    <span class="info-box-number">{{ $dataCallout }}</span>
-                                                </div>
-                                                <div class="col-md-6 col-12">
-                                                    <span class="info-box-text">Closing 3 Hari</span>
-                                                    @if ($dataClosing->count() == 0)
+                                $signalPercent = round(((int) $items->callout + (int) $items->nocallout) / (float) $runhour);
+                                if ($signalPercent >= '0' && $signalPercent < '26') {
+                                    $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">-__-</span>';
+                                } elseif ($signalPercent >= '26' && $signalPercent < '30') {
+                                    $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Sangat Lambat</span>';
+                                } elseif ($signalPercent >= '30' && $signalPercent < '34') {
+                                    $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">Lambat</span>';
+                                } elseif ($signalPercent >= '34' && $signalPercent < '39') {
+                                    $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb7904;">Kurang Cepat</span>';
+                                } elseif ($signalPercent >= '39' && $signalPercent < '43') {
+                                    $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">OK</span>';
+                                } elseif ($signalPercent >= '43') {
+                                    $signalText = '<span style="font-weight:bold;font-size:20px;color:#009b05;">Cepat</span>';
+                                }
+                                ?>
+                                <p class="text-muted text-center">
+                                    {{ auth()->user()->roleuser_id == '3' ? 'TELEMARKETING' : '' }}
+                                </p>
+                                <div class="row justify-content-md-center">
+                                    <div class="col-md-3 col-sm-6 col-12">
+                                        <div class="info-box">
+                                            <span class="info-box-icon bg-success"><i class="fas fa-headset"></i></span>
+                                            <div class="info-box-content">
+                                                <div class="row">
+                                                    <div class="col-md-6 col-12">
+                                                        <span class="info-box-text">Total Calls Out</span>
+                                                        <span class="info-box-number">{{ $items->callout }}</span>
+                                                    </div>
+                                                    <div class="col-md-6 col-12">
+                                                        <span class="info-box-text">Closing 3 Hari</span>
+                                                        {{-- @if ($dataClosing->count() == 0)
                                                         <span class="info-box-number">0 | 0 | 0</span>
-                                                    @else
-                                                        @foreach ($dataClosing as $items)
-                                                            <span
-                                                                class="info-box-number">{{ $items->closing1 . ' | ' . $items->closing2 . ' | ' . $items->closing3 }}</span>
-                                                        @endforeach
-                                                    @endif
+                                                    @else --}}
+                                                        <span
+                                                            class="info-box-number">{{ $items->closing1 . ' | ' . $items->closing2 . ' | ' . $items->closing3 }}</span>
 
+                                                        {{-- @endif --}}
+
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
-                            <div class="row justify-content-md-center">
-                                <div class="col-md-3 col-sm-6 col-12">
-                                    <div class="info-box">
-                                        <span class="info-box-icon bg-info"><i class="fas fa-database"></i></span>
-                                        <div class="info-box-content">
-                                            <div class="row">
-                                                <div class="col-md-4 col-12">
-                                                    <span class="info-box-text">Total Data</span>
-                                                    <span
-                                                        class="info-box-number">{{ (int) $data_total + (int) $dataCall + (int) $dataCallout - (int) $data_total_today . ' + ' . (int) $data_total_today }}</span>
-                                                </div>
-                                                <div class="col-md-4 col-12">
-                                                    <span class="info-box-text">Sudah Di Telepon</span>
-                                                    <span
-                                                        class="info-box-number">{{ (int) $dataCall + (int) $dataCallout }}</span>
-                                                </div>
-                                                <div class="col-md-4 col-12">
-                                                    <span class="info-box-text">Belum Di Telepon</span>
-                                                    <span class="info-box-number">{{ (int) $data_total }}</span>
+                                <div class="row justify-content-md-center">
+                                    <div class="col-md-3 col-sm-6 col-12">
+                                        <div class="info-box">
+                                            <span class="info-box-icon bg-info"><i class="fas fa-database"></i></span>
+                                            <div class="info-box-content">
+                                                <div class="row">
+                                                    <div class="col-md-4 col-12">
+                                                        <span class="info-box-text">Total Data</span>
+                                                        <span
+                                                            class="info-box-number">{{ (int) $items->nocall + (int) $items->nocallout + (int) $items->callout - (int) $items->distribusi_today . ' + ' . (int) $items->distribusi_today }}</span>
+                                                    </div>
+                                                    <div class="col-md-4 col-12">
+                                                        <span class="info-box-text">Sudah Di Telepon</span>
+                                                        <span
+                                                            class="info-box-number">{{ (int) $items->nocallout + (int) $items->callout }}</span>
+                                                    </div>
+                                                    <div class="col-md-4 col-12">
+                                                        <span class="info-box-text">Belum Di Telepon</span>
+                                                        <span class="info-box-number">{{ (int) $items->nocall }}</span>
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+                            @endforeach
                             <p class="profile-username text-center" style="font-size:18px;">Kecepatan
                                 Menelpon<br>{!! $signalText !!}</p>
                             {{-- <a class="btn"><i class="nav-icon fas fa-database"></i>

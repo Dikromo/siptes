@@ -140,15 +140,20 @@ class CampaignController extends Controller
             DB::raw('COUNT(IF(
                 DATE(distribusis.distribusi_at) <> "' . $today . '" AND
                 (distribusis.status = "3" OR
+                distribusis.status = "11" OR
                 distribusis.status = "12" OR
                 distribusis.status = "13" OR
                 distribusis.status = "14" OR
                 distribusis.status = "16" OR
+                distribusis.status = "17" OR
                 distribusis.status = "18" OR
                 distribusis.status = "19" OR
+                distribusis.status = "24" OR
+                distribusis.status = "25" OR
                 distribusis.status = "26" OR
                 distribusis.status = "27" OR
                 distribusis.status = "28" OR
+                distribusis.status = "35" OR
                 distribusis.status = "37")
                 , 1, null)
                 ) AS total_reload'),

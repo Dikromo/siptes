@@ -182,8 +182,8 @@ class CustomerController extends Controller
         // $tanggal = date('Y-m-d', strtotime('-5 days'));
         if ($request->fileexcel_id != 'today') {
             if ($request->tipe == 'RELOAD') {
-                //$defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
-                $defaultreload = ['3', '11', '12', '13', '14', '16', '17', '18', '19', '25', '26', '27', '28', '35', '37'];
+                $defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
+                // $defaultreload = ['3', '11', '12', '13', '14', '16', '17', '18', '19', '25', '26', '27', '28', '35', '37'];
                 $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
                 if ($setupReloaddata->count() > 0) {
                     $defaultreload = [];
@@ -514,8 +514,8 @@ class CustomerController extends Controller
         Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>';
                 $msglog = 'Sukses menarik data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
             } else if ($request->tipe == 'RELOAD') {
-                //$defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
-                $defaultreload = ['3', '11', '12', '13', '14', '16', '17', '18', '19', '25', '26', '27', '28', '35', '37'];
+                $defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
+                // $defaultreload = ['3', '11', '12', '13', '14', '16', '17', '18', '19', '25', '26', '27', '28', '35', '37'];
                 $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
                 if ($setupReloaddata->count() > 0) {
                     $defaultreload = [];

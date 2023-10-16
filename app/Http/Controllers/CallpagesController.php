@@ -182,6 +182,8 @@ class CallpagesController extends Controller
 
         $distribusi = Distribusi::select(
             'distribusis.*',
+            DB::raw('IF(distribusis.namaktp is not null, distribusis.namaktp, customers.nama) as disnama'),
+            DB::raw('IF(distribusis.perusahaan is not null, distribusis.perusahaan, customers.perusahaan) as disperusahaan'),
             'customers.nama',
             'customers.no_telp',
             'customers.perusahaan',
@@ -222,10 +224,17 @@ class CallpagesController extends Controller
         )
             ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
-            ->where('distribusis.user_id', $request->user_id);
+            ->leftjoin('users', 'users.id', '=', 'distribusis.user_id');
+        if ($request->status == '4') {
+            $data = $data->where('users.parentuser_id', $request->user_id);
+        } else {
+            $data = $data->where('distribusis.user_id', $request->user_id);
+        }
         if ($request->status == '2') {
             $data = $data->whereIn('distribusis.status', ['3', '14', '16']);
         } else if ($request->status == '1') {
+            $data = $data->whereIn('distribusis.status', ['1', '15']);
+        } else if ($request->status == '4') {
             $data = $data->whereIn('distribusis.status', ['1', '15']);
         } else {
             $data = $data->whereIn('distribusis.status', ['2', '34']);
@@ -239,6 +248,7 @@ class CallpagesController extends Controller
                     ->with(['data' => $data, 'links' => 'call/detail', 'type' => 'sales']);
             })
             ->editColumn('customer.no_telp', '{{{substr($no_telp, 0, 6)}}}xxxx')
+            ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
             ->make(true);
     }
     public function salescallStore(Request $request, $id)
@@ -333,19 +343,35 @@ class CallpagesController extends Controller
             if (auth()->user()->produk_id == '2' || auth()->user()->produk_id == '4') {
                 $rules['subproduk_id'] = ['required'];
             }
-            if ($request->tipeproses == 'VIP') {
-                $rules['tipeproses'] = 'required';
-                $rules['nik'] = 'required';
-                $rules['dob'] = 'required';
-                $rules['perusahaan'] = 'required';
-                $rules['jabatan'] = 'required';
-                $rules['jmoasli'] = 'required';
-            }
-
-            if ($request->tipeproses == 'REGULER') {
-                $rules['tipeproses'] = 'required';
-                $rules['nik'] = 'required';
-                $rules['dob'] = 'required';
+            if ($request->status == '1') {
+                if (auth()->user()->produk_id == '1' &&  auth()->user()->roleuser_id == '2') {
+                    $rules['tipeproses'] = 'required';
+                    $rules['namaktp'] = 'required';
+                    $rules['email'] = 'required';
+                    $rules['nik'] = 'required';
+                    $rules['dob'] = 'required';
+                    $rules['perusahaan'] = 'required';
+                    $rules['jabatan'] = 'required';
+                    $rules['masakerja'] = 'required';
+                    $rules['jmoasli'] = 'required';
+                    $rules['loan_apply'] = 'required';
+                    $rules['limit'] = 'required';
+                    $rules['bank_penerbit'] = 'required';
+                    $rules['mob'] = 'required';
+                } else if (auth()->user()->produk_id == '1' &&  auth()->user()->roleuser_id != '2') {
+                    $rules['namaktp'] = 'required';
+                    $rules['email'] = 'required';
+                    $rules['nik'] = 'required';
+                    $rules['dob'] = 'required';
+                    $rules['perusahaan'] = 'required';
+                    $rules['jabatan'] = 'required';
+                    $rules['masakerja'] = 'required';
+                    $rules['jmoasli'] = 'required';
+                    $rules['loan_apply'] = 'required';
+                    $rules['limit'] = 'required';
+                    $rules['bank_penerbit'] = 'required';
+                    $rules['mob'] = 'required';
+                }
             }
         }
 

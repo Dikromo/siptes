@@ -649,12 +649,14 @@ class CustomerController extends Controller
     {
         $data = Distribusi::select(
             'distribusis.*',
-            'parent.name as parentuser_nama'
+            DB::raw('IF(parent.name is not null, parent.name, sales.name) as parentuser_nama'),
         )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
-            ->join('users as parent', 'parent.id', '=', 'sales.parentuser_id')
+            ->leftjoin('users as parent', 'parent.id', '=', 'sales.parentuser_id')
             ->where('distribusis.status', '1')
+            ->where('distribusis.produk_id', '1')
             ->whereDate('distribusis.updated_at', $request->tanggal)
-            ->whereNotNull('distribusis.tipeproses');
+            ->whereNotNull('distribusis.tipeproses')
+            ->orderBy('updated_at', 'desc');
         $data = $data->get();
         return DataTables::of($data)
             ->addIndexColumn()
@@ -662,7 +664,8 @@ class CustomerController extends Controller
                 return view('admin.layouts.buttonActiontables')
                     ->with(['data' => $data, 'links' => 'jmosip', 'type' => 'all']);
             })
-            ->editColumn('jmoasli', '{{{number_format($jmoasli, 2, ",", ".")}}}')
+            ->editColumn('updated_at', '{{{date("Y-m-d",strtotime($updated_at));}}}')
+            // ->editColumn('jmoasli', '{{{number_format($jmoasli, 2, ",", ".")}}}')
             ->make(true);
     }
     public function viewCallhistory(Request $request)

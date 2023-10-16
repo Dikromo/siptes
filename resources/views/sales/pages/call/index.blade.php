@@ -138,6 +138,11 @@
                         </div>
                         <hr>
                         <div class="text-center">
+                            @if (auth()->user()->roleuser_id == '2')
+                                <a onclick="renderTable('List Pengajuan','4');"
+                                    class="btn btn-primary btn-sm border_white m-1">
+                                    Show List Pengajuan Team</a>
+                            @endif
                             <a onclick="renderTable('List Pengajuan','1');" class="btn btn-primary btn-sm border_white m-1">
                                 Show List Pengajuan</a>
                             <a onclick="renderTable('List Prospek','3');" class="btn btn-primary btn-sm border_white m-1">
@@ -156,6 +161,7 @@
                                     <thead>
                                         <tr>
                                             <th>NO</th>
+                                            <th>Incoming Date</th>
                                             <th>Nama</th>
                                             <th>Status</th>
                                             <th>Remarks</th>
@@ -245,6 +251,9 @@
                 columns: [{
                     data: 'DT_RowIndex',
                     name: 'DT_RowIndex',
+                }, {
+                    data: 'updated_at',
+                    name: 'updated_at'
                 }, {
                     data: 'nama',
                     name: 'nama'

@@ -413,83 +413,179 @@
                                             @enderror
                                         </div>
                                         @if ($data != '')
-                                            @if ($data->status == '1' && auth()->user()->cabang_id != 4)
-                                                <?php
-                                                $prosesNasabah = ['VIP', 'REGULER'];
-                                                ?>
-                                                <div class="form-group">
-                                                    <label for="tipeproses">Proses Cek</label>
-                                                    <select name="tipeproses"
-                                                        class="form-control select2 @error('tipeproses') is-invalid @enderror  "
-                                                        id="tipeproses">
-                                                        <option value="">-- Pilih --</option>
-                                                        @foreach ($prosesNasabah as $item)
-                                                            @if (old('tipeproses') == $item || $data->tipeproses == $item)
-                                                                <option value="{{ $item }}" selected>
-                                                                    {{ $item }}
-                                                                </option>
-                                                            @else
-                                                                <option value="{{ $item }}">
-                                                                    {{ $item }}
-                                                                </option>
+                                            @if (auth()->user()->produk_id == '1')
+                                                <div class="fokbank"
+                                                    {{ $data == ''
+                                                        ? 'style=display:none;'
+                                                        : (old('status', $data->status) == '1'
+                                                            ? 'style=display:block;'
+                                                            : 'style=display:none;') }}>
+                                                    @if (auth()->user()->roleuser_id == '2')
+                                                        <?php
+                                                        $prosesNasabah = ['VIP', 'REGULER'];
+                                                        ?>
+                                                        <div class="form-group">
+                                                            <label for="tipeproses">Proses Cek</label>
+                                                            @if (auth()->user()->roleuser_id == '2' && $data->user_id == auth()->user()->id)
+                                                                <input type="hidden" id="tipe" name="tipe"
+                                                                    value="apply">
                                                             @endif
-                                                        @endforeach
-                                                    </select>
-                                                    @error('tipeproses')
-                                                        <span id="tipeproses"
-                                                            class="error invalid-feedback">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="nik">NIK</label>
-                                                    <input type="hidden" id="tipe" name="tipe" value="apply">
-                                                    <input type="text" id="nik" name="nik"
-                                                        class="form-control @error('nik') is-invalid @enderror"
-                                                        value="{{ $data == '' ? old('nik') : old('nik', $data->nik) }}">
-                                                    @error('nik')
-                                                        <span id="nik"
-                                                            class="error invalid-feedback">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="dob">DOB</label>
-                                                    <input type="date" id="dob" name="dob"
-                                                        class="form-control @error('dob') is-invalid @enderror"
-                                                        value="{{ $data == '' ? old('dob') : old('dob', $data->dob) }}">
-                                                    @error('dob')
-                                                        <span id="dob"
-                                                            class="error invalid-feedback">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="perusahaan">Perusahaan</label>
-                                                    <input type="text" id="perusahaan" name="perusahaan"
-                                                        class="form-control @error('perusahaan') is-invalid @enderror"
-                                                        value="{{ $data == '' ? old('perusahaan') : old('perusahaan', $data->perusahaan) }}">
-                                                    @error('perusahaan')
-                                                        <span id="perusahaan"
-                                                            class="error invalid-feedback">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="jabatan">Jabatan</label>
-                                                    <input type="text" id="jabatan" name="jabatan"
-                                                        class="form-control @error('jabatan') is-invalid @enderror"
-                                                        value="{{ $data == '' ? old('jabatan') : old('jabatan', $data->jabatan) }}">
-                                                    @error('jabatan')
-                                                        <span id="jabatan"
-                                                            class="error invalid-feedback">{{ $message }}</span>
-                                                    @enderror
-                                                </div>
-                                                <div class="form-group">
-                                                    <label for="jmoasli">JMO Asli</label>
-                                                    <input type="number" id="jmoasli" name="jmoasli"
-                                                        class="form-control @error('jmoasli') is-invalid @enderror"
-                                                        value="{{ $data == '' ? old('jmoasli') : old('jmoasli', $data->jmoasli) }}">
-                                                    @error('jmoasli')
-                                                        <span id="jmoasli"
-                                                            class="error invalid-feedback">{{ $message }}</span>
-                                                    @enderror
+                                                            <select name="tipeproses"
+                                                                class="form-control select2 @error('tipeproses') is-invalid @enderror  "
+                                                                id="tipeproses">
+                                                                <option value="">-- Pilih --</option>
+                                                                @foreach ($prosesNasabah as $item)
+                                                                    @if (old('tipeproses') == $item || $data->tipeproses == $item)
+                                                                        <option value="{{ $item }}" selected>
+                                                                            {{ $item }}
+                                                                        </option>
+                                                                    @else
+                                                                        <option value="{{ $item }}">
+                                                                            {{ $item }}
+                                                                        </option>
+                                                                    @endif
+                                                                @endforeach
+                                                            </select>
+                                                            @error('tipeproses')
+                                                                <span id="tipeproses"
+                                                                    class="error invalid-feedback">{{ $message }}</span>
+                                                            @enderror
+                                                        </div>
+                                                    @endif
+                                                    <div class="form-group">
+                                                        <label for="namaktp">Nama KTP</label>
+                                                        <input type="text" id="namaktp" name="namaktp"
+                                                            class="form-control @error('namaktp') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('namaktp') : old('namaktp', $data->namaktp) }}">
+                                                        @error('namaktp')
+                                                            <span id="namaktp"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="nik">NIK</label>
+                                                        <input type="text" id="nik" name="nik"
+                                                            class="form-control @error('nik') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('nik') : old('nik', $data->nik) }}">
+                                                        @error('nik')
+                                                            <span id="nik"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="dob">DOB</label>
+                                                        <input type="date" id="dob" name="dob"
+                                                            class="form-control @error('dob') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('dob') : old('dob', $data->dob) }}">
+                                                        @error('dob')
+                                                            <span id="dob"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="email">Email</label>
+                                                        <input type="email" id="email" name="email"
+                                                            class="form-control @error('email') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('email') : old('email', $data->email) }}">
+                                                        @error('email')
+                                                            <span id="email"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="perusahaan">Perusahaan</label>
+                                                        <input type="text" id="perusahaan" name="perusahaan"
+                                                            class="form-control @error('perusahaan') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('perusahaan') : old('perusahaan', $data->disperusahaan) }}">
+                                                        @error('perusahaan')
+                                                            <span id="perusahaan"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="jabatan">Jabatan</label>
+                                                        <input type="text" id="jabatan" name="jabatan"
+                                                            class="form-control @error('jabatan') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('jabatan') : old('jabatan', $data->jabatan) }}">
+                                                        @error('jabatan')
+                                                            <span id="jabatan"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="masakerja">Masa Kerja (Tahun - Bulan)</label>
+                                                        <input type="text" id="masakerja" name="masakerja"
+                                                            class="form-control @error('masakerja') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('masakerja') : old('masakerja', $data->masakerja) }}"
+                                                            data-inputmask="'mask': '99-99'" data-mask>
+                                                        @error('masakerja')
+                                                            <span id="masakerja"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="jmoasli">JMO Asli</label>
+                                                        <input type="text" id="jmoasli" name="jmoasli"
+                                                            class="form-control @error('jmoasli') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('jmoasli') : old('jmoasli', $data->jmoasli) }}"
+                                                            data-inputmask="'alias': 'currency', 'placeholder': '', 'digits': '0','digitsOptional':'!1', 
+                                                        'rightAlign':'false', 'allowMinus': 'false', 'showMaskOnFocus': 'false', 
+                                                        'showMaskOnHover': 'false','groupSeparator':'.','removeMaskOnSubmit': 'true'"
+                                                            data-mask>
+                                                        @error('jmoasli')
+                                                            <span id="jmoasli"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="loan_apply">Pengajuan Pinjaman </label>
+                                                        <input type="text" id="loan_apply" name="loan_apply"
+                                                            class="form-control @error('loan_apply') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('loan_apply') : old('loan_apply', $data->loan_apply) }}"
+                                                            data-inputmask="'alias': 'currency', 'placeholder': '', 'digits': '0','digitsOptional':'!1', 
+                                                        'rightAlign':'false', 'allowMinus': 'false', 'showMaskOnFocus': 'false', 
+                                                        'showMaskOnHover': 'false','groupSeparator':'.','removeMaskOnSubmit': 'true'"
+                                                            data-mask>
+                                                        @error('loan_apply')
+                                                            <span id="loan_apply"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="bank_penerbit">Penerbit Kartu Kredit</label>
+                                                        <input type="text" id="bank_penerbit" name="bank_penerbit"
+                                                            class="form-control @error('bank_penerbit') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('bank_penerbit') : old('bank_penerbit', $data->bank_penerbit) }}">
+                                                        @error('bank_penerbit')
+                                                            <span id="bank_penerbit"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="limit">Limit Kartu Kredit</label>
+                                                        <input type="text" id="limit" name="limit"
+                                                            class="form-control @error('limit') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('limit') : old('limit', $data->limit) }}"
+                                                            data-inputmask="'alias': 'currency', 'placeholder': '', 'digits': '0','digitsOptional':'!1', 
+                                                        'rightAlign':'false', 'allowMinus': 'false', 'showMaskOnFocus': 'false', 
+                                                        'showMaskOnHover': 'false','groupSeparator':'.','removeMaskOnSubmit': 'true'"
+                                                            data-mask>
+                                                        @error('limit')
+                                                            <span id="limit"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label for="mob">MOB</label>
+                                                        <input type="text" id="mob" name="mob"
+                                                            class="form-control @error('mob') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('mob') : old('mob', $data->mob) }}"
+                                                            data-inputmask="'mask': '99/99'" data-mask>
+                                                        @error('mob')
+                                                            <span id="mob"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
                                                 </div>
                                             @endif
                                         @endif
@@ -533,7 +629,19 @@
     <script src="{{ asset('adminlte/plugins/inputmask/jquery.inputmask.min.js') }}"></script>
     <script>
         var cabang_id = '{{ auth()->user()->cabang_id }}';
+        var produk_id = '{{ auth()->user()->produk_id }}';
         var tesCall = 0;
+        if (produk_id == '1') {
+            $('[data-mask]').inputmask();
+
+            $("#status").change(function() {
+                if (this.value == '1') {
+                    $('.fokbank').css('display', 'block');
+                } else {
+                    $('.fokbank').css('display', 'none');
+                }
+            });
+        }
         if (cabang_id == '4') {
             $('[data-mask]').inputmask();
 

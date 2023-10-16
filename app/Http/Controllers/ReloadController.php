@@ -68,7 +68,7 @@ class ReloadController extends Controller
             }
             Setupreload::Insert($validateData);
         }
-
+        $fileexcel_id = $request->fileexcel_id;
         $lastDistribusi = DB::table('distribusis')
             ->select(
                 'customer_id',
@@ -79,13 +79,45 @@ class ReloadController extends Controller
                     WHEN distribusis.status = '1' OR distribusis.status = '15' 
                     THEN distribusis.id
                 END), MAX(distribusis.id)) AS id"
-                )
+                ),
+                DB::raw('COUNT(distribusis.id) AS tot')
             )
-            ->join('users', 'users.id', '=', 'distribusis.user_id');
+            ->join('users', 'users.id', '=', 'distribusis.user_id')
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->join('setupreloads', function ($join) use ($fileexcel_id) {
+                $join->on('setupreloads.statuscall_id', '=', 'distribusis.status')
+                    ->whereRaw('setupreloads.fileexcel_id = "' . $fileexcel_id . '"');
+            });
         if (auth()->user()->roleuser_id != '1') {
-            $lastDistribusi = $lastDistribusi->whereRaw('users.cabang_id = "' . auth()->user()->cabang_id . '"');
+            $lastDistribusi = $lastDistribusi->whereRaw('users.cabang_id = \'' . auth()->user()->cabang_id . '\'');
         }
         $lastDistribusi = $lastDistribusi->groupBy('customer_id');
+
+
+        $lastTrashhold = DB::table('distribusis')
+            ->select(
+                'customer_id',
+                DB::raw(
+                    "COALESCE(
+                MAX(
+                    CASE
+                    WHEN distribusis.status = '1' OR distribusis.status = '15' 
+                    THEN distribusis.id
+                END), MAX(distribusis.id)) AS id"
+                ),
+                DB::raw('COUNT(distribusis.id) AS tot')
+            )
+            ->join('users', 'users.id', '=', 'distribusis.user_id')
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->join('setupreloads', function ($join) use ($fileexcel_id) {
+                $join->on('setupreloads.statuscall_id', '=', 'distribusis.status')
+                    ->whereRaw('setupreloads.fileexcel_id = \'' . $fileexcel_id . '\'');
+            })
+            ->whereRaw('setupreloads.status = \'1\'');
+        if (auth()->user()->roleuser_id != '1') {
+            $lastTrashhold = $lastTrashhold->whereRaw('users.cabang_id = \'' . auth()->user()->cabang_id . '\'');
+        }
+        $lastTrashhold = $lastTrashhold->groupBy('customer_id');
 
         $cekReload = $this->cekReloadfile($request->fileexcel_id);
 
@@ -165,7 +197,7 @@ class ReloadController extends Controller
         if (auth()->user()->roleuser_id != '1') {
             $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id]);
         }
-        $data = $data->where('fileexcels.id', $request->fileexcel_id)
+        $data = $data->where('fileexcels.id', $fileexcel_id)
             ->orderby('sort_totaldata', 'desc')
             ->groupBy(DB::raw('1,2,3'))
             ->without("Customer")
@@ -176,11 +208,15 @@ class ReloadController extends Controller
             'setupreloads.status',
             //'fileexcels.kode',
             DB::raw('statuscalls.nama AS statusnama'),
-            DB::raw('COUNT(customers.id) AS total_data'),
+            DB::raw('COUNT(a.customer_id) AS total_data'),
+            DB::raw('COUNT(b.customer_id) AS total_data2'),
         )
             ->leftjoin('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
             ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
                 $join->on('customers.id', '=', 'a.customer_id');
+            })
+            ->leftjoin(DB::raw('(' . $lastTrashhold->toSql() . ') as b'), function ($join) {
+                $join->on('customers.id', '=', 'b.customer_id');
             })
             ->leftjoin('distribusis', function ($join) use ($today) {
                 $join->on('distribusis.id', '=', 'a.id');
@@ -202,7 +238,7 @@ class ReloadController extends Controller
         if (auth()->user()->roleuser_id != '1') {
             $data2 = $data2->whereIn('fileexcels.user_id', [auth()->user()->id]);
         }
-        $data2 = $data2->where('fileexcels.id', $request->fileexcel_id)
+        $data2 = $data2->where('fileexcels.id', $fileexcel_id)
             ->where('customers.provider', '<>', 'Tidak Ditemukan')
             ->groupBy(DB::raw('1,2,3'))
             ->without("Customer")

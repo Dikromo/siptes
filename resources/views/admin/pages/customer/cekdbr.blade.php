@@ -49,12 +49,20 @@
                             <thead>
                                 <tr>
                                     <th>NO</th>
+                                    <th>Incoming Date</th>
                                     <th>Proses Tipe</th>
                                     <th>NIK</th>
                                     <th>Nama</th>
+                                    <th>Email</th>
+                                    <th>DOB</th>
                                     <th>Perusahaan</th>
                                     <th>Jabatan</th>
+                                    <th>Masa Kerja</th>
                                     <th>JMO Asli</th>
+                                    <th>Loan Apply</th>
+                                    <th>Bank Kartu Kredit</th>
+                                    <th>Limit Kartu Kredit</th>
+                                    <th>MOB Kartu Kredit</th>
                                     <th>Sales</th>
                                     <th>Team Leader</th>
                                     {{-- <th>Reason</th> --}}
@@ -137,14 +145,27 @@
                         data: 'DT_RowIndex',
                         name: 'DT_RowIndex',
                     }, {
+                        data: 'updated_at',
+                        name: 'updated_at'
+                    }, {
                         data: 'tipeproses',
                         name: 'tipeproses'
                     }, {
                         data: 'nik',
                         name: 'nik'
                     }, {
-                        data: 'customer.nama',
-                        name: 'customer.nama'
+                        data: 'namaktp',
+                        name: 'namaktp'
+                    }, {
+                        data: 'email',
+                        name: 'email',
+                        visible: false,
+                        searchable: false
+                    }, {
+                        data: 'dob',
+                        name: 'dob',
+                        visible: false,
+                        searchable: false
                     }, {
                         data: 'perusahaan',
                         name: 'perusahaan'
@@ -152,8 +173,33 @@
                         data: 'jabatan',
                         name: 'jabatan'
                     }, {
+                        data: 'masakerja',
+                        name: 'masakerja'
+                    }, {
                         data: 'jmoasli',
-                        name: 'jmoasli'
+                        name: 'jmoasli',
+                        visible: false,
+                        searchable: false
+                    }, {
+                        data: 'loan_apply',
+                        name: 'loan_apply',
+                        visible: false,
+                        searchable: false
+                    }, {
+                        data: 'bank_penerbit',
+                        name: 'bank_penerbit',
+                        visible: false,
+                        searchable: false
+                    }, {
+                        data: 'limit',
+                        name: 'limit',
+                        visible: false,
+                        searchable: false
+                    }, {
+                        data: 'mob',
+                        name: 'mob',
+                        visible: false,
+                        searchable: false
                     }, {
                         data: 'user.name',
                         name: 'user.name'
@@ -168,6 +214,7 @@
                     dom: 'Bfrtip',
                     buttons: [{
                         extend: 'excel',
+                        title: '',
                         text: 'Export Excel',
                         filename: 'export_cekdbr_' + hari
                     }, ]

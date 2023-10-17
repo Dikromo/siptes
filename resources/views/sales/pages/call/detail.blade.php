@@ -413,7 +413,7 @@
                                             @enderror
                                         </div>
                                         @if ($data != '')
-                                            @if (auth()->user()->produk_id == '1')
+                                            @if (auth()->user()->produk_id == '1' && auth()->user()->cabang_id == '1')
                                                 <div class="fokbank"
                                                     {{ $data == ''
                                                         ? 'style=display:none;'
@@ -631,7 +631,7 @@
         var cabang_id = '{{ auth()->user()->cabang_id }}';
         var produk_id = '{{ auth()->user()->produk_id }}';
         var tesCall = 0;
-        if (produk_id == '1') {
+        if (produk_id == '1' && cabang_id == '1') {
             $('[data-mask]').inputmask();
 
             $("#status").change(function() {

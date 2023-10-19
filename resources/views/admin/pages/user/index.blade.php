@@ -38,11 +38,14 @@
                             <thead>
                                 <tr>
                                     <th>NO</th>
+                                    <th>ID Sales</th>
                                     <th>Nama</th>
                                     <th>Username</th>
                                     <th>Role</th>
+                                    <th>ID SPV</th>
                                     <th>Supervisor</th>
                                     <th>SPV Kode</th>
+                                    <th>ID SM</th>
                                     <th>Sales Manager</th>
                                     <th>Unit Manager</th>
                                     <th>Sales Code</th>
@@ -126,6 +129,10 @@
                 orderable: false,
                 searchable: false
             }, {
+                data: 'id',
+                name: 'id',
+                visible: false
+            }, {
                 data: 'name',
                 name: 'name'
             }, {
@@ -135,11 +142,19 @@
                 data: 'roletext',
                 name: 'roleusers.nama'
             }, {
+                data: 'parentuser_id',
+                name: 'parentuser_id',
+                visible: false
+            }, {
                 data: 'spvnama',
                 name: 'spv.name'
             }, {
                 data: 'spvnickname',
                 name: 'spv.nickname'
+            }, {
+                data: 'sm_id',
+                name: 'sm_id',
+                visible: false
             }, {
                 data: 'smnama',
                 name: 'sm.name',

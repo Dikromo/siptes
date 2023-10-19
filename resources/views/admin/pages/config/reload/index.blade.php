@@ -172,6 +172,26 @@
                                     </p>
                                 </div>
                                 <div class="d-flex justify-content-between align-items-center border-bottom mb-1 mt-3">
+                                    <p class="text-danger text-medium">
+                                        NON SIMPATI
+                                    </p>
+                                    <p class="d-flex flex-column text-right">
+                                        <span class="font-weight-bold totNosimpati ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center border-bottom mb-1 mt-3">
+                                    <p class="text-danger text-medium">
+                                        ALL PROVIDER
+                                    </p>
+                                    <p class="d-flex flex-column text-right">
+                                        <span class="font-weight-bold totAllprov ajaxLoading">
+                                            <i class="ion ion-android-arrow-up text-success"></i> 0
+                                        </span>
+                                    </p>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center border-bottom mb-1 mt-3">
                                     <p class="text-info text-medium">
                                         TOTAL
                                     </p>
@@ -192,6 +212,9 @@
                             <div class="card-header">
                                 <h3 class="card-title">{{ $title }} Table </h3>
                                 <div class="card-tools">
+                                    <div class="row">
+                                        <a class="btn btn-primary btn-block mr-4" onclick="refreshTable()">Refresh</a>
+                                    </div>
                                 </div>
                             </div>
                             <!-- /.card-header -->
@@ -235,7 +258,7 @@
                                     <div class="col-8">
                                     </div>
                                     <div class="col-4">
-                                        <a class="btn btn-primary btn-block" onclick="proses()">Proses</a>
+                                        <!--a class="btn btn-primary btn-block" onclick="proses()">Proses</a-->
                                     </div>
                                 </div>
                             </div>
@@ -291,13 +314,23 @@
                 $('.totReload').html(data.provider['0'].total_reload);
 
 
-                $('.totProvthree').html(data.provider['0'].total_three);
-                $('.totProvsimpati').html(data.provider['0'].total_simpati);
-                $('.totProvindosat').html(data.provider['0'].total_indosat);
-                $('.totProvxl').html(data.provider['0'].total_xl);
-                $('.totProvaxis').html(data.provider['0'].total_axis);
-                $('.totProvsmart').html(data.provider['0'].total_smart);
+                $('.totProvthree').html(data.provider['0'].total_three_reload + ' / ' + data.provider['0']
+                    .total_three);
+                $('.totProvsimpati').html(data.provider['0'].total_simpati_reload + ' / ' + data.provider['0']
+                    .total_simpati);
+                $('.totProvindosat').html(data.provider['0'].total_indosat_reload + ' / ' + data.provider['0']
+                    .total_indosat);
+                $('.totProvxl').html(data.provider['0'].total_xl_reload + ' / ' + data.provider['0']
+                    .total_xl);
+                $('.totProvaxis').html(data.provider['0'].total_axis_reload + ' / ' + data.provider['0']
+                    .total_axis);
+                $('.totProvsmart').html(data.provider['0'].total_smart_reload + ' / ' + data.provider['0']
+                    .total_smart);
                 $('.totNoprov').html(data.provider['0'].total_noprovider);
+                $('.totNosimpati').html(data.provider['0'].total_nosimpati_reload + ' / ' + data.provider['0']
+                    .total_nosimpati);
+                $('.totAllprov').html(data.provider['0'].total_reload + ' / ' + data.provider['0']
+                    .total_data);
                 $('.totProv').html(data.provider['0'].total_data);
                 var palangSelect = 1;
                 console.log(data.status.length);
@@ -338,12 +371,14 @@
                 }).done(function(data) {
                     if (data == 'done') {
                         console.log('okelah');
-                        renderData();
                     }
                 });
             }
         });
 
+        function refreshTable() {
+            renderData();
+        }
 
         function saveData() {
             console.log(this.id);

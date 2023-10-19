@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\User;
 use App\Models\Subproduk;
 use App\Models\Distribusi;
 use App\Models\Statuscall;
@@ -49,12 +50,13 @@ class CallpagesController extends Controller
         $h2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($hariini))), '');
         $h3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($hariini))), '');
         //$hariini = date('Y-m-d', strtotime('2023-07-21'));
-        $data = Distribusi::select(
+        $data = User::select(
             'distribusis.id'
         )
-            ->where('distribusis.user_id', auth()->user()->id)
+            ->join('distribusis', 'distribusis.user_id', '=', 'users.id')
             ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
             ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+            ->where('distribusis.user_id', auth()->user()->id)
             ->where('distribusis.status', 0)
             ->orderByRaw(
                 "distribusis.call_time desc,
@@ -113,7 +115,7 @@ class CallpagesController extends Controller
         //     ->without("Customer")
         //     ->without("User")
         //     ->get();
-        $datastatistik = Distribusi::select(
+        $datastatistik = User::select(
             'distribusis.user_id',
             DB::raw('COUNT(IF(DATE(distribusis.distribusi_at) = "' . $hariini . '", 1, NULL)) AS distribusi_today'),
             DB::raw('COUNT(IF(distribusis.status = "0", 1, NULL)) AS nocall'),
@@ -123,8 +125,9 @@ class CallpagesController extends Controller
             DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $h2 . '", 1, NULL)) AS closing2'),
             DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15") AND DATE(distribusis.updated_at) = "' . $h3 . '", 1, NULL)) AS closing3'),
         )
+            ->leftjoin('distribusis', 'distribusis.user_id', '=', 'users.id')
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
-            ->where('user_id', auth()->user()->id)
+            ->where('users.id', auth()->user()->id)
             ->groupBy(DB::raw('1'))
             ->without("Customer")
             ->without("User")

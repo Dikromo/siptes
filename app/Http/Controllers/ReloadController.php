@@ -134,7 +134,7 @@ class ReloadController extends Controller
         distribusis.status = "26" OR
         distribusis.status = "27" OR
         distribusis.status = "28" OR
-        distribusis.status = "37") AND customers.provider <> "Tidak Ditemukan"';
+        distribusis.status = "37")';
 
 
         if ($cekReload != '0') {
@@ -151,7 +151,7 @@ class ReloadController extends Controller
                     }
                     $z++;
                 }
-                $defaultreload .= ' ) AND customers.provider <> "Tidak Ditemukan"';
+                $defaultreload .= ' )';
             }
         }
 
@@ -168,7 +168,7 @@ class ReloadController extends Controller
             DB::raw('COUNT(IF(distribusis.status = "0", 1, null)) AS total_nocall'),
             DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, null)) AS total_callout'),
             DB::raw('COUNT(IF(statuscalls.jenis = "2", 1, null)) AS total_nocallout'),
-            DB::raw('COUNT(IF(' . $defaultreload . '
+            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider <> "Tidak Ditemukan"
                 , 1, null)
                 ) AS total_reload'),
             DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1, null)) AS total_closing'),
@@ -179,6 +179,16 @@ class ReloadController extends Controller
             DB::raw('COUNT(IF(customers.provider = "AXIS", 1, null)) AS total_axis'),
             DB::raw('COUNT(IF(customers.provider = "THREE", 1, null)) AS total_three'),
             DB::raw('COUNT(IF(customers.provider = "SMART", 1, null)) AS total_smart'),
+            DB::raw('COUNT(IF(customers.provider <> "SIMPATI", 1, null)) AS total_nosimpati'),
+
+            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "SIMPATI", 1, null)) AS total_simpati_reload'),
+            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "INDOSAT", 1, null)) AS total_indosat_reload'),
+            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "XL", 1, null)) AS total_xl_reload'),
+            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "AXIS", 1, null)) AS total_axis_reload'),
+            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "THREE", 1, null)) AS total_three_reload'),
+            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "SMART", 1, null)) AS total_smart_reload'),
+            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider <> "SIMPATI", 1, null)) AS total_nosimpati_reload'),
+
             DB::raw('COUNT(IF(customers.provider = "TIDAK DITEMUKAN", 1, null)) AS total_noprovider'),
         )
             ->leftjoin('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')

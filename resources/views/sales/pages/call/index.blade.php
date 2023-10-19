@@ -26,36 +26,38 @@
                             <div class="text-center">
                                 <img class="img-fluid" src="{{ asset('assets/img/logo.png') }}" alt="Photo">
                             </div>
-
-                            @foreach ($datastatistik as $items)
-                                <h3 class="profile-username text-center">{{ auth()->user()->name }}</h3>
-                                <?php
-                                $signalBar = '';
-                                $signalText = '';
-                                $timerun1 = date('Y-m-d 00:00:00');
-                                $timerun2 = date('Y-m-d H:i:s');
-                                $jarak = date_diff(date_create($timerun2), date_create($timerun1));
-                                if ($jarak->h <= '10') {
-                                    $runhour = '1' * 60;
-                                    $runhour = ($runhour + (int) $jarak->i) / 60;
+                            <h3 class="profile-username text-center">{{ auth()->user()->name }}</h3>
+                            <?php
+                            $signalBar = '';
+                            $signalText = '';
+                            $timerun1 = date('Y-m-d 00:00:00');
+                            $timerun2 = date('Y-m-d H:i:s');
+                            $jarak = date_diff(date_create($timerun2), date_create($timerun1));
+                            if ($jarak->h <= '10') {
+                                $runhour = '1' * 60;
+                                $runhour = ($runhour + (int) $jarak->i) / 60;
+                            } else {
+                                if ($jarak->h >= '17') {
+                                    $runhour = '7';
                                 } else {
-                                    if ($jarak->h >= '17') {
-                                        $runhour = '7';
-                                    } else {
-                                        if ($jarak->h <= '12') {
-                                            if ($jarak->h == '12') {
-                                                $runhour = ((int) $jarak->h + 1 - 10) * 60;
-                                                $runhour = $runhour / 60;
-                                            } else {
-                                                $runhour = ((int) $jarak->h + 1 - 10) * 60;
-                                                $runhour = ($runhour + (int) $jarak->i) / 60;
-                                            }
+                                    if ($jarak->h <= '12') {
+                                        if ($jarak->h == '12') {
+                                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
+                                            $runhour = $runhour / 60;
                                         } else {
-                                            $runhour = ((int) $jarak->h - 10) * 60;
+                                            $runhour = ((int) $jarak->h + 1 - 10) * 60;
                                             $runhour = ($runhour + (int) $jarak->i) / 60;
                                         }
+                                    } else {
+                                        $runhour = ((int) $jarak->h - 10) * 60;
+                                        $runhour = ($runhour + (int) $jarak->i) / 60;
                                     }
                                 }
+                            }
+                            ?>
+
+                            @foreach ($datastatistik as $items)
+                                <?php
                                 $signalPercent = round(((int) $items->callout + (int) $items->nocallout) / (float) $runhour);
                                 if ($signalPercent >= '0' && $signalPercent < '26') {
                                     $signalText = '<span style="font-weight:bold;font-size:20px;color:#eb0424;">-__-</span>';

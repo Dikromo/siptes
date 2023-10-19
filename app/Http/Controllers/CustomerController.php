@@ -655,7 +655,6 @@ class CustomerController extends Controller
             ->where('distribusis.status', '1')
             ->where('distribusis.produk_id', '1')
             ->whereDate('distribusis.updated_at', $request->tanggal)
-            ->whereNotNull('distribusis.tipeproses')
             ->orderBy('updated_at', 'desc');
         $data = $data->get();
         return DataTables::of($data)

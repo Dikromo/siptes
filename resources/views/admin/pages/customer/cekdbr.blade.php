@@ -154,8 +154,8 @@
                         data: 'nik',
                         name: 'nik'
                     }, {
-                        data: 'namaktp',
-                        name: 'namaktp'
+                        data: 'namacust',
+                        name: 'namacust'
                     }, {
                         data: 'email',
                         name: 'email',

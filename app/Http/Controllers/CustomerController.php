@@ -649,8 +649,11 @@ class CustomerController extends Controller
     {
         $data = Distribusi::select(
             'distribusis.*',
+            DB::raw('IF(distribusis.namaktp is not null, distribusis.namaktp, customers.nama) as namacust'),
             DB::raw('IF(parent.name is not null, parent.name, sales.name) as parentuser_nama'),
-        )->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
+        )
+            ->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
+            ->join('customers', 'distribusis.customer_id', '=', 'customers.id')
             ->leftjoin('users as parent', 'parent.id', '=', 'sales.parentuser_id')
             ->where('distribusis.status', '1')
             ->where('distribusis.produk_id', '1')

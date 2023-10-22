@@ -1573,7 +1573,7 @@ class DashboardController extends Controller
             })
             ->addColumn('campaign', function ($data) use ($today) {
                 if (auth()->user()->roleuser_id == '1' || $data->upload_user == auth()->user()->id) {
-                    $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a><a style="cursor: pointer;"  onclick="modalEditkode(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;"> <i class="fa-solid fa-pen-to-square"></i></span></a>';
+                    $vToday = '<a style="cursor: pointer;" onclick="modalEdit(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;" class="pos_campaign_' . $data->id . '" title="Campaign">' . $data->kode . '</span></a><a style="cursor: pointer;"  onclick="modalEditkode(\'' . encrypt($data->id) . '\')"><span style="color:#ff2d2e;font-weight:bold;"> <i class="fa-solid fa-pen-to-square"></i></span></a>';
                 } else {
                     $vToday = '<a style="cursor: pointer;" onclick="alertAdmin();"><span style="color:#ff2d2e;font-weight:bold;" title="Campaign">' . $data->kode . '</span></a>';
                 }
@@ -1772,7 +1772,7 @@ class DashboardController extends Controller
     }
     public function prioritasStoremodal(Request $request, Fileexcel $fileexcel)
     {
-        $result = '';
+        $result = [];
         $checkdata = ['id' => $fileexcel->id];
         $validateData = [];
 
@@ -1786,11 +1786,11 @@ class DashboardController extends Controller
 
         if (isset($fileexcel->id)) {
             Fileexcel::updateOrInsert($checkdata, $validateData);
-            $result = 'Data Berhasil di Update!';
+            $result['hasil'] = 'Data Berhasil di Update!';
         } else {
-            $result = 'Data Berhasil di Update!';
+            $result['hasil'] = 'Data Berhasil di Update!';
         }
-
+        $result['campaign_id'] = $fileexcel->id;
         return json_encode($result);
     }
     public function tarikDatacampaign(Request $request)

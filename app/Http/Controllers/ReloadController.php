@@ -24,9 +24,44 @@ class ReloadController extends Controller
             $statusSelect =  $statusSelect
                 ->where('cabang_id', '<>', '4');
         }
-        $fileSelect = Fileexcel::where('user_id', auth()->user()->id)
-            ->without('Customer')
-            ->without('User')
+        $statusSelect = $statusSelect
+            ->orderBy('jenis', 'desc')
+            ->orderBy('parentstatus_id', 'asc');
+
+        $lastDistribusi = DB::table('distribusis')
+            ->select('customer_id', DB::raw('MAX(id) as id'))
+            ->groupBy('customer_id');
+        $fileExcel = DB::table('fileexcels')
+            ->select(
+                'fileexcels.id',
+                'fileexcels.kode',
+                DB::raw('COUNT(IF(customers.status = "0", 1, NULL)) AS total_data'),
+            )
+            ->join('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
+            ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                $join->on('customers.id', '=', 'a.customer_id');
+            });
+        $fileExcel =    $fileExcel->where('fileexcels.user_id', auth()->user()->id)
+            ->where('customers.provider', '<>', 'Tidak Ditemukan')
+            ->orderby('fileexcels.id', 'desc')
+            ->groupBy(DB::raw('1,2'))
+            ->get();
+
+        $group_fileexcels = DB::table('group_fileexcels')
+            ->select(
+                'group_fileexcels.id',
+                'group_fileexcels.nama',
+                DB::raw('COUNT(IF(customers.status = "0", 1, NULL)) AS total_data'),
+            )
+            ->join('fileexcels', 'group_fileexcels.id', '=', 'fileexcels.group_id')
+            ->join('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
+            ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                $join->on('customers.id', '=', 'a.customer_id');
+            });
+        $group_fileexcels = $group_fileexcels->where('group_fileexcels.created_id', auth()->user()->id)
+            ->where('customers.provider', '<>', 'Tidak Ditemukan')
+            ->orderby('fileexcels.id', 'desc')
+            ->groupBy(DB::raw('1,2'))
             ->get();
         return view('admin.pages.config.reload.index', [
             'title' => 'Reload Setting',
@@ -34,7 +69,8 @@ class ReloadController extends Controller
             'active_sub' => '',
             "data" => '',
             "get" => isset($request) ? $request : '',
-            "fileSelect" => $fileSelect,
+            "fileSelect" => $fileExcel,
+            "groupfileexcelsdata" => $group_fileexcels,
             "userSelect" => $userSelect->get(),
             "statusSelect" => $statusSelect->get(),
             //"category" => User::all(),
@@ -44,8 +80,11 @@ class ReloadController extends Controller
     {
         $today = date('Y-m-d');
 
-
-        $cekReload = $this->cekReloadfile($request->fileexcel_id);
+        if ($request->group_fileexcels_id == '') {
+            $cekReload = $this->cekReloadfile($request->fileexcel_id, '');
+        } else {
+            $cekReload = $this->cekReloadfile($request->group_fileexcels_id, 'group');
+        }
 
         if ($cekReload == '0') {
             $statusSelect = Statuscall::where('status', '1');
@@ -59,6 +98,7 @@ class ReloadController extends Controller
             foreach ($statusSelect->get() as $item) {
                 $validateData[] = [
                     'nama'          => '',
+                    'group_id'      => $request->group_fileexcels_id,
                     'fileexcel_id'  => $request->fileexcel_id,
                     'statuscall_id' => $item->id,
                     'status'        => 0,
@@ -69,6 +109,7 @@ class ReloadController extends Controller
             Setupreload::Insert($validateData);
         }
         $fileexcel_id = $request->fileexcel_id;
+        $group_fileexcels_id = $request->group_fileexcels_id;
         $lastDistribusi = DB::table('distribusis')
             ->select(
                 'customer_id',
@@ -84,9 +125,13 @@ class ReloadController extends Controller
             )
             ->join('users', 'users.id', '=', 'distribusis.user_id')
             ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-            ->join('setupreloads', function ($join) use ($fileexcel_id) {
-                $join->on('setupreloads.statuscall_id', '=', 'distribusis.status')
-                    ->whereRaw('setupreloads.fileexcel_id = "' . $fileexcel_id . '"');
+            ->join('setupreloads', function ($join) use ($fileexcel_id, $group_fileexcels_id) {
+                $join->on('setupreloads.statuscall_id', '=', 'distribusis.status');
+                if ($group_fileexcels_id == '') {
+                    $join->whereRaw('setupreloads.fileexcel_id = "' . $fileexcel_id . '"');
+                } else {
+                    $join->whereRaw('setupreloads.group_id = "' . $group_fileexcels_id . '"');
+                }
             });
         if (auth()->user()->roleuser_id != '1') {
             $lastDistribusi = $lastDistribusi->whereRaw('users.cabang_id = \'' . auth()->user()->cabang_id . '\'');
@@ -119,7 +164,11 @@ class ReloadController extends Controller
         }
         $lastTrashhold = $lastTrashhold->groupBy('customer_id');
 
-        $cekReload = $this->cekReloadfile($request->fileexcel_id);
+        if ($request->group_fileexcels_id == '') {
+            $cekReload = $this->cekReloadfile($request->fileexcel_id, '');
+        } else {
+            $cekReload = $this->cekReloadfile($request->group_fileexcels_id, 'group');
+        }
 
 
         $defaultreload = '
@@ -155,42 +204,82 @@ class ReloadController extends Controller
             }
         }
 
-        $data = Fileexcel::select(
-            'fileexcels.id',
-            //'fileexcels.kode',
-            DB::raw('fileexcels.kode AS kodenama'),
-            'fileexcels.user_id as upload_user',
-            DB::raw('(COUNT(IF(distribusis.status = "0", 1, null)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null))) AS sort_totaldata'),
-            DB::raw('COUNT(customers.id) AS total_data'),
-            DB::raw('COUNT(IF(distribusis.status is null, 1, null)) AS total_nodistribusi'),
-            DB::raw('COUNT(distribusis.id) AS total_data1'),
-            DB::raw('COUNT(IF(distribusis.status <> "0", 1, null)) AS total_call'),
-            DB::raw('COUNT(IF(distribusis.status = "0", 1, null)) AS total_nocall'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, null)) AS total_callout'),
-            DB::raw('COUNT(IF(statuscalls.jenis = "2", 1, null)) AS total_nocallout'),
-            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider <> "Tidak Ditemukan"
+        if ($request->group_fileexcels_id == '') {
+            $data = Fileexcel::select(
+                'fileexcels.id',
+                //'fileexcels.kode',
+                DB::raw('fileexcels.kode AS kodenama'),
+                'fileexcels.user_id as upload_user',
+                DB::raw('(COUNT(IF(distribusis.status = "0", 1, null)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null))) AS sort_totaldata'),
+                DB::raw('COUNT(customers.id) AS total_data'),
+                DB::raw('COUNT(IF(distribusis.status is null, 1, null)) AS total_nodistribusi'),
+                DB::raw('COUNT(distribusis.id) AS total_data1'),
+                DB::raw('COUNT(IF(distribusis.status <> "0", 1, null)) AS total_call'),
+                DB::raw('COUNT(IF(distribusis.status = "0", 1, null)) AS total_nocall'),
+                DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, null)) AS total_callout'),
+                DB::raw('COUNT(IF(statuscalls.jenis = "2", 1, null)) AS total_nocallout'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider <> "Tidak Ditemukan"
                 , 1, null)
                 ) AS total_reload'),
-            DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1, null)) AS total_closing'),
-            DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34"), 1, null)) AS total_prospek'),
-            DB::raw('COUNT(IF(customers.provider = "SIMPATI", 1, null)) AS total_simpati'),
-            DB::raw('COUNT(IF(customers.provider = "INDOSAT", 1, null)) AS total_indosat'),
-            DB::raw('COUNT(IF(customers.provider = "XL", 1, null)) AS total_xl'),
-            DB::raw('COUNT(IF(customers.provider = "AXIS", 1, null)) AS total_axis'),
-            DB::raw('COUNT(IF(customers.provider = "THREE", 1, null)) AS total_three'),
-            DB::raw('COUNT(IF(customers.provider = "SMART", 1, null)) AS total_smart'),
-            DB::raw('COUNT(IF(customers.provider <> "SIMPATI", 1, null)) AS total_nosimpati'),
+                DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1, null)) AS total_closing'),
+                DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34"), 1, null)) AS total_prospek'),
+                DB::raw('COUNT(IF(customers.provider = "SIMPATI", 1, null)) AS total_simpati'),
+                DB::raw('COUNT(IF(customers.provider = "INDOSAT", 1, null)) AS total_indosat'),
+                DB::raw('COUNT(IF(customers.provider = "XL", 1, null)) AS total_xl'),
+                DB::raw('COUNT(IF(customers.provider = "AXIS", 1, null)) AS total_axis'),
+                DB::raw('COUNT(IF(customers.provider = "THREE", 1, null)) AS total_three'),
+                DB::raw('COUNT(IF(customers.provider = "SMART", 1, null)) AS total_smart'),
+                DB::raw('COUNT(IF(customers.provider <> "SIMPATI", 1, null)) AS total_nosimpati'),
 
-            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "SIMPATI", 1, null)) AS total_simpati_reload'),
-            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "INDOSAT", 1, null)) AS total_indosat_reload'),
-            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "XL", 1, null)) AS total_xl_reload'),
-            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "AXIS", 1, null)) AS total_axis_reload'),
-            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "THREE", 1, null)) AS total_three_reload'),
-            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "SMART", 1, null)) AS total_smart_reload'),
-            DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider <> "SIMPATI", 1, null)) AS total_nosimpati_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "SIMPATI", 1, null)) AS total_simpati_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "INDOSAT", 1, null)) AS total_indosat_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "XL", 1, null)) AS total_xl_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "AXIS", 1, null)) AS total_axis_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "THREE", 1, null)) AS total_three_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "SMART", 1, null)) AS total_smart_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider <> "SIMPATI", 1, null)) AS total_nosimpati_reload'),
 
-            DB::raw('COUNT(IF(customers.provider = "TIDAK DITEMUKAN", 1, null)) AS total_noprovider'),
-        )
+                DB::raw('COUNT(IF(customers.provider = "TIDAK DITEMUKAN", 1, null)) AS total_noprovider'),
+            );
+        } else {
+            $data = Fileexcel::select(
+                'fileexcels.group_id',
+                //'fileexcels.kode',
+                'fileexcels.group_id as group2',
+                'fileexcels.user_id as upload_user',
+                DB::raw('(COUNT(IF(distribusis.status = "0", 1, null)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null))) AS sort_totaldata'),
+                DB::raw('COUNT(customers.id) AS total_data'),
+                DB::raw('COUNT(IF(distribusis.status is null, 1, null)) AS total_nodistribusi'),
+                DB::raw('COUNT(distribusis.id) AS total_data1'),
+                DB::raw('COUNT(IF(distribusis.status <> "0", 1, null)) AS total_call'),
+                DB::raw('COUNT(IF(distribusis.status = "0", 1, null)) AS total_nocall'),
+                DB::raw('COUNT(IF(statuscalls.jenis = "1", 1, null)) AS total_callout'),
+                DB::raw('COUNT(IF(statuscalls.jenis = "2", 1, null)) AS total_nocallout'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider <> "Tidak Ditemukan"
+                    , 1, null)
+                    ) AS total_reload'),
+                DB::raw('COUNT(IF((distribusis.status = "1" OR distribusis.status = "15"), 1, null)) AS total_closing'),
+                DB::raw('COUNT(IF((distribusis.status = "2" OR distribusis.status = "34"), 1, null)) AS total_prospek'),
+                DB::raw('COUNT(IF(customers.provider = "SIMPATI", 1, null)) AS total_simpati'),
+                DB::raw('COUNT(IF(customers.provider = "INDOSAT", 1, null)) AS total_indosat'),
+                DB::raw('COUNT(IF(customers.provider = "XL", 1, null)) AS total_xl'),
+                DB::raw('COUNT(IF(customers.provider = "AXIS", 1, null)) AS total_axis'),
+                DB::raw('COUNT(IF(customers.provider = "THREE", 1, null)) AS total_three'),
+                DB::raw('COUNT(IF(customers.provider = "SMART", 1, null)) AS total_smart'),
+                DB::raw('COUNT(IF(customers.provider <> "SIMPATI", 1, null)) AS total_nosimpati'),
+
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "SIMPATI", 1, null)) AS total_simpati_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "INDOSAT", 1, null)) AS total_indosat_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "XL", 1, null)) AS total_xl_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "AXIS", 1, null)) AS total_axis_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "THREE", 1, null)) AS total_three_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider = "SMART", 1, null)) AS total_smart_reload'),
+                DB::raw('COUNT(IF(' . $defaultreload . ' AND customers.provider <> "SIMPATI", 1, null)) AS total_nosimpati_reload'),
+
+                DB::raw('COUNT(IF(customers.provider = "TIDAK DITEMUKAN", 1, null)) AS total_noprovider'),
+            );
+        }
+        $data = $data
             ->leftjoin('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
             ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
                 $join->on('customers.id', '=', 'a.customer_id');
@@ -207,8 +296,12 @@ class ReloadController extends Controller
         if (auth()->user()->roleuser_id != '1') {
             $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id]);
         }
-        $data = $data->where('fileexcels.id', $fileexcel_id)
-            ->orderby('sort_totaldata', 'desc')
+        if ($request->group_fileexcels_id == '') {
+            $data = $data->where('fileexcels.id', $fileexcel_id);
+        } else {
+            $data = $data->where('fileexcels.group_id', $request->group_fileexcels_id);
+        }
+        $data = $data->orderby('sort_totaldata', 'desc')
             ->groupBy(DB::raw('1,2,3'))
             ->without("Customer")
             ->without("User");
@@ -219,14 +312,10 @@ class ReloadController extends Controller
             //'fileexcels.kode',
             DB::raw('statuscalls.nama AS statusnama'),
             DB::raw('COUNT(a.customer_id) AS total_data'),
-            DB::raw('COUNT(b.customer_id) AS total_data2'),
         )
             ->leftjoin('customers', 'customers.fileexcel_id', '=', 'fileexcels.id')
             ->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
                 $join->on('customers.id', '=', 'a.customer_id');
-            })
-            ->leftjoin(DB::raw('(' . $lastTrashhold->toSql() . ') as b'), function ($join) {
-                $join->on('customers.id', '=', 'b.customer_id');
             })
             ->leftjoin('distribusis', function ($join) use ($today) {
                 $join->on('distribusis.id', '=', 'a.id');
@@ -248,7 +337,12 @@ class ReloadController extends Controller
         if (auth()->user()->roleuser_id != '1') {
             $data2 = $data2->whereIn('fileexcels.user_id', [auth()->user()->id]);
         }
-        $data2 = $data2->where('fileexcels.id', $fileexcel_id)
+        if ($request->group_fileexcels_id == '') {
+            $data2 = $data2->where('fileexcels.id', $fileexcel_id);
+        } else {
+            $data2 = $data2->where('fileexcels.group_id', $request->group_fileexcels_id);
+        }
+        $data2 = $data2
             ->where('customers.provider', '<>', 'Tidak Ditemukan')
             ->groupBy(DB::raw('1,2,3'))
             ->without("Customer")
@@ -258,20 +352,32 @@ class ReloadController extends Controller
         $result['status'] = $data2->get();
         return json_encode($result);
     }
-    private function cekReloadfile($id)
+    private function cekReloadfile($id, $param)
     {
-        $statusSelect = Setupreload::where('fileexcel_id', $id);
+        if ($param == 'group') {
+            $statusSelect = Setupreload::where('group_id', $id);
+        } else {
+            $statusSelect = Setupreload::where('fileexcel_id', $id);
+        }
         return $statusSelect->count();
     }
     public function saveSetupreload(Request $request)
     {
-        $checkdata = [
-            'fileexcel_id' => $request->fileexcel_id,
-            'statuscall_id' => $request->statuscall_id
-        ];
+        if ($request->group_fileexcels_id == '') {
+            $checkdata = [
+                'fileexcel_id' => $request->fileexcel_id,
+                'statuscall_id' => $request->statuscall_id
+            ];
+        } else {
+            $checkdata = [
+                'group_id' => $request->group_fileexcels_id,
+                'statuscall_id' => $request->statuscall_id
+            ];
+        }
         $status = $request->inputbox == 'YES' ? '1' : '0';
         $validateData = [
             'nama'          => '',
+            'group_id' => $request->group_fileexcels_id,
             'fileexcel_id'  => $request->fileexcel_id,
             'statuscall_id' => $request->statuscall_id,
             'status'        => $status,

@@ -5,6 +5,7 @@
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-responsive/css/responsive.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/datatables-buttons/css/buttons.bootstrap4.min.css') }}">
     <link rel="stylesheet" href="{{ asset('adminlte/plugins/select2/css/select2.min.css') }}">
+    <link rel="stylesheet" href="{{ asset('adminlte/plugins/icheck-bootstrap/icheck-bootstrap.min.css') }}">
 
     <div class="container-fluid">
         <div class="row">
@@ -13,6 +14,20 @@
                     <div class="card-body">
                         <div class="row">
                             <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="group_fileexcels_id">Group Campaign</label>
+                                    <select name="group_fileexcels_id"
+                                        class="form-control select2 @error('group_fileexcels_id') is-invalid @enderror  "
+                                        id="group_fileexcels_id">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($groupfileexcelsdata as $item)
+                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('group_fileexcels_id')
+                                        <span id="group_fileexcels_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
                                 <div class="form-group">
                                     <label for="fileexcel_id">Campaign</label>
                                     <select name="fileexcel_id"
@@ -213,13 +228,37 @@
                                 <h3 class="card-title">{{ $title }} Table </h3>
                                 <div class="card-tools">
                                     <div class="row">
+                                        <div class="icheck-primary">
+                                            <input type="checkbox" id="checkAll" />
+                                            <label for="checkAll">Check ALL</label>
+                                        </div>
                                         <a class="btn btn-primary btn-block mr-4" onclick="refreshTable()">Refresh</a>
                                     </div>
                                 </div>
                             </div>
                             <!-- /.card-header -->
                             <div class="card-body">
+                                <?php
+                                $jenisParam = 0;
+                                $parentstatusParam = 0;
+                                ?>
                                 @foreach ($statusSelect as $item)
+                                    <?php
+                                    if ($jenisParam != $item->jenis) {
+                                        $jenisParam = $item->jenis;
+                                        if ($item->jenis == '1') {
+                                            echo '<hr><h5>TERHUBUNG</h5>';
+                                        } else {
+                                            $parentstatusParam = 0;
+                                            echo '<h5>TIDAK TERHUBUNG</h5>';
+                                        }
+                                    } else {
+                                        if ($parentstatusParam != $item->parentstatus_id) {
+                                            $parentstatusParam = $item->parentstatus_id;
+                                            echo '<hr><h5>TERHUBUNG NO CRITERIA</h5>';
+                                        }
+                                    }
+                                    ?>
                                     <div class="form-group row">
                                         <label for="inputbox_{{ $item->id }}"
                                             class="col-sm-6 col-form-label">{{ $item->nama }}</label>
@@ -234,8 +273,8 @@
                                                 class="error invalid-feedback">{{ $message }}</span>
                                         @enderror
                                         <div class="col-sm-3">
-                                            <?php
-                                            $arrayYesno = ['YES', 'NO'];
+                                            {{-- <?php
+                                            //$arrayYesno = ['YES', 'NO'];
                                             ?>
                                             <select name="yesno"
                                                 class="selbox form-control select2 @error('yesno_{{ $item->id }}') is-invalid @enderror  "
@@ -246,7 +285,11 @@
                                                         {{ $item }}
                                                     </option>
                                                 @endforeach
-                                            </select>
+                                            </select> --}}
+                                            <div class="icheck-primary">
+                                                <input type="checkbox" class="selbox" id="yesno_{{ $item->id }}" />
+                                                <label for="yesno_{{ $item->id }}">Yes / No</label>
+                                            </div>
                                         </div>
                                     </div>
                                 @endforeach
@@ -289,6 +332,21 @@
         $('.select2').select2();
         var arrayInputbox = [];
         var cekSelect = 0;
+        $("#group_fileexcels_id").change(function() {
+            if ($("#group_fileexcels_id").val() != '') {
+                $("#fileexcel_id").prop("disabled", true);
+            } else {
+                $("#fileexcel_id").prop("disabled", false);
+            }
+        });
+
+        $("#fileexcel_id").change(function() {
+            if ($("#fileexcel_id").val() != '') {
+                $("#group_fileexcels_id").prop("disabled", true);
+            } else {
+                $("#group_fileexcels_id").prop("disabled", false);
+            }
+        });
 
         function renderData() {
             cekSelect = 0;
@@ -302,6 +360,7 @@
                 data: {
                     _token: '{{ csrf_token() }}',
                     fileexcel_id: $("#fileexcel_id").val(),
+                    group_fileexcels_id: $("#group_fileexcels_id").val(),
                 },
                 dataType: "json",
                 encode: true,
@@ -338,11 +397,13 @@
                     arrayInputbox = data.status;
                     $('#inputbox_' + obj.id).val(obj.total_data);
                     if (obj.status == '0') {
-                        var statusyesno = 'NO';
+                        //var statusyesno = 'NO';
+                        $('#yesno_' + obj.id).prop('checked', false);
                     } else {
-                        var statusyesno = 'YES';
+                        //var statusyesno = 'YES';
+                        $('#yesno_' + obj.id).prop('checked', true);
                     }
-                    $('#yesno_' + obj.id).val(statusyesno).change();
+                    //$('#yesno_' + obj.id).val(statusyesno).change();
                     if (palangSelect == data.status.length) {
                         cekSelect = 1;
                         console.log(cekSelect);
@@ -352,27 +413,37 @@
                 });
             });
         }
-
+        $("#checkAll").click(function() {
+            $('input:checkbox.selbox').not(this).prop('checked', this.checked).change();
+        });
         $(".selbox").change(function(event) {
             if (cekSelect != 0) {
-                var id = (event.target.id);
-                var statuscall_id = id.replace('yesno_', '');
-                $.ajax({
-                    type: 'PUT',
-                    url: "/setting/reload/save",
-                    data: {
-                        _token: '{{ csrf_token() }}',
-                        fileexcel_id: $("#fileexcel_id").val(),
-                        inputbox: $("#yesno_" + statuscall_id).val(),
-                        statuscall_id: statuscall_id,
-                    },
-                    dataType: "json",
-                    encode: true,
-                }).done(function(data) {
-                    if (data == 'done') {
-                        console.log('okelah');
+                if ($("#fileexcel_id").val() != '' || $("#group_fileexcels_id").val() != '') {
+                    var id = (event.target.id);
+                    var statuscall_id = id.replace('yesno_', '');
+                    if (this.checked) {
+                        var inp_box = "YES";
+                    } else {
+                        var inp_box = "NO";
                     }
-                });
+                    $.ajax({
+                        type: 'PUT',
+                        url: "/setting/reload/save",
+                        data: {
+                            _token: '{{ csrf_token() }}',
+                            fileexcel_id: $("#fileexcel_id").val(),
+                            group_fileexcels_id: $("#group_fileexcels_id").val(),
+                            inputbox: inp_box,
+                            statuscall_id: statuscall_id,
+                        },
+                        dataType: "json",
+                        encode: true,
+                    }).done(function(data) {
+                        if (data == 'done') {
+                            console.log('okelah');
+                        }
+                    });
+                }
             }
         });
 

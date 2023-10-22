@@ -427,7 +427,7 @@
             });
         }
 
-        function modalEdit(param) {
+        function modalEdit(param, paramm) {
             linkid = '';
             tipe = '';
             $('#prioritas').val('');
@@ -478,8 +478,9 @@
             }).done(function(data) {
                 $('#modalAdd').modal('hide');
                 $('#modalEdit').modal('hide');
-                renderTable(hari);
-                toastAlert(data);
+                //renderTable(hari);
+                toastAlert(data.hasil);
+                $('.pos_campaign_' + data.campaign_id).append(' (*' + $('#prioritas').val() + ')');
                 $('#prioritas').val('').change();
                 $('#prioritkodeeditas').val('').change();
             });

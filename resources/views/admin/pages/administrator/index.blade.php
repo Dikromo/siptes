@@ -481,7 +481,7 @@
                 name: 'csalesnama',
                 searchable: false
             }, {
-                data: 'nama',
+                data: 'namaktp',
                 name: 'customers.nama',
             }, {
                 data: 'no_telp',

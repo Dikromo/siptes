@@ -116,7 +116,7 @@ class AdministratorController extends Controller
         return DataTables::of($data)
             ->addIndexColumn()
             ->editColumn('no_telp', '\'{{{substr($no_telp,-4)}}}')
-            ->editColumn('namaktp', '\'{{{$namaktp == null ? strtoupper($nama) : strtoupper($namaktp);}}}')
+            ->editColumn('namaktp', '{{{$namaktp == null ? strtoupper($nama) : strtoupper($namaktp);}}}')
             ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
             ->editColumn('csalesnama', '{{{$csalesnama == null ? $salesnama : $csalesnama;}}}')
             ->editColumn('updated_tgl', '{{{date("Y-m-d",strtotime($updated_at));}}}')

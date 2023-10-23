@@ -157,34 +157,67 @@ class DashboardController extends Controller
     private function checkDay($param, $param2)
     {
         $hasil = '';
-        if ($param2 == 'today') {
-            switch (date('l', strtotime($param))) {
-                case 'Sunday':
-                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
-                    break;
-                default:
-                    $hasil = $param;
-                    break;
+        if (auth()->user()->cabang_id == '4') {
+            if ($param2 == 'today') {
+                switch (date('l', strtotime($param))) {
+                    case 'Sunday':
+                        $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
+                        break;
+                    default:
+                        $hasil = $param;
+                        break;
+                }
+            } else {
+                switch (date('l', strtotime($param))) {
+                    case 'Saturday':
+                        $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
+                        break;
+
+                    case 'Sunday':
+                        $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
+                        break;
+                        //     // Tanggalan merah
+                        // case 'Thursday':
+                        //     $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        //     break;
+                        // case 'Wednesday':
+                        //     $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        //     break;
+                    default:
+                        $hasil = $param;
+                        break;
+                }
             }
         } else {
-            switch (date('l', strtotime($param))) {
-                case 'Saturday':
-                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
-                    break;
+            if ($param2 == 'today') {
+                switch (date('l', strtotime($param))) {
+                    case 'Sunday':
+                        $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        break;
+                    default:
+                        $hasil = $param;
+                        break;
+                }
+            } else {
+                switch (date('l', strtotime($param))) {
+                    case 'Saturday':
+                        $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        break;
 
-                case 'Sunday':
-                    $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
-                    break;
-                    //     // Tanggalan merah
-                    // case 'Thursday':
-                    //     $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
-                    //     break;
-                    // case 'Wednesday':
-                    //     $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
-                    //     break;
-                default:
-                    $hasil = $param;
-                    break;
+                    case 'Sunday':
+                        $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        break;
+                        //     // Tanggalan merah
+                        // case 'Thursday':
+                        //     $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        //     break;
+                        // case 'Wednesday':
+                        //     $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        //     break;
+                    default:
+                        $hasil = $param;
+                        break;
+                }
             }
         }
         return $hasil;

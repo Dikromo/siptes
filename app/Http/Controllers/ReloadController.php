@@ -187,7 +187,12 @@ class ReloadController extends Controller
 
 
         if ($cekReload != '0') {
-            $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+            //$setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+            if ($request->group_fileexcels_id != '') {
+                $setupReloaddata = Setupreload::where('group_id', $request->group_fileexcels_id)->where('status', '1');
+            } else {
+                $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+            }
             if ($setupReloaddata->count() > 0) {
                 $defaultreload = 'DATE(distribusis.distribusi_at) <> "' . $today . '" AND (';
                 $z = 0;

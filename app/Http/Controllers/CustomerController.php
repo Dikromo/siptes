@@ -184,7 +184,11 @@ class CustomerController extends Controller
             if ($request->tipe == 'RELOAD') {
                 $defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
                 // $defaultreload = ['3', '11', '12', '13', '14', '16', '17', '18', '19', '25', '26', '27', '28', '35', '37'];
-                $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+                if ($request->group_fileexcels_id != '') {
+                    $setupReloaddata = Setupreload::where('group_id', $request->group_fileexcels_id)->where('status', '1');
+                } else {
+                    $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+                }
                 if ($setupReloaddata->count() > 0) {
                     $defaultreload = [];
                     foreach ($setupReloaddata->get() as $item) {
@@ -516,7 +520,11 @@ class CustomerController extends Controller
             } else if ($request->tipe == 'RELOAD') {
                 $defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
                 // $defaultreload = ['3', '11', '12', '13', '14', '16', '17', '18', '19', '25', '26', '27', '28', '35', '37'];
-                $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+                if ($request->group_fileexcels_id != '') {
+                    $setupReloaddata = Setupreload::where('group_id', $request->group_fileexcels_id)->where('status', '1');
+                } else {
+                    $setupReloaddata = Setupreload::where('fileexcel_id', $request->fileexcel_id)->where('status', '1');
+                }
                 if ($setupReloaddata->count() > 0) {
                     $defaultreload = [];
                     foreach ($setupReloaddata->get() as $item) {

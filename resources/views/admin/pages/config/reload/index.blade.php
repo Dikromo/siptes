@@ -247,15 +247,36 @@
                                     if ($jenisParam != $item->jenis) {
                                         $jenisParam = $item->jenis;
                                         if ($item->jenis == '1') {
-                                            echo '<hr><h5>TERHUBUNG</h5>';
+                                            echo '<hr><div class="row">';
+                                            echo '<div class="col-md-9">';
+                                            echo '<h5>TERHUBUNG</h5>';
+                                            echo '</div>';
+                                            echo '<div class="col-md-3">';
+                                            echo '<div class="icheck-primary"><input type="checkbox" id="checkJenis1" /><label for="checkJenis1">Check Terhubung</label></div>';
+                                            echo '</div>';
+                                            echo '</div>';
                                         } else {
                                             $parentstatusParam = 0;
+                                            echo '<div class="row">';
+                                            echo '<div class="col-md-9">';
                                             echo '<h5>TIDAK TERHUBUNG</h5>';
+                                            echo '</div>';
+                                            echo '<div class="col-md-3">';
+                                            echo '<div class="icheck-primary"><input type="checkbox" id="checkJenis2" /><label for="checkJenis2">Check Tidak Teruhubung</label></div>';
+                                            echo '</div>';
+                                            echo '</div>';
                                         }
                                     } else {
                                         if ($parentstatusParam != $item->parentstatus_id) {
                                             $parentstatusParam = $item->parentstatus_id;
-                                            echo '<hr><h5>TERHUBUNG NO CRITERIA</h5>';
+                                            echo '<hr><div class="row">';
+                                            echo '<div class="col-md-9">';
+                                            echo '<h5>TERHUBUNG NO CRITERIA</h5>';
+                                            echo '</div>';
+                                            echo '<div class="col-md-3">';
+                                            echo '<div class="icheck-primary"><input type="checkbox" id="checkParent" /><label for="checkParent">Check No Criteria</label></div>';
+                                            echo '</div>';
+                                            echo '</div>';
                                         }
                                     }
                                     ?>
@@ -287,7 +308,9 @@
                                                 @endforeach
                                             </select> --}}
                                             <div class="icheck-primary">
-                                                <input type="checkbox" class="selbox" id="yesno_{{ $item->id }}" />
+                                                <input type="checkbox"
+                                                    class="selbox jenis_{{ $item->jenis . $item->parentstatus_id }} parentstatus_{{ $item->parentstatus_id }}"
+                                                    id="yesno_{{ $item->id }}" />
                                                 <label for="yesno_{{ $item->id }}">Yes / No</label>
                                             </div>
                                         </div>
@@ -415,6 +438,15 @@
         }
         $("#checkAll").click(function() {
             $('input:checkbox.selbox').not(this).prop('checked', this.checked).change();
+        });
+        $("#checkJenis1").click(function() {
+            $('input:checkbox.jenis_10').not(this).prop('checked', this.checked).change();
+        });
+        $("#checkJenis2").click(function() {
+            $('input:checkbox.jenis_20').not(this).prop('checked', this.checked).change();
+        });
+        $("#checkParent").click(function() {
+            $('input:checkbox.parentstatus_29').not(this).prop('checked', this.checked).change();
         });
         $(".selbox").change(function(event) {
             if (cekSelect != 0) {

@@ -443,6 +443,7 @@ class CallpagesController extends Controller
             }
         }
         $validateData['deskripsi'] = $request->deskripsi;
+        $validateData['nokantor'] =  $request->nokantor;
         if (!isset($request->tipeproses) && $request->tipe != 'apply') {
             $validateData['end_call_time'] =  now();
             $validateData['updated_at'] =  now();

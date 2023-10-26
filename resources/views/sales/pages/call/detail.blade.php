@@ -524,6 +524,17 @@
                                                         @enderror
                                                     </div>
                                                     <div class="form-group">
+                                                        <label for="nokantor">Nomor Kantor</label>
+                                                        <input type="text" id="nokantor" name="nokantor"
+                                                            class="form-control @error('nokantor') is-invalid @enderror"
+                                                            value="{{ $data == '' ? old('nokantor') : old('nokantor', $data->nokantor) }}"
+                                                            data-inputmask="'mask': '999-999999999'" data-mask>
+                                                        @error('nokantor')
+                                                            <span id="nokantor"
+                                                                class="error invalid-feedback">{{ $message }}</span>
+                                                        @enderror
+                                                    </div>
+                                                    <div class="form-group">
                                                         <label for="jmoasli">JMO Asli</label>
                                                         <input type="text" id="jmoasli" name="jmoasli"
                                                             class="form-control @error('jmoasli') is-invalid @enderror"

@@ -128,7 +128,7 @@ class CampaignController extends Controller
             'group_fileexcels.id',
             //'fileexcels.kode',
             DB::raw('group_fileexcels.nama AS groupnama'),
-            'fileexcels.user_id as upload_user',
+            'group_fileexcels.created_id as upload_user',
             DB::raw('(COUNT(IF(distribusis.status = "0", 1, null)) + COUNT(IF(distribusis.status <> "0" AND DATE(distribusis.updated_at) = "' . $today . '", 1, null))) AS sort_totaldata'),
             DB::raw('COUNT(customers.id) AS total_data'),
             DB::raw('COUNT(IF(distribusis.status is null, 1, null)) AS total_nodistribusi'),
@@ -183,7 +183,7 @@ class CampaignController extends Controller
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->leftjoin('users', 'users.id', '=', 'distribusis.user_id');
         if (auth()->user()->roleuser_id != '1') {
-            $data = $data->whereIn('fileexcels.user_id', [auth()->user()->id]);
+            $data = $data->whereIn('group_fileexcels.created_id', [auth()->user()->id]);
         }
         $data = $data->orderby('sort_totaldata', 'desc')
             ->groupBy(DB::raw('1,2,3'))

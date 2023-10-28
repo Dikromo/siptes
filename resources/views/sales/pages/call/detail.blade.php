@@ -153,12 +153,12 @@
                                                     value="{{ $data == '' ? old('rbutton') : old('rbutton', $data->jenisstatus == '0' ? '' : $data->jenisstatus) }}">
                                                 <a id="rbutton1" class="btn btn-default btn-sm mx-2 m-2"
                                                     {{ $data == '' ? '' : (old('rbutton', $data->jenisstatus) == '1' ? 'style=background-color:#ff2d2e;color:#fff;' : '') }}
-                                                    onclick="rbutton('1')">
+                                                    onclick="rbutton('1');">
                                                     Terhubung
                                                 </a>
                                                 <a id="rbutton2" class="btn btn-default btn-sm mx-2 m-2"
                                                     {{ $data == '' ? '' : (old('rbutton', $data->jenisstatus) == '2' ? 'style=background-color:#ff2d2e;color:#fff;' : '') }}
-                                                    onclick="rbutton('2')">
+                                                    onclick="rbutton('2');">
                                                     Tidak Terhubung
                                                 </a>
                                                 @error('rbutton')

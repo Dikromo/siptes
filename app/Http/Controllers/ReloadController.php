@@ -330,9 +330,13 @@ class ReloadController extends Controller
                 // });
             })
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
-            ->leftjoin('setupreloads', function ($join) use ($request) {
-                $join->on('setupreloads.statuscall_id', '=', 'statuscalls.id')
-                    ->where('setupreloads.fileexcel_id', $request->fileexcel_id);
+            ->leftjoin('setupreloads', function ($join) use ($fileexcel_id, $group_fileexcels_id) {
+                $join->on('setupreloads.statuscall_id', '=', 'statuscalls.id');
+                if ($group_fileexcels_id == '') {
+                    $join->whereRaw('setupreloads.fileexcel_id = "' . $fileexcel_id . '"');
+                } else {
+                    $join->whereRaw('setupreloads.group_id = "' . $group_fileexcels_id . '"');
+                }
                 // ->where(function ($query)  use ($today, $today2, $today3) {
                 //     $query->whereDate('distribusis.distribusi_at', '>=', $today3)
                 //         ->whereDate('distribusis.distribusi_at', '<=', $today);

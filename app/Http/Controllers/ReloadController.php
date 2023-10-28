@@ -306,7 +306,8 @@ class ReloadController extends Controller
         } else {
             $data = $data->where('fileexcels.group_id', $request->group_fileexcels_id);
         }
-        $data = $data->orderby('sort_totaldata', 'desc')
+        $data = $data->whereDate('distribusis.updated_at', '<=', $today)
+            ->orderby('sort_totaldata', 'desc')
             ->groupBy(DB::raw('1,2,3'))
             ->without("Customer")
             ->without("User");

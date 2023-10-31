@@ -147,7 +147,7 @@
                                             @endif
                                         @endif
                                         @if (auth()->user()->cabang_id == '4')
-                                            <div class="form-group text-center">
+                                            {{-- <div class="form-group text-center">
                                                 <input type="hidden" id="rbutton" name="rbutton"
                                                     class="@error('rbutton') is-invalid @enderror"
                                                     value="{{ $data == '' ? old('rbutton') : old('rbutton', $data->jenisstatus == '0' ? '' : $data->jenisstatus) }}">
@@ -163,6 +163,50 @@
                                                 </a>
                                                 @error('rbutton')
                                                     <br> <span id="rbutton"
+                                                        class="error invalid-feedback">{{ $message }}</span>
+                                                @enderror
+                                            </div> --}}
+                                            <?php
+                                            $rbuttonArray = ['Terhubung', 'Tidak Terhubung'];
+                                            
+                                            $rbutton = '';
+                                            if ($data == '') {
+                                            } else {
+                                                if ($data->status == '0') {
+                                                } else {
+                                                    if (old('status') == 'Terhubung' || $data->jenisstatus == '1') {
+                                                        $rbutton = 'Terhubung';
+                                                    } else {
+                                                        if ($data->jenisstatus == '2') {
+                                                            $rbutton = 'Tidak Terhubung';
+                                                        }
+                                                    }
+                                                }
+                                            }
+                                            ?>
+                                            <div class="form-group">
+                                                <label for="rstatus">Terhubung / Tidak Terhubung</label>
+                                                <input type="hidden" id="rbutton" name="rbutton"
+                                                    class="@error('rbutton') is-invalid @enderror"
+                                                    value="{{ $data == '' ? old('rbutton') : old('rbutton', $data->jenisstatus == '0' ? '' : $data->jenisstatus) }}">
+                                                <select name="rstatus"
+                                                    class="form-control select2 @error('rstatus') is-invalid @enderror  "
+                                                    id="rstatus">
+                                                    <option value="">-- Pilih --</option>
+                                                    @foreach ($rbuttonArray as $item)
+                                                        @if (old('rstatus') == $item || $rbutton == $item)
+                                                            <option value="{{ $item }}" selected>
+                                                                {{ $item }}
+                                                            </option>
+                                                        @else
+                                                            <option value="{{ $item }}">
+                                                                {{ $item }}
+                                                            </option>
+                                                        @endif
+                                                    @endforeach
+                                                </select>
+                                                @error('rstatus')
+                                                    <span id="rstatus"
                                                         class="error invalid-feedback">{{ $message }}</span>
                                                 @enderror
                                             </div>
@@ -704,10 +748,15 @@
                 }
             });
 
-            function rbutton(param) {
-                $('#rbutton').val(param);
+            $("#rstatus").change(function() {
+                if (this.value == 'Terhubung') {
+                    var valRbutton = '1';
+                } else {
+                    var valRbutton = '2';
+                }
+                $('#rbutton').val(valRbutton);
                 $('.fPikir').css('display', 'none');
-                if (param == '1') {
+                if (valRbutton == '1') {
                     $('#rbutton1').css('background-color', '#ff2d2e ');
                     $('#rbutton1').css('color', '#fff');
                     $('.fstatus').css('display', 'block');
@@ -723,7 +772,7 @@
                     $('.fstatus1').css('display', 'none');
                     $('.fstatus3').css('display', 'none');
                 }
-                if (param == '2') {
+                if (valRbutton == '2') {
                     $('#rbutton2').css('background-color', '#ff2d2e ');
                     $('#rbutton2').css('color', '#fff');
                     $('.fstatus2').css('display', 'block');
@@ -733,7 +782,7 @@
                     $('#status2').val('');
                     $('.fstatus2').css('display', 'none');
                 }
-            }
+            });
         }
         $('#formImport').submit(function() {
             if (cabang_id == '4') {

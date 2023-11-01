@@ -955,11 +955,11 @@ class DashboardController extends Controller
             ->where(function ($query) {
                 $query->where('users.roleuser_id', '2')
                     ->orWhere('users.roleuser_id', '3');
-            })
-            ->where(function ($query) use ($cektoday) {
-                $query->whereNull('users.flag_hadir')
-                    ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
             });
+        // ->where(function ($query) use ($cektoday) {
+        //     $query->whereNull('users.flag_hadir')
+        //         ->orWhereRaw('date(users.flag_hadir) <> "' . $cektoday . '"');
+        // });
         $myArray = explode(',', $request->user_id);
         $data = $data->where(function ($query) use ($myArray) {
             $query->whereIn('users.id',  $myArray)

@@ -442,6 +442,10 @@ class CallpagesController extends Controller
                 $validateData['status'] = $request->status2;
             }
         }
+        $validateData['d_parentuser_id'] = (auth()->user()->roleuser_id == '2') ? auth()->user()->id : auth()->user()->parentuser_id;
+        $validateData['d_sm_id'] =  auth()->user()->sm_id;
+        $validateData['d_um_id'] =  auth()->user()->um_id;
+        $validateData['d_cabang_id'] =  auth()->user()->cabang_id;
         $validateData['deskripsi'] = $request->deskripsi;
         $validateData['nokantor'] =  $request->nokantor;
         if (!isset($request->tipeproses) && $request->tipe != 'apply') {

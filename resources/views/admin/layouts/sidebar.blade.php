@@ -187,7 +187,7 @@
                         </a>
                     </li>
                 @endif
-                @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4')
+                @if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '6')
                     <li class="nav-item">
                         <a href="/administrator/calltracking"
                             class="nav-link {{ $active === 'updatenasabah' ? 'active' : '' }}">

@@ -94,17 +94,17 @@ class CallpagesController extends Controller
             'distribusis.id'
         )
             ->join('distribusis', 'distribusis.user_id', '=', 'users.id')
-            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-            ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+            // ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            // ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
             ->where('distribusis.user_id', auth()->user()->id)
             ->where('distribusis.status', 0)
-            ->orderByRaw(
-                "distribusis.call_time desc,
-                CASE date(fileexcels.prioritas_date)  
-                    WHEN '" . $cektoday . "' THEN 1
-                    ELSE 0
-                END desc,CAST(fileexcels.prioritas AS UNSIGNED) ASC"
-            )
+            // ->orderByRaw(
+            //     "distribusis.call_time desc,
+            //     CASE date(fileexcels.prioritas_date)  
+            //         WHEN '" . $cektoday . "' THEN 1
+            //         ELSE 0
+            //     END desc,CAST(fileexcels.prioritas AS UNSIGNED) ASC"
+            // )
             ->without("Customer")
             ->without("User")
             ->limit(1)

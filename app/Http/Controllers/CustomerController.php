@@ -283,13 +283,14 @@ class CustomerController extends Controller
                 'customers.provider',
                 'fileexcels.kode',
             )
-                ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-                ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+                ->leftjoin('customers', 'customers.id', '=', 'distribusis.customer_id')
+                ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
                 ->where('distribusis.user_id', auth()->user()->id)
-                ->where(function ($query) {
-                    $query->where('distribusis.status', '0')
-                        ->orWhere('distribusis.status', null);
-                })
+                ->where('distribusis.status', '0')
+                // ->where(function ($query) {
+                //     $query->where('distribusis.status', '0')
+                //         ->orWhere('distribusis.status', null);
+                // })
                 ->where('distribusis.produk_id', $produk_id);
             if ($request->provider == 'NON-SIMPATI') {
                 $data =   $data->where('customers.provider', '<>', 'SIMPATI')
@@ -317,8 +318,8 @@ class CustomerController extends Controller
             'customers.provider',
             'fileexcels.kode',
         )
-            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
-            ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+            ->leftjoin('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
             ->whereIn('distribusis.user_id',  $request->user_id)
             //->where('distribusis.user_id', $request->user_id)
             ->where(function ($query) {

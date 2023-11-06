@@ -277,6 +277,8 @@ class CustomerController extends Controller
                     ->make(true);
             }
         } else {
+
+            $today = date('Y-m-d', strtotime('-31 days', strtotime(date('Y-m-d'))));
             $data = Distribusi::select(
                 'customers.nama',
                 'customers.no_telp',
@@ -287,6 +289,7 @@ class CustomerController extends Controller
                 ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
                 ->where('distribusis.user_id', auth()->user()->id)
                 ->where('distribusis.status', '0')
+                //->whereDate('distribusis.distribusi_at', '>=', $today)
                 // ->where(function ($query) {
                 //     $query->where('distribusis.status', '0')
                 //         ->orWhere('distribusis.status', null);
@@ -312,6 +315,7 @@ class CustomerController extends Controller
     //**Tabel To pada page distribusi */
     public function customerDistribusito(Request $request)
     {
+        $today = date('Y-m-d', strtotime('-31 days', strtotime(date('Y-m-d'))));
         $data = Distribusi::select(
             'customers.nama',
             'customers.no_telp',
@@ -321,7 +325,7 @@ class CustomerController extends Controller
             ->leftjoin('customers', 'customers.id', '=', 'distribusis.customer_id')
             ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
             ->whereIn('distribusis.user_id',  $request->user_id)
-            //->where('distribusis.user_id', $request->user_id)
+            //->whereDate('distribusis.distribusi_at', '>=', $today)
             ->where(function ($query) {
                 $query->where('distribusis.status', '0')
                     ->orWhere('distribusis.status', null);

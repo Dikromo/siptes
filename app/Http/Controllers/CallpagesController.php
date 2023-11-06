@@ -21,7 +21,7 @@ class CallpagesController extends Controller
             if ($param2 == 'today') {
                 switch (date('l', strtotime($param))) {
                     case 'Sunday':
-                        $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
                         break;
                     default:
                         $hasil = $param;
@@ -30,11 +30,11 @@ class CallpagesController extends Controller
             } else {
                 switch (date('l', strtotime($param))) {
                     case 'Saturday':
-                        $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
                         break;
 
                     case 'Sunday':
-                        $hasil = date('Y-m-d', strtotime('-1 days', strtotime($param)));
+                        $hasil = date('Y-m-d', strtotime('-2 days', strtotime($param)));
                         break;
                         //     // Tanggalan merah
                         // case 'Thursday':
@@ -93,8 +93,8 @@ class CallpagesController extends Controller
         $data = Distribusi::select(
             'distribusis.id'
         )
-            ->leftjoin('customers', 'customers.id', '=', 'distribusis.customer_id')
-            ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
             ->where('distribusis.user_id', auth()->user()->id)
             ->where('distribusis.status', 0)
             ->orderByRaw(

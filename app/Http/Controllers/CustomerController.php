@@ -211,8 +211,8 @@ class CustomerController extends Controller
                         'customers.provider',
                         'fileexcels.kode',
                     )
-                    ->join('customers', 'customers.id', '=', 'a.customer_id')
-                    ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
+                    ->leftjoin('customers', 'customers.id', '=', 'a.customer_id')
+                    ->leftjoin('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id')
                     ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
                     // jika local status nya 4 dan 5
                     // jika server status nya 12 dan 13

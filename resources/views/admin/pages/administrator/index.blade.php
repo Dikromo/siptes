@@ -8,88 +8,83 @@
 
     <div class="container-fluid">
         <div class="row">
-            <div class="col-12">
+            <div class="col-md-2">
                 <div class="card card-primary card-outline">
                     <div class="card-body">
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="produk_id">Produk</label>
-                                    <select name="produk_id"
-                                        class="form-control select2 @error('produk_id') is-invalid @enderror  "
-                                        id="produk_id">
-                                        <option value="">-- Pilih --</option>
-                                        @foreach ($produkSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->tipe . ' - ' . $item->nama }}
-                                            </option>
-                                        @endforeach
-                                    </select>
-                                    @error('produk_id')
-                                        <span id="produk_id" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                            <div class="form-group">
+                                <label for="produk_id">Produk</label>
+                                <select name="produk_id"
+                                    class="form-control select2 @error('produk_id') is-invalid @enderror  " id="produk_id"
+                                    style="width: 100%">
+                                    <option value="">-- Pilih --</option>
+                                    @foreach ($produkSelect as $item)
+                                        <option value="{{ $item->id }}">{{ $item->tipe . ' - ' . $item->nama }}
+                                        </option>
+                                    @endforeach
+                                </select>
+                                @error('produk_id')
+                                    <span id="produk_id" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <?php
-                                $vUserid = $get->id != '' ? decrypt($get->id) : '';
-                                $vTanggal = $get->tanggal != '' ? decrypt($get->tanggal) : '';
-                                ?>
-                                <div class="form-group">
-                                    <label for="user_id">Sales</label>
-                                    <select name="user_id"
-                                        class="form-control select2 @error('user_id') is-invalid @enderror  "
-                                        id="user_id">
-                                        <option value="">-- Pilih --</option>
-                                        @foreach ($userSelect as $item)
-                                            @if ($get != '')
-                                                @if ($vUserid == $item->id)
-                                                    <option value="{{ $item->id }}" selected>{{ $item->name }}
-                                                    </option>
-                                                @else
-                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                                @endif
+                            <?php
+                            $vUserid = $get->id != '' ? decrypt($get->id) : '';
+                            $vTanggal = $get->tanggal != '' ? decrypt($get->tanggal) : '';
+                            ?>
+                            <div class="form-group">
+                                <label for="user_id">Sales</label>
+                                <select name="user_id" class="form-control select2 @error('user_id') is-invalid @enderror  "
+                                    id="user_id">
+                                    <option value="">-- Pilih --</option>
+                                    @foreach ($userSelect as $item)
+                                        @if ($get != '')
+                                            @if ($vUserid == $item->id)
+                                                <option value="{{ $item->id }}" selected>{{ $item->name }}
+                                                </option>
                                             @else
                                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endif
-                                        @endforeach
-                                    </select>
-                                    @error('user_id')
-                                        <span id="user_id" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
-                            </div>
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="status">Status</label>
-                                    <select name="status"
-                                        class="form-control select2 @error('status') is-invalid @enderror  " id="status">
-                                        <option value="">-- Pilih --</option>
-                                        @foreach ($statusSelect as $item)
-                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                        @endforeach
-                                    </select>
-                                    @error('status')
-                                        <span id="status" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                                        @else
+                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                        @endif
+                                    @endforeach
+                                </select>
+                                @error('user_id')
+                                    <span id="user_id" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
                             </div>
                         </div>
                         <div class="row">
-                            <div class="col-md-6">
-                                <div class="form-group">
-                                    <label for="fromTanggal">Dari Tanggal</label>
-                                    <input type="date" id="fromTanggal" name="fromTanggal"
-                                        class="form-control @error('fromTanggal') is-invalid @enderror"
-                                        value="{{ $vTanggal == '' ? old('fromTanggal', date('Y-m-d', strtotime('-7 days'))) : $vTanggal }}"
-                                        required>
-                                    @error('fromTanggal')
-                                        <span id="fromTanggal" class="error invalid-feedback">{{ $message }}</span>
-                                    @enderror
-                                </div>
+                            <div class="form-group">
+                                <label for="status">Status</label>
+                                <select name="status" class="form-control select2 @error('status') is-invalid @enderror  "
+                                    id="status" style="width:100%">
+                                    <option value="">-- Pilih --</option>
+                                    @foreach ($statusSelect as $item)
+                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                    @endforeach
+                                </select>
+                                @error('status')
+                                    <span id="status" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
                             </div>
-                            <div class="col-md-6">
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
+                                <label for="fromTanggal">Dari Tanggal</label>
+                                <input type="date" id="fromTanggal" name="fromTanggal"
+                                    class="form-control @error('fromTanggal') is-invalid @enderror"
+                                    value="{{ $vTanggal == '' ? old('fromTanggal', date('Y-m-d', strtotime('-7 days'))) : $vTanggal }}"
+                                    required>
+                                @error('fromTanggal')
+                                    <span id="fromTanggal" class="error invalid-feedback">{{ $message }}</span>
+                                @enderror
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="form-group">
                                 <label for="toTanggal">Sampai Tanggal</label>
                                 <input type="date" id="toTanggal" name="toTanggal"
                                     class="form-control @error('toTanggal') is-invalid @enderror"
@@ -104,14 +99,12 @@
 
                         <div class="row">
                             <!-- /.col -->
-                            <div class="col-8">
-                            </div>
-                            <div class="col-4">
-                                <a class="btn btn-primary btn-block" onclick="proses()">Proses</a>
-                            </div>
+                            <a class="btn btn-primary btn-block" onclick="proses()">Proses</a>
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="col-md-10">
                 <div class="card">
                     <div class="card-header">
                         <h3 class="card-title">{{ $title }} Table </h3>
@@ -163,8 +156,8 @@
                     {{-- <div class="list-data card-footer">
                     </div> --}}
                 </div>
-                <!-- /.card -->
             </div>
+            <!-- /.card -->
         </div>
         <!-- /.row -->
     </div><!-- /.container-fluid -->

@@ -803,11 +803,28 @@
                     });
                     return true;
                 } else {
-                    $('#modal-overlay').modal({
-                        backdrop: 'static',
-                        keyboard: false
-                    });
-                    return true;
+                    if ($('#status').val() == 'Ya') {
+                        console.log($('#loan_apply').val());
+                        console.log($('#limit').val());
+                        if ((parseInt($('#loan_apply').val()) >= '5000000' && parseInt($('#loan_apply').val()) <=
+                                '300000000') && parseInt($(
+                                '#limit').val()) >= '5000000') {
+                            $('#modal-overlay').modal({
+                                backdrop: 'static',
+                                keyboard: false
+                            });
+                            return true;
+                        } else {
+                            alert('Mohon isikan limit dan loan apply dengan angka yang benar');
+                            return false;
+                        }
+                    } else {
+                        $('#modal-overlay').modal({
+                            backdrop: 'static',
+                            keyboard: false
+                        });
+                        return true;
+                    }
                 }
             } else {
                 $('#modal-overlay').modal({

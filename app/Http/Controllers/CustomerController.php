@@ -431,11 +431,11 @@ class CustomerController extends Controller
                     if ($request->group_fileexcels_id != '') {
                         $getfileexcel = group_fileexcel::firstWhere('id', $request->group_fileexcels_id);
                         $msglog2 = ' Group campaign ' . $getfileexcel->nama;
-                        $msglogFileexcel = $getfileexcel->nama;
+                        $msglogFileexcel = $getfileexcel->nama . ' ID GROUP ' . $request->group_fileexcels_id;
                     } else {
                         $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
                         $msglog2 = ' campaign ' . $getfileexcel->kode;
-                        $msglogFileexcel = $getfileexcel->kode;
+                        $msglogFileexcel = $getfileexcel->kode . ' ID Campaign ' . $request->fileexcel_id;
                     }
                 }
                 // $data->update(['status' => 1]);
@@ -518,6 +518,17 @@ class CustomerController extends Controller
                     }
                 }
 
+                if ($request->group_fileexcels_id != '') {
+                    $getfileexcel = group_fileexcel::firstWhere('id', $request->group_fileexcels_id);
+                    $msglog2 = ' Group campaign ' . $getfileexcel->nama;
+                    $msglogFileexcel = $getfileexcel->nama . ' ID Campaign ' . $request->group_fileexcels_id;
+                } else {
+                    $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
+                    $msglog2 = ' campaign ' . $getfileexcel->kode;
+                    $msglogFileexcel = $getfileexcel->kode . ' ID Campaign ' . $request->fileexcel_id;
+                }
+
+                $getUser = User::firstWhere('id', $user_id)->name;
                 $getUser = User::firstWhere('id', $user_id)->name;
                 $msg .= '
         Sukses menarik data dari <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>';
@@ -591,11 +602,11 @@ class CustomerController extends Controller
                 if ($request->group_fileexcels_id != '') {
                     $getfileexcel = group_fileexcel::firstWhere('id', $request->group_fileexcels_id);
                     $msglog2 = ' Group campaign ' . $getfileexcel->nama;
-                    $msglogFileexcel = $getfileexcel->nama;
+                    $msglogFileexcel = $getfileexcel->nama . ' ID Campaign ' . $request->group_fileexcels_id;
                 } else {
                     $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
                     $msglog2 = ' campaign ' . $getfileexcel->kode;
-                    $msglogFileexcel = $getfileexcel->kode;
+                    $msglogFileexcel = $getfileexcel->kode . ' ID Campaign ' . $request->fileexcel_id;
                 }
 
                 $getUser = User::firstWhere('id', $user_id)->name;

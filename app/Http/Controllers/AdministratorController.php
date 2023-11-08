@@ -15,35 +15,60 @@ class AdministratorController extends Controller
     //
     public function viewCalltracking(Request $request)
     {
-        $userSelect = User::where('status', '1');
-        if (auth()->user()->roleuser_id == '2') {
-            $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
-                ->where(function ($query) {
-                    $query->where('roleuser_id', '2')
-                        ->orWhere('roleuser_id', '3');
-                });
-        } else if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '6') {
-            $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
-                ->where(function ($query) {
-                    $query->where('roleuser_id', '2')
-                        ->orWhere('roleuser_id', '3');
-                });
-        } else if (auth()->user()->roleuser_id == '5') {
-            $userSelect = $userSelect->where('sm_id', auth()->user()->id)
-                ->where(function ($query) {
-                    $query->where('roleuser_id', '2')
-                        ->orWhere('roleuser_id', '3');
-                });
-        } else {
-            $userSelect = $userSelect
-                ->where(function ($query) {
-                    $query->where('roleuser_id', '2')
-                        ->orWhere('roleuser_id', '3');
-                });
-        }
+        //$userSelect = User::where('status', '1');
+        $salesSelect =  User::where('status', '1')->where('roleuser_id', '3');
+        $leaderSelect =  User::where('status', '1')->where('roleuser_id', '2');
+        $managerSelect =  User::where('status', '1')->where('roleuser_id', '5');
+        // if (auth()->user()->roleuser_id == '2') {
+        //     $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
+        //         ->where(function ($query) {
+        //             $query->where('roleuser_id', '2')
+        //                 ->orWhere('roleuser_id', '3');
+        //         });
+        // } else if (auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '6') {
+        //     $userSelect = $userSelect->where('cabang_id', auth()->user()->cabang_id)
+        //         ->where(function ($query) {
+        //             $query->where('roleuser_id', '2')
+        //                 ->orWhere('roleuser_id', '3');
+        //         });
+        // } else if (auth()->user()->roleuser_id == '5') {
+        //     $userSelect = $userSelect->where('sm_id', auth()->user()->id)
+        //         ->where(function ($query) {
+        //             $query->where('roleuser_id', '2')
+        //                 ->orWhere('roleuser_id', '3');
+        //         });
+        // } else {
+        //     $userSelect = $userSelect
+        //         ->where(function ($query) {
+        //             $query->where('roleuser_id', '2')
+        //                 ->orWhere('roleuser_id', '3');
+        //         });
+        // }
         $statusSelect = Statuscall::where('status', '1')
             ->where('jenis', '1');
         if (auth()->user()->roleuser_id != '1') {
+            $salesSelect =  $salesSelect->where('cabang_id', auth()->user()->cabang_id);
+            $leaderSelect =  $leaderSelect->where('cabang_id', auth()->user()->cabang_id);
+            $managerSelect =  $managerSelect->where('cabang_id', auth()->user()->cabang_id);
+
+            if (auth()->user()->roleuser_id == '2') {
+                $salesSelect =  $salesSelect->where('parentuser_id', auth()->user()->id);
+                $leaderSelect =  $leaderSelect->where('id', auth()->user()->id);
+                $managerSelect =  $managerSelect->where('id', auth()->user()->sm_id);
+            }
+
+            if (auth()->user()->roleuser_id == '5') {
+                $salesSelect =  $salesSelect->where('sm_id', auth()->user()->id);
+                $leaderSelect =  $leaderSelect->where('sm_id', auth()->user()->id);
+                $managerSelect =  $managerSelect->where('id', auth()->user()->id);
+            }
+
+            if (auth()->user()->roleuser_id == '6') {
+                $salesSelect =  $salesSelect->where('um_id', auth()->user()->id);
+                $leaderSelect =  $leaderSelect->where('um_id', auth()->user()->id);
+                $managerSelect =  $managerSelect->where('um_id', auth()->user()->id);
+            }
+
             if (auth()->user()->cabang_id == '4') {
                 $statusSelect =    $statusSelect->whereIn('id', ['15']);
                 //$statusSelect =    $statusSelect->whereIn('id', ['15', '16', '34']);
@@ -63,7 +88,9 @@ class AdministratorController extends Controller
             "data" => '',
             "get" => isset($request) ? $request : '',
             "produkSelect" => $produkSelect,
-            "userSelect" => $userSelect->get(),
+            "salesSelect" => $salesSelect->get(),
+            "leaderSelect" => $leaderSelect->get(),
+            "managerSelect" => $managerSelect->get(),
             "statusSelect" => $statusSelect->get(),
             //"category" => User::all(),
         ]);
@@ -99,10 +126,18 @@ class AdministratorController extends Controller
             ->where('distribusis.status', '<>', '0');
         if ($request->user_id != '') {
             $data = $data->where('sales.id', $request->user_id);
-        } else {
-            if (auth()->user()->roleuser_id != '1') {
-                $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
-            }
+        }
+        if ($request->parentuser_id != '') {
+            $data = $data->where(function ($query) use ($request) {
+                $query->where('sales.id', $request->parentuser_id)
+                    ->orWhere('parentuser.id', $request->parentuser_id);
+            });
+        }
+        if ($request->sm_id != '') {
+            $data = $data->where('sm.id', $request->sm_id);
+        }
+        if (auth()->user()->roleuser_id != '1') {
+            $data = $data->where('sales.cabang_id', auth()->user()->cabang_id);
         }
         if ($request->produk_id != '') {
             $data = $data->where('distribusis.produk_id', $request->produk_id);
@@ -121,7 +156,7 @@ class AdministratorController extends Controller
             ->editColumn('csalesnama', '{{{$csalesnama == null ? $salesnama : $csalesnama;}}}')
             ->editColumn('updated_tgl', '{{{date("Y-m-d",strtotime($updated_at));}}}')
             ->addColumn('action', function ($data) {
-                if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
+                if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
                     return view('admin.layouts.buttonActiontables')
                         ->with(['data' => $data, 'links' => 'modalEdit(\'' . encrypt($data->id) . '\')', 'type' => 'onclick']);
                 } else {

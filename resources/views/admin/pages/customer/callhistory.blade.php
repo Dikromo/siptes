@@ -523,15 +523,12 @@
                         pageon: pageon,
                     }
                 },
-
-                deferRender: true,
-                lengthMenu: paramLength,
                 columns: paramColumn,
                 columnDefs: [{
                     targets: 0,
                     className: "text-center",
                 }],
-                dom: 'lBfrtip',
+                dom: 'Bfrtip',
                 buttons: [{
                     extend: 'excel',
                     title: '',
@@ -542,7 +539,7 @@
                     [sortPos, 'desc']
                 ],
                 processing: true,
-                serverSide: true
+                serverSide: true,
             }).buttons().container().appendTo('#dataTables_wrapper .col-md-6:eq(0)');
         }
         $('#dataTables').on('search.dt', function() {

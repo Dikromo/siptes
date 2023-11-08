@@ -12,86 +12,161 @@
                 <div class="card card-primary card-outline">
                     <div class="card-body">
                         <div class="row">
-                            <div class="form-group">
-                                <label for="produk_id">Produk</label>
-                                <select name="produk_id"
-                                    class="form-control select2 @error('produk_id') is-invalid @enderror  " id="produk_id"
-                                    style="width: 100%">
-                                    <option value="">-- Pilih --</option>
-                                    @foreach ($produkSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->tipe . ' - ' . $item->nama }}
-                                        </option>
-                                    @endforeach
-                                </select>
-                                @error('produk_id')
-                                    <span id="produk_id" class="error invalid-feedback">{{ $message }}</span>
-                                @enderror
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="produk_id">Produk</label>
+                                    <select name="produk_id"
+                                        class="form-control select2 @error('produk_id') is-invalid @enderror  "
+                                        id="produk_id" style="width: 100%">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($produkSelect as $item)
+                                            <option value="{{ $item->id }}">{{ $item->tipe . ' - ' . $item->nama }}
+                                            </option>
+                                        @endforeach
+                                    </select>
+                                    @error('produk_id')
+                                        <span id="produk_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <?php
-                            $vUserid = $get->id != '' ? decrypt($get->id) : '';
-                            $vTanggal = $get->tanggal != '' ? decrypt($get->tanggal) : '';
-                            ?>
-                            <div class="form-group">
-                                <label for="user_id">Sales</label>
-                                <select name="user_id" class="form-control select2 @error('user_id') is-invalid @enderror  "
-                                    id="user_id">
-                                    <option value="">-- Pilih --</option>
-                                    @foreach ($userSelect as $item)
-                                        @if ($get != '')
-                                            @if ($vUserid == $item->id)
-                                                <option value="{{ $item->id }}" selected>{{ $item->name }}
-                                                </option>
+                            <div class="col-md-12">
+                                <?php
+                                $vUserid = $get->id != '' ? decrypt($get->id) : '';
+                                $vTanggal = $get->tanggal != '' ? decrypt($get->tanggal) : '';
+                                ?>
+                                <div class="form-group">
+                                    <label for="sm_id">Sales Manager</label>
+                                    <select name="sm_id"
+                                        class="form-control select2 @error('sm_id') is-invalid @enderror  " id="sm_id"
+                                        style="width:100%">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($managerSelect as $item)
+                                            @if ($get != '')
+                                                @if ($vUserid == $item->id)
+                                                    <option value="{{ $item->id }}" selected>{{ $item->name }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endif
                                             @else
                                                 <option value="{{ $item->id }}">{{ $item->name }}</option>
                                             @endif
-                                        @else
-                                            <option value="{{ $item->id }}">{{ $item->name }}</option>
-                                        @endif
-                                    @endforeach
-                                </select>
-                                @error('user_id')
-                                    <span id="user_id" class="error invalid-feedback">{{ $message }}</span>
-                                @enderror
+                                        @endforeach
+                                    </select>
+                                    @error('sm_id')
+                                        <span id="sm_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group">
-                                <label for="status">Status</label>
-                                <select name="status" class="form-control select2 @error('status') is-invalid @enderror  "
-                                    id="status" style="width:100%">
-                                    <option value="">-- Pilih --</option>
-                                    @foreach ($statusSelect as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama }}</option>
-                                    @endforeach
-                                </select>
-                                @error('status')
-                                    <span id="status" class="error invalid-feedback">{{ $message }}</span>
-                                @enderror
+                            <div class="col-md-12">
+                                <?php
+                                $vUserid = $get->id != '' ? decrypt($get->id) : '';
+                                $vTanggal = $get->tanggal != '' ? decrypt($get->tanggal) : '';
+                                ?>
+                                <div class="form-group">
+                                    <label for="parentuser_id">Team Leader</label>
+                                    <select name="parentuser_id"
+                                        class="form-control select2 @error('parentuser_id') is-invalid @enderror  "
+                                        id="parentuser_id" style="width:100%">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($leaderSelect as $item)
+                                            @if ($get != '')
+                                                @if ($vUserid == $item->id)
+                                                    <option value="{{ $item->id }}" selected>{{ $item->name }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('parentuser_id')
+                                        <span id="parentuser_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group">
-                                <label for="fromTanggal">Dari Tanggal</label>
-                                <input type="date" id="fromTanggal" name="fromTanggal"
-                                    class="form-control @error('fromTanggal') is-invalid @enderror"
-                                    value="{{ $vTanggal == '' ? old('fromTanggal', date('Y-m-d', strtotime('-7 days'))) : $vTanggal }}"
-                                    required>
-                                @error('fromTanggal')
-                                    <span id="fromTanggal" class="error invalid-feedback">{{ $message }}</span>
-                                @enderror
+                            <div class="col-md-12">
+                                <?php
+                                $vUserid = $get->id != '' ? decrypt($get->id) : '';
+                                $vTanggal = $get->tanggal != '' ? decrypt($get->tanggal) : '';
+                                ?>
+                                <div class="form-group">
+                                    <label for="user_id">Sales</label>
+                                    <select name="user_id"
+                                        class="form-control select2 @error('user_id') is-invalid @enderror  " id="user_id"
+                                        style="width:100%">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($salesSelect as $item)
+                                            @if ($get != '')
+                                                @if ($vUserid == $item->id)
+                                                    <option value="{{ $item->id }}" selected>{{ $item->name }}
+                                                    </option>
+                                                @else
+                                                    <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                                @endif
+                                            @else
+                                                <option value="{{ $item->id }}">{{ $item->name }}</option>
+                                            @endif
+                                        @endforeach
+                                    </select>
+                                    @error('user_id')
+                                        <span id="user_id" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                         <div class="row">
-                            <div class="form-group">
-                                <label for="toTanggal">Sampai Tanggal</label>
-                                <input type="date" id="toTanggal" name="toTanggal"
-                                    class="form-control @error('toTanggal') is-invalid @enderror"
-                                    value="{{ $vTanggal == '' ? old('toTanggal', date('Y-m-d')) : $vTanggal }}" required>
-                                @error('toTanggal')
-                                    <span id="toTanggal" class="error invalid-feedback">{{ $message }}</span>
-                                @enderror
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="status">Status</label>
+                                    <select name="status"
+                                        class="form-control select2 @error('status') is-invalid @enderror  " id="status"
+                                        style="width:100%">
+                                        <option value="">-- Pilih --</option>
+                                        @foreach ($statusSelect as $item)
+                                            <option value="{{ $item->id }}">{{ $item->nama }}</option>
+                                        @endforeach
+                                    </select>
+                                    @error('status')
+                                        <span id="status" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="fromTanggal">Dari Tanggal</label>
+                                    <input type="date" id="fromTanggal" name="fromTanggal"
+                                        class="form-control @error('fromTanggal') is-invalid @enderror"
+                                        value="{{ $vTanggal == '' ? old('fromTanggal', date('Y-m-d', strtotime('-7 days'))) : $vTanggal }}"
+                                        required>
+                                    @error('fromTanggal')
+                                        <span id="fromTanggal" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group">
+                                    <label for="toTanggal">Sampai Tanggal</label>
+                                    <input type="date" id="toTanggal" name="toTanggal"
+                                        class="form-control @error('toTanggal') is-invalid @enderror"
+                                        value="{{ $vTanggal == '' ? old('toTanggal', date('Y-m-d')) : $vTanggal }}"
+                                        required>
+                                    @error('toTanggal')
+                                        <span id="toTanggal" class="error invalid-feedback">{{ $message }}</span>
+                                    @enderror
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -140,8 +215,10 @@
                                     <th>Subproduk</th>
                                     <th>Deskripsi</th>
                                     <th>End Call</th>
-                                    <th>Status Admin</th>
-                                    <th>Tanggal Status Admin </th>
+                                    <th>Decision Status</th>
+                                    <th>Decision Date</th>
+                                    <th>Disbursed Limit</th>
+                                    <th>Remarks Decision</th>
                                     <th>Sales</th>
                                     <th>SPV</th>
                                     <th>SM</th>
@@ -172,10 +249,13 @@
                     </button>
                 </div>
                 <div class="modal-body">
+                    <input type="hidden" id="mproduk_id" name="mproduk_id">
+                    <input type="hidden" id="msubproduk_id" name="msubproduk_id">
+                    <input type="hidden" id="mtahap" name="mtahap">
                     <?php
-                    $arrayTipe = ['Verifikasi', 'Submit', 'Pending', 'Cancel'];
+                    //$arrayTipe = ['Verifikasi', 'Submit', 'Pending', 'Cancel'];
                     ?>
-                    <div class="form-group">
+                    {{-- <div class="form-group">
                         <label for="statusadmin">Status Admin</label>
                         <input type="hidden" id="mproduk_id" name="mproduk_id">
                         <input type="hidden" id="msubproduk_id" name="msubproduk_id">
@@ -225,9 +305,9 @@
                         @error('remarksadmin')
                             <span id="remarksadmin" class="error invalid-feedback">{{ $message }}</span>
                         @enderror
-                    </div>
+                    </div> --}}
                     <?php
-                    $arrayTipe = ['Verifikasi', 'Disetujui', 'Ditolak', 'Cancel'];
+                    $arrayTipe = ['FAILED', 'INPROCESS', 'REJECT', 'DISBURSED', 'CANCEL BY CUSTOMER', 'CANCEL'];
                     ?>
                     <div class="form-group">
                         <label for="statusbank">Status Bank</label>
@@ -360,7 +440,8 @@
                         $('#mtahap').val('2');
                         $(".fbank").prop("disabled", false);
                     } else {
-                        $(".fbank").prop("disabled", true);
+                        $('#mtahap').val('2');
+                        $(".fbank").prop("disabled", false);
                     }
 
                 });
@@ -374,24 +455,8 @@
         }
 
         function checkbeforeSave() {
-            if ($('#mtahap').val() == '' && $('#statusadmin').val() != '' && $('#statusadmin_date').val() != '') {
-                if ($('#statusadmin').val() == 'Submit') {
-                    if ($('#mproduk_id').val() == '6' && ($('#temp_limit').val() == '' || $('#temp_limit').val() == null) &&
-                        $('#msubproduk_id').val() == '1') {
-                        alert('Mohon isikan temporary limit');
-                    } else {
-                        saveEditcallhistory();
-                    }
-                } else {
-                    if ($('#statusadmin').val() == '' || $('#statusadmin_date').val() == '' || $('#remarksadmin').val() ==
-                        '') {
-                        alert('Mohon isikan form dengan benar');
-                    } else {
-                        saveEditcallhistory();
-                    }
-                }
-            } else if ($('#mtahap').val() == '2' && $('#statusbank').val() != '' && $('#statusbank_date').val() != '') {
-                if ($('#statusbank').val() == 'Disetujui') {
+            if ($('#mtahap').val() == '2' && $('#statusbank').val() != '' && $('#statusbank_date').val() != '') {
+                if ($('#statusbank').val() == 'DISBURSED') {
                     if ($('#mproduk_id').val() == '6' && ($('#disburse_limit').val() == '' || $('#disburse_limit').val() ==
                             null)) {
                         alert('Mohon isikan disburse limit');
@@ -407,8 +472,43 @@
                     }
                 }
             } else {
-                alert('Mohon isikan form dengan benar');
+                alert('Mohon isikan form dengan benarr');
             }
+            // if ($('#mtahap').val() == '' && $('#statusadmin').val() != '' && $('#statusadmin_date').val() != '') {
+            //     if ($('#statusadmin').val() == 'Submit') {
+            //         if ($('#mproduk_id').val() == '6' && ($('#temp_limit').val() == '' || $('#temp_limit').val() == null) &&
+            //             $('#msubproduk_id').val() == '1') {
+            //             alert('Mohon isikan temporary limit');
+            //         } else {
+            //             saveEditcallhistory();
+            //         }
+            //     } else {
+            //         if ($('#statusadmin').val() == '' || $('#statusadmin_date').val() == '' || $('#remarksadmin').val() ==
+            //             '') {
+            //             alert('Mohon isikan form dengan benar');
+            //         } else {
+            //             saveEditcallhistory();
+            //         }
+            //     }
+            // } else if ($('#mtahap').val() == '2' && $('#statusbank').val() != '' && $('#statusbank_date').val() != '') {
+            //     if ($('#statusbank').val() == 'Disetujui') {
+            //         if ($('#mproduk_id').val() == '6' && ($('#disburse_limit').val() == '' || $('#disburse_limit').val() ==
+            //                 null)) {
+            //             alert('Mohon isikan disburse limit');
+            //         } else {
+            //             saveEditcallhistory();
+            //         }
+            //     } else {
+            //         if ($('#statusbank').val() == '' || $('#statusbank_date').val() == '' || $('#remarksbank').val() ==
+            //             '') {
+            //             alert('Mohon isikan form dengan benar');
+            //         } else {
+            //             saveEditcallhistory();
+            //         }
+            //     }
+            // } else {
+            //     alert('Mohon isikan form dengan benar');
+            // }
         }
 
         function saveEditcallhistory() {
@@ -515,11 +615,17 @@
                 data: 'updated_at',
                 name: 'updated_at'
             }, {
-                data: 'statusadmin',
-                name: 'statusadmin'
+                data: 'statusbank',
+                name: 'statusbank'
             }, {
-                data: 'statusadmin_date',
-                name: 'statusadmin_date'
+                data: 'statusbank_date',
+                name: 'statusbank_date'
+            }, {
+                data: 'disburse_limit',
+                name: 'disburse_limit'
+            }, {
+                data: 'remarksbank',
+                name: 'remarksbank'
             }, {
                 data: 'salesnama',
                 name: 'sales.name as salesnama',
@@ -562,6 +668,8 @@
                         _token: '{{ csrf_token() }}',
                         fromtanggal: param1,
                         totanggal: param2,
+                        sm_id: $('#sm_id').val(),
+                        parentuser_id: $('#parentuser_id').val(),
                         user_id: $('#user_id').val(),
                         status: $('#status').val(),
                         produk_id: $('#produk_id').val(),

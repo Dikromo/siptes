@@ -528,7 +528,7 @@
                     targets: 0,
                     className: "text-center",
                 }],
-                dom: 'Bfrtip',
+                dom: 'lBfrtip',
                 buttons: [{
                     extend: 'excel',
                     title: '',

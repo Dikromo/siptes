@@ -524,8 +524,9 @@ class CustomerController extends Controller
                     $msglogFileexcel = $getfileexcel->nama . ' ID Campaign ' . $request->group_fileexcels_id;
                 } else {
                     $getfileexcel = Fileexcel::firstWhere('id', $request->fileexcel_id);
-                    $msglog2 = ' campaign ' . $getfileexcel->kode;
-                    $msglogFileexcel = $getfileexcel->kode . ' ID Campaign ' . $request->fileexcel_id;
+                    $fileKode = $getfileexcel != null ? $getfileexcel->kode : '';
+                    $msglog2 = ' campaign ' . $fileKode;
+                    $msglogFileexcel = $fileKode . ' ID Campaign ' . $request->fileexcel_id;
                 }
 
                 $getUser = User::firstWhere('id', $user_id)->name;

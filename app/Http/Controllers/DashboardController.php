@@ -238,6 +238,8 @@ class DashboardController extends Controller
         $today = $this->checkDay(date('Y-m-d', strtotime($request->tanggal)), 'today');
         $today2 = $this->checkDay(date('Y-m-d', strtotime('-1 days', strtotime($today))), '');
         $today3 = $this->checkDay(date('Y-m-d', strtotime('-2 days', strtotime($today))), '');
+        $leadClosing = 0;
+        $tmpLead = '';
 
         if ($request->tanggal == $cektoday) {
             $timerun1 = date('Y-m-d 00:00:00');
@@ -274,6 +276,7 @@ class DashboardController extends Controller
         $data = User::select(
             'users.id',
             'users.name',
+            DB::raw('IF(parentuser.name is not null, parentuser.id, users.id) as spv_id'),
             DB::raw('IF(parentuser.name is not null, parentuser.name, users.name) as spvname'),
             DB::raw('IF(parentuser.nickname is not null, parentuser.nickname, users.nickname) as spvnickname'),
             'sm.name as smname',
@@ -340,7 +343,7 @@ class DashboardController extends Controller
             $data = $data->where('users.um_id', auth()->user()->id);
         }
         $data = $data->orderby('users.parentuser_id', 'asc')
-            ->groupBy(DB::raw('1,2,3,4,5,6,7'));
+            ->groupBy(DB::raw('1,2,3,4,5,6,7,8'));
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('today', function ($data) use ($today) {
@@ -388,9 +391,18 @@ class DashboardController extends Controller
             ->addColumn('h3', '{{$total_call_3.\' | \'.$total_callout_3.\' | \'.$total_prospek_3.\' | \'.$total_closing_3}}')
             ->addColumn('total', '{{$total_nocall.\'\'}}')
             ->editColumn('total_data_today', '{{{$total_nocall + $total_call_today}}}')
-            ->editColumn('name', function ($data) use ($cektoday2, $runhour) {
+            ->editColumn('name', function ($data) use ($cektoday2, $runhour, $leadClosing, $tmpLead) {
+
+                if ($tmpLead == '') {
+                    $tmpLead = $data->spvname;
+                }
+                if ($tmpLead != $data->spvname) {
+                    // $tmpLead = $data->spvname;
+                    $leadClosing = 0;
+                }
+                $leadClosing = $leadClosing + $data->total_closing_today + $data->total_closing_2 + $data->total_closing_3;
                 $signalPercent = round((int)$data->total_call_today / (float)$runhour);
-                $signalBar = 'C' . $data->total_closing_today + $data->total_closing_2 + $data->total_closing_3 . ' ';
+                $signalBar = $data->roleuser_id == '2' ? '<span class="spv_' . $data->spv_id . '">C' . $leadClosing . '</span> ' : '<span class="tele_'  . $data->spv_id . '_' . $data->id . '">C' . $data->total_closing_today + $data->total_closing_2 + $data->total_closing_3 . '</span> ';
                 $signalBar .= $data->roleuser_id == '2' ? '<i class="fas fa-star" style="color: #e7af13;"></i>' . $data->name : $data->name;
                 $signalBar .=  $data->spvnickname == '' ? '(' . $data->spvname . ')' : '(' . $data->spvnickname . ')';
                 $signalBar .= $data->smnickname == '' ? '(' . $data->smname . ')' : '(' . $data->smnickname . ')';

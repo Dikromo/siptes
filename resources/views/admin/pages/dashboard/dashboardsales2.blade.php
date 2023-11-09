@@ -429,6 +429,65 @@
                 //     text: 'Export Excel',
                 //     filename: 'export_callhistory_' + hari
                 // }, ],
+                "drawCallback": function(settings) {
+                    var api = this.api();
+
+                    // Output the data for the visible rows to the browser's console
+                    var tmpSpv = '';
+                    var tmpClosing = 0;
+                    if (cabang_id == '4') {
+                        for (let i = 0; i < api.rows({
+                                page: 'current'
+                            }).data().length; i++) {
+                            if (tmpSpv != api.rows({
+                                    page: 'current'
+                                }).data()[i]['spv_id']) {
+                                if (tmpSpv != '') {
+                                    console.log(tmpSpv + '===' + tmpClosing);
+                                    $('.spv_' + tmpSpv).html('C' + tmpClosing);
+                                    tmpClosing = 0;
+                                }
+                                tmpSpv = api.rows({
+                                    page: 'current'
+                                }).data()[i]['spv_id'];
+                            } else {
+                                var cIndex = parseInt(api.rows({
+                                    page: 'current'
+                                }).data().length) - parseInt(i);
+                                console.log('inex==' + cIndex);
+                                if (cIndex == '1') {
+                                    tmpClosing = parseInt(tmpClosing) + parseInt(api.rows({
+                                        page: 'current'
+                                    }).data()[i]['total_closing_today']) + parseInt(api.rows({
+                                        page: 'current'
+                                    }).data()[i]['total_closing_2']) + parseInt(api.rows({
+                                        page: 'current'
+                                    }).data()[i]['total_closing_3']);
+                                    console.log('totall' + api.rows({
+                                        page: 'current'
+                                    }).data()[i]['spv_id']);
+                                    console.log(tmpSpv + '===' + tmpClosing);
+                                    $('.spv_' + tmpSpv).html('C' + tmpClosing);
+                                    tmpClosing = 0;
+                                }
+                            }
+                            tmpClosing = parseInt(tmpClosing) + parseInt(api.rows({
+                                page: 'current'
+                            }).data()[i]['total_closing_today']) + parseInt(api.rows({
+                                page: 'current'
+                            }).data()[i]['total_closing_2']) + parseInt(api.rows({
+                                page: 'current'
+                            }).data()[i]['total_closing_3']);
+                            console.log('totall' + api.rows({
+                                page: 'current'
+                            }).data()[i]['spv_id']);
+                            //const element = array[i];
+                        }
+                        // console.log(api.rows({
+                        //     page: 'current'
+                        // }).data());
+                    }
+                },
                 footerCallback: function(row, data, start, end, display) {
                     let api = this.api();
                     let vLink = '';

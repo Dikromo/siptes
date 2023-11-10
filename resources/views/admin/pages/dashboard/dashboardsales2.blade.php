@@ -204,6 +204,7 @@
         var roleuser_id = "<?php echo auth()->user()->roleuser_id; ?>";
         var cabang_id = "<?php echo auth()->user()->cabang_id; ?>";
         var hari = "<?php echo date('Y-m-d'); ?>";
+        var callbackParam = 0;
         renderTable(hari);
 
         function proses() {
@@ -442,56 +443,59 @@
                     var tmpSpv = '';
                     var tmpClosing = 0;
                     if (cabang_id == '4') {
-                        for (let i = 0; i < api.rows({
-                                page: 'current'
-                            }).data().length; i++) {
-                            if (tmpSpv != api.rows({
+                        if (callbackParam == 0) {
+                            for (let i = 0; i < api.rows({
                                     page: 'current'
-                                }).data()[i]['spv_id']) {
-                                if (tmpSpv != '') {
-                                    console.log(tmpSpv + '===' + tmpClosing);
-                                    $('.spv_' + tmpSpv).html('C' + tmpClosing);
-                                    tmpClosing = 0;
+                                }).data().length; i++) {
+                                if (tmpSpv != api.rows({
+                                        page: 'current'
+                                    }).data()[i]['spv_id']) {
+                                    if (tmpSpv != '') {
+                                        console.log(tmpSpv + '===' + tmpClosing);
+                                        $('.spv_' + tmpSpv).html('C' + tmpClosing);
+                                        tmpClosing = 0;
+                                    }
+                                    tmpSpv = api.rows({
+                                        page: 'current'
+                                    }).data()[i]['spv_id'];
+                                } else {
+                                    var cIndex = parseInt(api.rows({
+                                        page: 'current'
+                                    }).data().length) - parseInt(i);
+                                    console.log('inex==' + cIndex);
+                                    if (cIndex == '1') {
+                                        callbackParam = 1;
+                                        tmpClosing = parseInt(tmpClosing) + parseInt(api.rows({
+                                            page: 'current'
+                                        }).data()[i]['total_closing_today']) + parseInt(api.rows({
+                                            page: 'current'
+                                        }).data()[i]['total_closing_2']) + parseInt(api.rows({
+                                            page: 'current'
+                                        }).data()[i]['total_closing_3']);
+                                        console.log('totall' + api.rows({
+                                            page: 'current'
+                                        }).data()[i]['spv_id']);
+                                        console.log(tmpSpv + '===' + tmpClosing);
+                                        $('.spv_' + tmpSpv).html('C' + tmpClosing);
+                                        tmpClosing = 0;
+                                    }
                                 }
-                                tmpSpv = api.rows({
+                                tmpClosing = parseInt(tmpClosing) + parseInt(api.rows({
                                     page: 'current'
-                                }).data()[i]['spv_id'];
-                            } else {
-                                var cIndex = parseInt(api.rows({
+                                }).data()[i]['total_closing_today']) + parseInt(api.rows({
                                     page: 'current'
-                                }).data().length) - parseInt(i);
-                                console.log('inex==' + cIndex);
-                                if (cIndex == '1') {
-                                    tmpClosing = parseInt(tmpClosing) + parseInt(api.rows({
-                                        page: 'current'
-                                    }).data()[i]['total_closing_today']) + parseInt(api.rows({
-                                        page: 'current'
-                                    }).data()[i]['total_closing_2']) + parseInt(api.rows({
-                                        page: 'current'
-                                    }).data()[i]['total_closing_3']);
-                                    console.log('totall' + api.rows({
-                                        page: 'current'
-                                    }).data()[i]['spv_id']);
-                                    console.log(tmpSpv + '===' + tmpClosing);
-                                    $('.spv_' + tmpSpv).html('C' + tmpClosing);
-                                    tmpClosing = 0;
-                                }
+                                }).data()[i]['total_closing_2']) + parseInt(api.rows({
+                                    page: 'current'
+                                }).data()[i]['total_closing_3']);
+                                console.log('totall' + api.rows({
+                                    page: 'current'
+                                }).data()[i]['spv_id']);
+                                //const element = array[i];
                             }
-                            tmpClosing = parseInt(tmpClosing) + parseInt(api.rows({
-                                page: 'current'
-                            }).data()[i]['total_closing_today']) + parseInt(api.rows({
-                                page: 'current'
-                            }).data()[i]['total_closing_2']) + parseInt(api.rows({
-                                page: 'current'
-                            }).data()[i]['total_closing_3']);
-                            console.log('totall' + api.rows({
-                                page: 'current'
-                            }).data()[i]['spv_id']);
-                            //const element = array[i];
+                            // console.log(api.rows({
+                            //     page: 'current'
+                            // }).data());
                         }
-                        // console.log(api.rows({
-                        //     page: 'current'
-                        // }).data());
                     }
                 },
                 footerCallback: function(row, data, start, end, display) {

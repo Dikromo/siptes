@@ -143,10 +143,12 @@
                                     <th>H-2 Call Out</th>
                                     <th>H-2 Prospek</th>
                                     <th>H-2 closing</th>
+                                    <th>roleuser</th>
                                 </tr>
                             </thead>
                             <tfoot>
                                 <tr>
+                                    <th></th>
                                     <th></th>
                                     <th></th>
                                     <th></th>
@@ -396,6 +398,10 @@
                 name: 'total_closing_3',
                 visible: false,
                 searchable: false
+            }, {
+                data: 'roleuser',
+                name: 'roleuser',
+                visible: false
             }];
             var tables1 = new $('#dataTables').DataTable({
                 autoWidth: false,

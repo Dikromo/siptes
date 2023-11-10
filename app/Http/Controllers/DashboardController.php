@@ -276,6 +276,7 @@ class DashboardController extends Controller
         $data = User::select(
             'users.id',
             'users.name',
+            'roleusers.nama as roleuser',
             DB::raw('IF(parentuser.name is not null, parentuser.id, users.id) as spv_id'),
             DB::raw('IF(parentuser.name is not null, parentuser.name, users.name) as spvname'),
             DB::raw('IF(parentuser.nickname is not null, parentuser.nickname, users.nickname) as spvnickname'),
@@ -318,6 +319,7 @@ class DashboardController extends Controller
             ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'users.parentuser_id')
             ->leftjoin('users as sm', 'sm.id', '=', 'users.sm_id')
+            ->leftjoin('roleusers', 'roleusers.id', '=', 'users.roleuser_id')
             ->where('users.status', '1')
             ->whereDate('distribusis.distribusi_at', '<=', $today)
             ->where(function ($query) {
@@ -343,7 +345,7 @@ class DashboardController extends Controller
             $data = $data->where('users.um_id', auth()->user()->id);
         }
         $data = $data->orderby('users.parentuser_id', 'asc')
-            ->groupBy(DB::raw('1,2,3,4,5,6,7,8'));
+            ->groupBy(DB::raw('1,2,3,4,5,6,7,8,9'));
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->addColumn('today', function ($data) use ($today) {

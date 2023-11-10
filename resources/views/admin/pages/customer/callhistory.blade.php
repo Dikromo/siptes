@@ -523,6 +523,7 @@
                         pageon: pageon,
                     }
                 },
+                lengthMenu: paramLength,
                 columns: paramColumn,
                 columnDefs: [{
                     targets: 0,

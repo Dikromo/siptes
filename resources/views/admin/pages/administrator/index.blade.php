@@ -169,6 +169,45 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <div class="form-group text-center">
+                                    <input type="hidden" id="rbutton" name="rbutton"
+                                        class="@error('rbutton') is-invalid @enderror"
+                                        value="{{ $data == '' ? old('rbutton') : old('rbutton', $data->jenisstatus == '0' ? '' : $data->jenisstatus) }}">
+                                    <a id="rbutton1" class="btn btn-default btn-sm mx-2 m-2"
+                                        {{ $data == '' ? '' : (old('rbutton', $data->jenisstatus) == '1' ? 'style=background-color:#ff2d2e;color:#fff;' : '') }}
+                                        onclick="rbutton('1');">
+                                        DISBURSED
+                                    </a>
+                                    <a id="rbutton2" class="btn btn-default btn-sm mx-2 m-2"
+                                        {{ $data == '' ? '' : (old('rbutton', $data->jenisstatus) == '2' ? 'style=background-color:#ff2d2e;color:#fff;' : '') }}
+                                        onclick="rbutton('2');">
+                                        INPROCESS
+                                    </a>
+                                    <a id="rbutton3" class="btn btn-default btn-sm mx-2 m-2"
+                                        {{ $data == '' ? '' : (old('rbutton', $data->jenisstatus) == '2' ? 'style=background-color:#ff2d2e;color:#fff;' : '') }}
+                                        onclick="rbutton('3');">
+                                        FAILED
+                                    </a>
+                                    <a id="rbutton4" class="btn btn-default btn-sm mx-2 m-2"
+                                        {{ $data == '' ? '' : (old('rbutton', $data->jenisstatus) == '2' ? 'style=background-color:#ff2d2e;color:#fff;' : '') }}
+                                        onclick="rbutton('4');">
+                                        REJECT
+                                    </a>
+                                    <a id="rbutton5" class="btn btn-default btn-sm mx-2 m-2"
+                                        {{ $data == '' ? '' : (old('rbutton', $data->jenisstatus) == '2' ? 'style=background-color:#ff2d2e;color:#fff;' : '') }}
+                                        onclick="rbutton('5');">
+                                        CANCEL
+                                    </a>
+                                    <a id="rbutton6" class="btn btn-default btn-sm mx-2 m-2"
+                                        {{ $data == '' ? '' : (old('rbutton', $data->jenisstatus) == '2' ? 'style=background-color:#ff2d2e;color:#fff;' : '') }}
+                                        onclick="rbutton('6');">
+                                        CANCEL BY CUSTOMER
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                     <div class="card-footer">
 

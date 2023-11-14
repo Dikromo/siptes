@@ -6,6 +6,7 @@ use App\Models\User;
 use App\Models\Produk;
 use App\Models\Distribusi;
 use App\Models\Statuscall;
+use App\Models\Submition;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
@@ -97,8 +98,14 @@ class AdministratorController extends Controller
     }
     public function getCustomer(Request $request)
     {
+        $lastSubmition = DB::table('submitions')
+            ->select('distribusis_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
+            ->groupBy('distribusis_id')
+            ->orderBy('tot', 'asc');
         $data = Distribusi::select(
-            'distribusis.*',
+            'submitions.*',
+            'distribusis.deskripsi',
+            'distribusis.updated_at as distribusis_updated_at',
             'customers.nama as nama',
             'customers.no_telp as no_telp',
             'customers.provider as provider',
@@ -114,6 +121,10 @@ class AdministratorController extends Controller
             'fileexcels.kode as kode',
             DB::raw('timediff(distribusis.updated_at,distribusis.call_time) as selisih')
         )
+            ->leftjoin(DB::raw('(' . $lastSubmition->toSql() . ') as a'), function ($join) {
+                $join->on('distribusis.id', '=', 'a.distribusis_id');
+            })
+            ->leftjoin('submitions', 'submitions.id', '=', 'a.id')
             ->join('users as sales', 'sales.id', '=', 'distribusis.user_id')
             ->leftjoin('users as parentuser', 'parentuser.id', '=', 'sales.parentuser_id')
             ->leftjoin('users as sm', 'sm.id', '=', 'sales.sm_id')
@@ -142,7 +153,8 @@ class AdministratorController extends Controller
         if ($request->produk_id != '') {
             $data = $data->where('distribusis.produk_id', $request->produk_id);
         }
-        $data = $data->whereIn('distribusis.status', [$request->status])
+        $data = $data->whereNull('submitions.id')
+            ->whereIn('distribusis.status', [$request->status])
             ->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
             ->whereDate('distribusis.updated_at', '<=', $request->totanggal)
             ->without("Customer")
@@ -152,13 +164,13 @@ class AdministratorController extends Controller
             ->addIndexColumn()
             ->editColumn('no_telp', '\'{{{substr($no_telp,-4)}}}')
             ->editColumn('namaktp', '{{{$namaktp == null ? strtoupper($nama) : strtoupper($namaktp);}}}')
-            ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($updated_at));}}}')
+            ->editColumn('updated_at', '{{{date("Y-m-d H:i:s",strtotime($distribusis_updated_at));}}}')
             ->editColumn('csalesnama', '{{{$csalesnama == null ? $salesnama : $csalesnama;}}}')
-            ->editColumn('updated_tgl', '{{{date("Y-m-d",strtotime($updated_at));}}}')
+            ->editColumn('updated_tgl', '{{{date("Y-m-d",strtotime($distribusis_updated_at));}}}')
             ->addColumn('action', function ($data) {
                 if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
                     return view('admin.layouts.buttonActiontables')
-                        ->with(['data' => $data, 'links' => 'modalEdit(\'' . encrypt($data->id) . '\')', 'type' => 'onclick']);
+                        ->with(['data' => $data, 'links' => 'modalEdit(\'' . encrypt($data->distribusis_id) . '\')', 'type' => 'onclick']);
                 } else {
                     return '';
                 }
@@ -169,27 +181,40 @@ class AdministratorController extends Controller
     {
         $id = decrypt($request->id);
         $validateData = [];
+        $lastSubmition = DB::table('submitions')
+            ->select('distribusis_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
+            ->groupBy('distribusis_id')
+            ->orderBy('tot', 'asc');
         $data = Distribusi::select(
             'distribusis.id',
             'distribusis.produk_id',
             'distribusis.subproduk_id',
-            'distribusis.statusadmin',
-            'distribusis.remarksadmin',
-            DB::raw('date_format(statusadmin_date, "%Y-%m-%d") as admintgl'),
-            'distribusis.statusbank',
-            'distribusis.remarksbank',
-            DB::raw('date_format(statusbank_date, "%Y-%m-%d") as banktgl'),
-            'distribusis.temp_limit',
-            'distribusis.disburse_limit',
+            'submitions.statusadmin',
+            'submitions.remarksadmin',
+            DB::raw('date_format(submitions.statusadmin_date, "%Y-%m-%d") as admintgl'),
+            'submitions.statusbank',
+            'submitions.remarksbank',
+            DB::raw('date_format(submitions.statusbank_date, "%Y-%m-%d") as banktgl'),
+            'submitions.temp_limit',
+            'submitions.disburse_limit',
         )
-            ->firstWhere('id', $id);
+            ->leftjoin(DB::raw('(' . $lastSubmition->toSql() . ') as a'), function ($join) {
+                $join->on('distribusis.id', '=', 'a.distribusis_id');
+            })
+            ->leftjoin('submitions', 'submitions.id', '=', 'a.id')
+            ->firstWhere('distribusis.id', $id);
         return $data;
     }
     public function statusadminStoremodal(Request $request, Distribusi $distribusi)
     {
         $result = '';
-        $checkdata = ['id' => $distribusi->id];
-
+        $checkdata = [
+            'distribusis_id' => $distribusi->id,
+            'created_id' => auth()->user()->id
+        ];
+        if ($distribusi->id != '') {
+            $validateData['distribusis_id'] = $distribusi->id;
+        }
         if ($request->statusadmin != '') {
             $validateData['statusadmin'] = $request->statusadmin;
         }
@@ -214,8 +239,13 @@ class AdministratorController extends Controller
         if ($request->disburse_limit != '') {
             $validateData['disburse_limit'] = $request->disburse_limit;
         }
+
+        $validateData['created_id'] = auth()->user()->id;
+        $validateData['created_at'] =  now();
+        $validateData['updated_at'] =  now();
         if (isset($distribusi->id)) {
-            Distribusi::updateOrInsert($checkdata, $validateData);
+            Submition::Insert($validateData);
+            //Submition::updateOrInsert($checkdata, $validateData);
             $result = 'Data Berhasil di Update!';
         } else {
             $result = 'Data Berhasil di ditambahkan!';

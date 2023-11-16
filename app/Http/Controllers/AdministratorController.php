@@ -153,7 +153,12 @@ class AdministratorController extends Controller
         if ($request->produk_id != '') {
             $data = $data->where('distribusis.produk_id', $request->produk_id);
         }
-        $data = $data->whereNull('submitions.id')
+        if ($request->decision_status == '') {
+            $data = $data->whereNull('submitions.id');
+        } else {
+            $data = $data->where('submitions.statusbank', $request->decision_status);
+        }
+        $data = $data
             ->whereIn('distribusis.status', [$request->status])
             ->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
             ->whereDate('distribusis.updated_at', '<=', $request->totanggal)

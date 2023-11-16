@@ -433,9 +433,67 @@
         var idcampaign = "<?php echo $get->idcampaign; ?>";
         var searchHistory = "<?php echo $get->search; ?>";
         var pageon = "<?php echo $get->pageon; ?>";
+        var decisionstatus = '';
 
         renderTable(fromTanggal, toTanggal);
 
+        function rbutton(param) {
+            if ($('#produk_id').val() != '' && $('#status').val() != '') {
+                if (param == '1') {
+                    decisionstatus = 'DISBURSED';
+                }
+                if (param == '2') {
+                    decisionstatus = 'INPROCESS';
+                }
+                if (param == '3') {
+                    decisionstatus = 'FAILED';
+                }
+                if (param == '4') {
+                    decisionstatus = 'REJECT';
+                }
+                if (param == '5') {
+                    decisionstatus = 'CANCEL';
+                }
+                if (param == '6') {
+                    decisionstatus = 'CANCEL BY CUSTOMER';
+                }
+                if (decisionstatus == $('#rbutton').val()) {
+                    $('#rbutton1').css('background-color', '#f8f9fa');
+                    $('#rbutton1').css('color', '#444');
+                    $('#rbutton2').css('background-color', '#f8f9fa');
+                    $('#rbutton2').css('color', '#444');
+                    $('#rbutton3').css('background-color', '#f8f9fa');
+                    $('#rbutton3').css('color', '#444');
+                    $('#rbutton4').css('background-color', '#f8f9fa');
+                    $('#rbutton4').css('color', '#444');
+                    $('#rbutton5').css('background-color', '#f8f9fa');
+                    $('#rbutton5').css('color', '#444');
+                    $('#rbutton6').css('background-color', '#f8f9fa');
+                    $('#rbutton6').css('color', '#444');
+                    $('#rbutton').val('');
+                    renderTable($('#fromTanggal').val(), $('#toTanggal').val());
+                } else {
+                    $('#rbutton1').css('background-color', '#f8f9fa');
+                    $('#rbutton1').css('color', '#444');
+                    $('#rbutton2').css('background-color', '#f8f9fa');
+                    $('#rbutton2').css('color', '#444');
+                    $('#rbutton3').css('background-color', '#f8f9fa');
+                    $('#rbutton3').css('color', '#444');
+                    $('#rbutton4').css('background-color', '#f8f9fa');
+                    $('#rbutton4').css('color', '#444');
+                    $('#rbutton5').css('background-color', '#f8f9fa');
+                    $('#rbutton5').css('color', '#444');
+                    $('#rbutton6').css('background-color', '#f8f9fa');
+                    $('#rbutton6').css('color', '#444');
+                    $('#rbutton' + param).css('background-color', '#ff2d2e ');
+                    $('#rbutton' + param).css('color', '#fff');
+                    $('#rbutton').val(decisionstatus);
+                    renderTable($('#fromTanggal').val(), $('#toTanggal').val());
+                }
+            } else {
+                alert("Mohon pilih produk dan status terlebih dahulu!");
+            }
+        }
 
         function modalEdit(param) {
             linkid = '';
@@ -712,6 +770,7 @@
                         user_id: $('#user_id').val(),
                         status: $('#status').val(),
                         produk_id: $('#produk_id').val(),
+                        decision_status: $('#rbutton').val(),
                     }
                 },
 

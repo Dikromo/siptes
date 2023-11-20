@@ -11,7 +11,7 @@
             <div class="col-md-2">
                 <div class="card card-primary card-outline">
                     <div class="card-body">
-                        <div class="row">
+                        {{-- <div class="row">
                             <div class="col-md-12">
                                 <div class="form-group">
                                     <label for="produk_id">Produk</label>
@@ -29,7 +29,7 @@
                                     @enderror
                                 </div>
                             </div>
-                        </div>
+                        </div> --}}
                         <div class="row">
                             <div class="col-md-12">
                                 <?php
@@ -130,7 +130,7 @@
                                     <select name="status"
                                         class="form-control select2 @error('status') is-invalid @enderror  " id="status"
                                         style="width:100%">
-                                        <option value="">-- Pilih --</option>
+                                        {{-- <option value="">-- Pilih --</option> --}}
                                         @foreach ($statusSelect as $item)
                                             <option value="{{ $item->id }}">{{ $item->nama }}</option>
                                         @endforeach

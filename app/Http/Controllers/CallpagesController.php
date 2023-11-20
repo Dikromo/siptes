@@ -240,8 +240,8 @@ class CallpagesController extends Controller
 
         /** Update Call start time */
         if ($distribusi->status == '0') {
-            Distribusi::where('id', $id)
-                ->Update($upData);
+            // Distribusi::where('id', $id)
+            //     ->Update($upData);
         }
         return view('sales.pages.call.detail', [
             'title' => 'Call Page',
@@ -254,6 +254,28 @@ class CallpagesController extends Controller
             "statusSelect2" => $statusSelect2,
             "statusSelect3" => $statusSelect3
         ]);
+    }
+    public function startCall(Request $request)
+    {
+        $upData = ['call_time' => now()];
+        $distribusi = Distribusi::select(
+            'distribusis.*',
+            DB::raw('IF(distribusis.namaktp is not null, distribusis.namaktp, customers.nama) as disnama'),
+            DB::raw('IF(distribusis.perusahaan is not null, distribusis.perusahaan, customers.perusahaan) as disperusahaan'),
+            'customers.nama',
+            'customers.no_telp',
+            'customers.perusahaan',
+            'customers.kota',
+            'statuscalls.jenis as jenisstatus',
+            'statuscalls.parentstatus_id',
+        )
+            ->join('customers', 'customers.id', '=', 'distribusis.customer_id')
+            ->leftjoin('statuscalls', 'statuscalls.id', '=', 'distribusis.status')
+            ->firstWhere('distribusis.id', $request->id);
+        if ($distribusi->status == '0') {
+            Distribusi::where('id', $request->id)
+                ->Update($upData);
+        }
     }
     public function salesCallback(Request $request)
     {
@@ -440,6 +462,14 @@ class CallpagesController extends Controller
                 unset($validateData['status2']);
                 $validateData['status'] = $request->status2;
             }
+        }
+        $distribusi = Distribusi::select(
+            'distribusis.call_time',
+        )
+            ->firstWhere('distribusis.id', $id);
+
+        if ($distribusi->call_time == null) {
+            $validateData['call_time'] =  now();
         }
         $validateData['d_parentuser_id'] = (auth()->user()->roleuser_id == '2') ? auth()->user()->id : auth()->user()->parentuser_id;
         $validateData['d_sm_id'] =  auth()->user()->sm_id;

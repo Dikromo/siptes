@@ -11,8 +11,8 @@
                                 <img class="img-fluid" src="{{ asset('assets/img/logo.png') }}" alt="Photo">
                             </div>
                             <br>
-                            <a href="tel:{{ $data->no_telp }}" onclick="testCall()" class="btn btn-info btn-lg mx-2"> <i
-                                    class="fa fa-mobile-alt"></i>
+                            <a onclick="testCall('{{ $data->no_telp }}','{{ $data->id }}')"
+                                class="btn btn-info btn-lg mx-2"> <i class="fa fa-mobile-alt"></i>
                                 Call</a>
                             <a href="https://wa.me/+62{!! substr(strip_tags($data->no_telp), 1, 20) !!}" class="btn btn-success btn-lg mx-2"> <i
                                     class="fab fa-whatsapp" aria-hidden="true"></i>
@@ -697,12 +697,24 @@
                 }
             });
         }
+
+        function testCall(param, paramid) {
+            $.ajax({
+                type: 'PUT',
+                url: "/call/startcall",
+                data: {
+                    _token: '{{ csrf_token() }}',
+                    id: paramid,
+                },
+                dataType: "json",
+                encode: true,
+            }).done(function(data) {
+                window.open('tel:' + param);
+            });
+            //tesCall = parseInt(tesCall) + 1;
+        }
         if (cabang_id == '4') {
             $('[data-mask]').inputmask();
-
-            function testCall() {
-                tesCall = parseInt(tesCall) + 1;
-            }
             $("#status").change(function() {
                 if (this.value == 'Ya') {
                     $('#status1').val('');

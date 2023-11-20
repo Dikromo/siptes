@@ -87,6 +87,7 @@ Route::get('/call', [CallpagesController::class, 'salesCallpages'])->middleware(
 Route::get('/call/detail/{id}', [CallpagesController::class, 'salesCallshow'])->middleware('auth');
 Route::put('/call/detail/{id}', [CallpagesController::class, 'salescallStore'])->middleware('auth');
 Route::post('/call/ajax', [CallpagesController::class, 'salesCallback'])->middleware('auth');
+Route::put('/call/startcall', [CallpagesController::class, 'startCall'])->middleware('auth');
 
 
 Route::get('/jmosip', [JmoController::class, 'index'])->middleware('auth');

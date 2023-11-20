@@ -104,6 +104,7 @@ class AdministratorController extends Controller
             ->orderBy('tot', 'asc');
         $data = Distribusi::select(
             'submitions.*',
+            'distribusis.id as distribusi_id',
             'distribusis.deskripsi',
             'distribusis.updated_at as distribusis_updated_at',
             'customers.nama as nama',
@@ -175,7 +176,7 @@ class AdministratorController extends Controller
             ->addColumn('action', function ($data) {
                 if (auth()->user()->roleuser_id == '1' || auth()->user()->roleuser_id == '2' || auth()->user()->roleuser_id == '4' || auth()->user()->roleuser_id == '5' || auth()->user()->roleuser_id == '6') {
                     return view('admin.layouts.buttonActiontables')
-                        ->with(['data' => $data, 'links' => 'modalEdit(\'' . encrypt($data->distribusis_id) . '\')', 'type' => 'onclick']);
+                        ->with(['data' => $data, 'links' => 'modalEdit(\'' . encrypt($data->distribusi_id) . '\')', 'type' => 'onclick']);
                 } else {
                     return '';
                 }
@@ -184,7 +185,7 @@ class AdministratorController extends Controller
     }
     public function statusadminEdit(Request $request)
     {
-        $id = decrypt($request->id);
+        $ids = decrypt($request->id);
         $validateData = [];
         $lastSubmition = DB::table('submitions')
             ->select('distribusis_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
@@ -207,7 +208,7 @@ class AdministratorController extends Controller
                 $join->on('distribusis.id', '=', 'a.distribusis_id');
             })
             ->leftjoin('submitions', 'submitions.id', '=', 'a.id')
-            ->firstWhere('distribusis.id', $id);
+            ->firstWhere('distribusis.id', $ids);
         return $data;
     }
     public function statusadminStoremodal(Request $request, Distribusi $distribusi)

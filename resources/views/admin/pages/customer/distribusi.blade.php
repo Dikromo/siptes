@@ -302,7 +302,7 @@
                             <div class="row">
                                 <!-- /.col -->
                                 <div class="col-12">
-                                    <button type="submit" class="btn btn-primary btn-block">Simpan</button>
+                                    <button type="submit" class="btn btn-primary btn-block btnsubmitku">Simpan</button>
                                 </div>
                                 <!-- /.col -->
                             </div>
@@ -400,7 +400,7 @@
                 $('.totSales').html('Total Sales di pilih :' + parseInt($('#user_id').val().length));
             }
         });
-        $('#formDistribusi').submit(function() {
+        $('#formDistribusi').submit(function(e) {
             let prosesData = '';
             switch ($('#tipe').val()) {
                 case 'DISTRIBUSI':
@@ -430,22 +430,26 @@
                 if ($('#tipe').val() == 'DISTRIBUSI' || $('#tipe').val() == 'RELOAD') {
                     var totLimit = parseInt($('#user_id').val().length) * parseInt($('#total').val())
                     if (fromTabel != 0 && $('#total').val() != '0' && totLimit <= fromTabel) {
+                        $('.btnsubmitku').attr('disabled', 'true');
                         $('#modal-overlay').modal({
                             backdrop: 'static',
                             keyboard: false
                         });
                         return true;
+                        e.preventDefault();
                     }
                 }
 
                 if ($('#tipe').val() == 'TARIK DATA' || $('#tipe').val() == 'TARIK DATA BY ADMIN' || $('#tipe')
                     .val() == 'TARIK DATA ALL CAMPAIGN') {
                     if (toTabel != 0 && $('#total').val() != '0' && $('#total').val() <= toTabel) {
+                        $('.btnsubmitku').attr('disabled', 'true');
                         $('#modal-overlay').modal({
                             backdrop: 'static',
                             keyboard: false
                         });
                         return true;
+                        e.preventDefault();
                     }
                 }
                 alert('Tidak dapat melakukan proses!');

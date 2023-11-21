@@ -17,9 +17,9 @@ class AdministratorController extends Controller
     public function viewCalltracking(Request $request)
     {
         //$userSelect = User::where('status', '1');
-        $salesSelect =  User::where('status', '1')->where('roleuser_id', '3');
-        $leaderSelect =  User::where('status', '1')->where('roleuser_id', '2');
-        $managerSelect =  User::where('status', '1')->where('roleuser_id', '5');
+        $salesSelect =  User::where('roleuser_id', '3');
+        $leaderSelect =  User::where('roleuser_id', '2');
+        $managerSelect =  User::where('roleuser_id', '5');
         // if (auth()->user()->roleuser_id == '2') {
         //     $userSelect = $userSelect->where('parentuser_id', auth()->user()->id)
         //         ->where(function ($query) {

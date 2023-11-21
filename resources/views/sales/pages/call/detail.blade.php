@@ -710,7 +710,7 @@
                 dataType: "json",
                 encode: true,
             }).done(function(data) {
-                window.open('tel:' + param);
+                //window.open('tel:' + param);
             });
             //tesCall = parseInt(tesCall) + 1;
         }

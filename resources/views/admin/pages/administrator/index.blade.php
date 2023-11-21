@@ -241,6 +241,7 @@
                             <thead>
                                 <tr>
                                     <th>NO</th>
+                                    <th></th>
                                     <th>Sales</th>
                                     <th>Nama</th>
                                     <th>4 Digit No Telp</th>
@@ -263,7 +264,6 @@
                                     <th>SM</th>
                                     <th>Site</th>
                                     {{-- <th>Reason</th> --}}
-                                    <th></th>
                                 </tr>
                             </thead>
                         </table>
@@ -667,6 +667,11 @@
                 orderable: false,
                 searchable: false
             }, {
+                data: 'action',
+                name: 'action',
+                searchable: false,
+                orderable: false
+            }, {
                 data: 'csalesnama',
                 name: 'csalesnama',
                 searchable: false
@@ -739,11 +744,6 @@
                 data: 'cabangnama',
                 name: 'cabangs.nama as cabangnama',
                 visible: false
-            }, {
-                data: 'action',
-                name: 'action',
-                searchable: false,
-                orderable: false
             }];
             paramLength = [
                 [10, 50, 100, 200, 500, -1],

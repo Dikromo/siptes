@@ -660,7 +660,7 @@
         }
 
         function renderTable(param1, param2) {
-            sortPos = 13;
+            sortPos = 14;
             paramColumn = [{
                 data: 'DT_RowIndex',
                 name: 'DT_RowIndex',
@@ -715,7 +715,7 @@
                 name: 'deskripsi'
             }, {
                 data: 'updated_at',
-                name: 'updated_at'
+                name: 'distribusis.updated_at'
             }, {
                 data: 'statusbank',
                 name: 'statusbank'

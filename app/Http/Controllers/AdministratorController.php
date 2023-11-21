@@ -163,6 +163,7 @@ class AdministratorController extends Controller
             ->whereIn('distribusis.status', [$request->status])
             ->whereDate('distribusis.updated_at', '>=', $request->fromtanggal)
             ->whereDate('distribusis.updated_at', '<=', $request->totanggal)
+            //->orderBy('distribusis.updated_at', 'desc')
             ->without("Customer")
             ->without("User");
         //echo $data;

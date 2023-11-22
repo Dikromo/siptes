@@ -276,6 +276,7 @@ class CallpagesController extends Controller
             Distribusi::where('id', $request->id)
                 ->Update($upData);
         }
+        return json_encode('oke');
     }
     public function salesCallback(Request $request)
     {

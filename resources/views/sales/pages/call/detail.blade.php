@@ -11,8 +11,7 @@
                                 <img class="img-fluid" src="{{ asset('assets/img/logo.png') }}" alt="Photo">
                             </div>
                             <br>
-                            <a href="tel:{{ $data->no_telp }}"
-                                onclick="testCall('{{ $data->no_telp }}','{{ $data->id }}')"
+                            <a onclick="testCall('{{ $data->no_telp }}','{{ $data->id }}')"
                                 class="btn btn-info btn-lg mx-2"> <i class="fa fa-mobile-alt"></i>
                                 Call</a>
                             <a href="https://wa.me/+62{!! substr(strip_tags($data->no_telp), 1, 20) !!}" class="btn btn-success btn-lg mx-2"> <i
@@ -710,7 +709,12 @@
                 dataType: "json",
                 encode: true,
             }).done(function(data) {
-                //window.open('tel:' + param);
+                if (data == 'oke') {
+                    //console.log('aa');
+                    window.open('tel:' + param, "_blank");
+                } else {
+                    alert('Mohon lapor team IT!');
+                }
             });
             //tesCall = parseInt(tesCall) + 1;
         }

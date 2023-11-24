@@ -65,6 +65,18 @@
                                 </thead>
                                 <tbody>
                                 </tbody>
+                                <tfoot>
+                                    <tr>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                        <th></th>
+                                    </tr>
+                                </tfoot>
                             </table>
                         </div>
                     </div>
@@ -77,7 +89,7 @@
             <div class="col-lg-2">
                 <div class="card card-primary card-outline">
                     {{-- <form action="/customer/distribusi/proses" id="formDistribusi" method="POST"> --}}
-                    <form action="#" id="formDistribusi" method="POST">
+                    <form action="/customer/distribusi/prosesnew" id="formDistribusi" method="POST">
                         @csrf
                         <div class="card-header">
                             <h3 class="card-title">Aksi {{ $title }}</h3>
@@ -90,6 +102,12 @@
                                 <input type="hidden" id="produk_id" name="produk_id"
                                     class="form-control @error('produk_id') is-invalid @enderror"
                                     value="{{ $data == '' ? old('produk_id', auth()->user()->produk_id) : old('produk_id', $data->produk_id) }}">
+                                <input type="hidden" id="arrayKode" name="arrayKode"
+                                    class="form-control @error('arrayKode') is-invalid @enderror"
+                                    value="{{ old('arrayKode') == '' ? '' : old('arrayKode') }}">
+                                <input type="hidden" id="gTotal" name="gTotal"
+                                    class="form-control @error('gTotal') is-invalid @enderror"
+                                    value="{{ old('gTotal') == '' ? '' : old('gTotal') }}">
                             @endif
                             @if (auth()->user()->roleuser_id == '1')
                                 <div class="form-group">
@@ -250,7 +268,8 @@
                             </div>
                             <div class="form-group">
                                 <label for="rbox_filter">Filter Data By</label><br>
-                                <input type="radio" name="rbox_filter" class="checkbox" value="sm"> SALES MANAGER<br>
+                                <input type="radio" name="rbox_filter" class="checkbox" value="sm"> SALES
+                                MANAGER<br>
                                 <input type="radio" name="rbox_filter" class="checkbox" value="spv"> SUPERVISOR<br>
                                 <input type="radio" name="rbox_filter" class="checkbox" value="tm">
                                 TELEMARKETING<br>
@@ -379,6 +398,8 @@
         var totalGroupfile = '{{ count($groupfileexcelsdata) }}';
         var fromTabel = 0;
         var toTabel = 0;
+        var arrayKode = [];
+        var gTotal = 0;
         var rolecek = '{{ auth()->user()->roleuser_id }}';
         // if (totalGroupfile > '0') {
         //     if ($("#group_fileexcels_id").val() != '') {
@@ -455,11 +476,12 @@
                 if ($('#tipe').val() == 'TARIK DATA' || $('#tipe').val() == 'TARIK DATA BY ADMIN' || $('#tipe')
                     .val() == 'TARIK DATA ALL CAMPAIGN') {
                     if (toTabel != 0 && $('#total').val() != '0' && $('#total').val() <= toTabel) {
-                        $('#modal-overlay').modal({
-                            backdrop: 'static',
-                            keyboard: false
-                        });
-                        return true;
+                        // $('#modal-overlay').modal({
+                        //     backdrop: 'static',
+                        //     keyboard: false
+                        // });
+                        alert('UNDERMAINTENANCE');
+                        return false;
                     }
                 }
                 alert('Tidak dapat melakukan proses!');
@@ -662,9 +684,33 @@
                 autoWidth: false,
                 bDestroy: true,
                 initComplete: function(settings, json) {
-                    fromTabel = this.api().page.info().recordsTotal;
-
-                    console.log(fromTabel);
+                    let api = this.api();
+                    arrayKode = [];
+                    gTotal = 0;
+                    for (let i = 0; i < api.rows({
+                            page: 'current'
+                        }).data().length; i++) {
+                        idKode = api.rows({
+                            page: 'current'
+                        }).data()[i]['id'];
+                        namaKode = api.rows({
+                            page: 'current'
+                        }).data()[i]['kode'];
+                        kTotaldata = api.rows({
+                            page: 'current'
+                        }).data()[i]['total_data'];
+                        arrayKode.push({
+                            id: idKode,
+                            kode: namaKode,
+                            limit: kTotaldata,
+                        });
+                        gTotal = gTotal + kTotaldata;
+                    }
+                    $('#arrayKode').val(JSON.stringify(arrayKode));
+                    $('#gTotal').val(gTotal);
+                    console.log(arrayKode);
+                    api.column(1).footer().innerHTML = 'TOTAL DATA READY : ' + gTotal;
+                    fromTabel = gTotal;
                 },
                 ajax: {
                     type: 'POST',

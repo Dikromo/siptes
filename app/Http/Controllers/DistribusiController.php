@@ -149,6 +149,7 @@ class DistribusiController extends Controller
         }
 
         $data = Customer::select(
+            'fileexcels.id',
             'fileexcels.kode',
             DB::raw('COUNT(customers.id) AS total_data'),
             DB::raw('COUNT(IF(customers.provider = "SIMPATI", 1, null)) AS total_simpati'),
@@ -262,11 +263,520 @@ class DistribusiController extends Controller
                 //->whereIn('b.status', $defaultreload);
             }
         }
-        $data = $data->groupBy(DB::raw('1'));
+        $data = $data->groupBy(DB::raw('1,2'));
 
         return DataTables::of($data->get())
             ->addIndexColumn()
             ->make(true);
+    }
+    public function customersDistribusiproses_new(Request $request)
+    {
+        // // //dd(json_decode($request->arrayKode));
+        // $arrayKode = json_decode($request->arrayKode);
+        // echo $arrayKode['1']->id;
+        // // foreach (json_decode($request->arrayKode) as $item) {
+        // //     echo $item->id . '========' . $item->limit;
+        // // };
+        // exit;
+        $produk_id = auth()->user()->roleuser_id == '2' ? auth()->user()->produk_id : $request->produk_id;
+        $tanggal = date('Y-m-d');
+        $arrayKode = json_decode($request->arrayKode);
+        $parammsg = '';
+        $msg = '';
+        $msglog = '';
+        $msglog2 = '';
+        $getUser = '';
+        $data = '';
+        $dataExec = '';
+
+        if ($request->fileexcel_id != 'today') {
+            if ($request->tipe == 'RELOAD') {
+                $defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
+                // $defaultreload = ['3', '11', '12', '13', '14', '16', '17', '18', '19', '25', '26', '27', '28', '35', '37'];
+
+                $defaultreload = [];
+                foreach ($request->fileexcel_id as $rfileexcel) {
+                    $setupReloaddata = Setupreload::where('fileexcel_id', $rfileexcel)->where('status', '1');
+                    if ($setupReloaddata->count() > 0) {
+                        foreach ($setupReloaddata->get() as $item) {
+                            # code...
+                            $defaultreload[$rfileexcel][] = $item->statuscall_id;
+                        }
+                    } else {
+                        $defaultreload[$rfileexcel] = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
+                    }
+                }
+                $lastDistribusi = DB::table('distribusis')
+                    ->select('customer_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
+                    ->where('produk_id', $produk_id)
+                    ->groupBy('customer_id')
+                    ->orderBy('tot', 'asc');
+            } else {
+                /// DISTRIBUSI TIPE
+            }
+        } else {
+            //Kode Today Proses
+        }
+        foreach ($request->user_id as $user_id) {
+
+            $msglog = '';
+            $msglog2 = '';
+            $data = Customer::select(
+                'customers.id as customer_id',
+                DB::raw('CONCAT("' . $user_id . '") as user_id'),
+                DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
+                DB::raw('CONCAT("1") as bank_id'),
+                DB::raw('CONCAT("0") as status'),
+                DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
+                'customers.fileexcel_id',
+            )
+                ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id');
+            if ($request->tipe == 'RELOAD') {
+                $parammsg = 'Reload';
+                $data = $data->joinSub($lastDistribusi, 'a', function ($join) {
+                    $join->on('customers.id', '=', 'a.customer_id');
+                })
+                    // $data =   $data->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                    //     $join->on('customers.id', '=', 'a.customer_id');
+                    // })
+                    ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
+                    ->leftjoin('users', 'users.id', '=', 'b.user_id');
+            }
+            if ($request->tipe <> 'RELOAD') {
+                if ($request->provider == 'NON-SIMPATI') {
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                        ->where('customers.provider', '<>', 'Tidak Ditemukan');
+                } else if ($request->provider == 'ALL-PROVIDER') {
+                    $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
+                } else {
+                    $data =   $data->where('provider', $request->provider);
+                }
+            }
+            if (isset($request->fileexcel_id) && ($request->tipe <> 'RELOAD')) {
+                $data =   $data->whereIn('customers.fileexcel_id', $request->fileexcel_id);
+            }
+            if ($request->tipe == 'DISTRIBUSI') {
+                $parammsg = 'Mendistribusi';
+                $data = $data->inRandomOrder()
+                    ->leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
+                        $join->on('customers.id', '=', 'distribusis.customer_id')
+                            ->where(function ($query)  use ($produk_id, $tanggal) {
+                                $query->where('distribusis.produk_id', '=', $produk_id)
+                                    ->orwhereDate('distribusis.distribusi_at', $tanggal);
+                            });
+                    })->where('distribusis.produk_id', null);
+            }
+            if ($request->tipe == 'RELOAD') {
+                //dd($defaultreload);
+                $i = 0;
+                foreach ($request->fileexcel_id as $rfileexcel) {
+                    if ($i == 0) {
+                        $data = $data->where(function ($query)  use ($defaultreload, $rfileexcel, $request, $tanggal, $produk_id) {
+                            $query
+                                ->whereDate('b.distribusi_at', '<>', $tanggal)
+                                ->where('b.produk_id', $produk_id)
+                                ->whereIn('b.status', $defaultreload[$rfileexcel])
+                                ->where('customers.fileexcel_id', $rfileexcel);
+                            if ($request->provider == 'NON-SIMPATI') {
+                                $query =   $query->where('customers.provider', '<>', 'SIMPATI')
+                                    ->where('customers.provider', '<>', 'Tidak Ditemukan');
+                            } else if ($request->provider == 'ALL-PROVIDER') {
+                                $query =   $query->where('customers.provider', '<>', 'Tidak Ditemukan');
+                            } else {
+                                $query =   $query->where('provider', $request->provider);
+                            }
+                            if ($request->rbox_filter == 'sm') {
+                                if (isset($request->user_id)) {
+                                    $datauser = User::select(DB::raw('IF((users.sm_id is not null AND users.sm_id <> "0"), users.sm_id, users.id) as sm_id'))->whereIn('id', $request->user_id)->groupBy(DB::raw('1'))->get();
+                                    $query =   $query->whereNotIn('users.sm_id', $datauser);
+                                }
+                            } elseif ($request->rbox_filter == 'spv') {
+                                if (isset($request->user_id)) {
+                                    $datauser = User::select(DB::raw('IF((users.parentuser_id is not null AND users.parentuser_id <> "0"), users.parentuser_id, users.id) as sm_id'))->whereIn('id', $request->user_id)->groupBy(DB::raw('1'))->get();
+                                    $query =   $query->whereNotIn('users.parentuser_id', $datauser);
+                                }
+                            } else {
+                                if (isset($request->user_id)) {
+                                    $query =   $query->whereNotIn('users.id', $request->user_id);
+                                }
+                            }
+                        });
+                    } else {
+                        $data = $data->orWhere(function ($query)  use ($defaultreload, $rfileexcel, $request, $tanggal, $produk_id) {
+                            $query->whereDate('b.distribusi_at', '<>', $tanggal)
+                                ->where('b.produk_id', $produk_id)
+                                ->whereIn('b.status', $defaultreload[$rfileexcel])
+                                ->where('customers.fileexcel_id', $rfileexcel);
+                            if ($request->provider == 'NON-SIMPATI') {
+                                $query =   $query->where('customers.provider', '<>', 'SIMPATI')
+                                    ->where('customers.provider', '<>', 'Tidak Ditemukan');
+                            } else if ($request->provider == 'ALL-PROVIDER') {
+                                $query =   $query->where('customers.provider', '<>', 'Tidak Ditemukan');
+                            } else {
+                                $query =   $query->where('provider', $request->provider);
+                            }
+                            if ($request->rbox_filter == 'sm') {
+                                if (isset($request->user_id)) {
+                                    $datauser = User::select(DB::raw('IF((users.sm_id is not null AND users.sm_id <> "0"), users.sm_id, users.id) as sm_id'))->whereIn('id', $request->user_id)->groupBy(DB::raw('1'))->get();
+                                    $query =   $query->whereNotIn('users.sm_id', $datauser);
+                                }
+                            } elseif ($request->rbox_filter == 'spv') {
+                                if (isset($request->user_id)) {
+                                    $datauser = User::select(DB::raw('IF((users.parentuser_id is not null AND users.parentuser_id <> "0"), users.parentuser_id, users.id) as sm_id'))->whereIn('id', $request->user_id)->groupBy(DB::raw('1'))->get();
+                                    $query =   $query->whereNotIn('users.parentuser_id', $datauser);
+                                }
+                            } else {
+                                if (isset($request->user_id)) {
+                                    $query =   $query->whereNotIn('users.id', $request->user_id);
+                                }
+                            }
+                        });
+                    }
+                    $i++;
+                    //->whereIn('b.status', $defaultreload);
+                }
+            }
+            $dataExec = DB::table($data, 'c')
+                ->select(
+                    'c.customer_id',
+                    'c.user_id',
+                    'c.produk_id',
+                    'c.bank_id',
+                    'c.status',
+                    'c.distribusi_at',
+                    'c.fileexcel_id',
+                )
+                ->addSelect(DB::raw('row_number() over(partition by `c`.`fileexcel_id` order by `c`.`customer_id`) as rn'));
+            $dataExec2 = DB::table($dataExec, 'd')
+                ->select(
+                    'd.customer_id',
+                    'd.user_id',
+                    'd.produk_id',
+                    'd.bank_id',
+                    'd.status',
+                    'd.distribusi_at',
+                );
+            $z = 0;
+            $msglog2 = ' campaign ';
+            foreach ($arrayKode as $item) {
+                if ($z == 0) {
+                    $msglog2 .= $item->kode;
+                    $dataExec2 = $dataExec2->where(function ($query)  use ($item, $request) {
+                        $totData = round(($item->limit / $request->gTotal) * $request->total);
+                        $query->where('d.fileexcel_id', '=', $item->id)
+                            ->where('rn', '>=', '1')
+                            ->where('rn', '<=', $totData);
+                        //dd($totData);
+                    });
+                } else {
+                    $msglog2 .= ',' . $item->kode;
+                    $dataExec2 = $dataExec2->orWhere(function ($query)  use ($item, $request) {
+                        $totData = round(($item->limit / $request->gTotal) * $request->total);
+                        $query->where('d.fileexcel_id', '=', $item->id)
+                            ->where('rn', '>=', '1')
+                            ->where('rn', '<=', $totData);
+                        //dd($totData);
+                    });
+                }
+                $z++;
+            }
+            $dataExec2 = $dataExec2->get();
+            $insertData = [];
+            foreach ($dataExec2 as $item) {
+                # code...
+                $insertData[] = [
+                    'customer_id' => $item->customer_id,
+                    'user_id' => $item->user_id,
+                    'produk_id' => $item->produk_id,
+                    'bank_id' => $item->bank_id,
+                    'status' => $item->status,
+                    'distribusi_at' => $item->distribusi_at,
+                ];
+                DB::table('customers')
+                    ->where('id', $item->customer_id)
+                    ->update(['status' => 1, 'updated_at' => now()]);
+            }
+            //$distribusiInsert = $dataExec2->toArray();
+            // dd($insertData);
+            // exit;
+            Distribusi::insert($insertData);
+            $getUser = User::firstWhere('id', $user_id)->name;
+            $msg .= '
+        Sukses mendistribusi data kepada <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>
+        ';
+            $msglog = 'Sukses ' . $parammsg . ' data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
+
+            $logInsert = [
+                'tipe' => $request->tipe,
+                'kode' => $msglog2,
+                'provider' => $request->provider,
+                'nama_sales' => $getUser,
+                'deskripsi' => $msglog,
+                'total' => $request->total,
+                'user_id' => auth()->user()->id,
+                'created_at' => now(),
+            ];
+            Log_distribusi::create($logInsert);
+        }
+        return back()->with(['msg' => $msg]);
+    }
+    public function customersDistribusiproses_new1(Request $request)
+    {
+        // // //dd(json_decode($request->arrayKode));
+        // $arrayKode = json_decode($request->arrayKode);
+        // echo $arrayKode['1']->id;
+        // // foreach (json_decode($request->arrayKode) as $item) {
+        // //     echo $item->id . '========' . $item->limit;
+        // // };
+        // exit;
+        $produk_id = auth()->user()->roleuser_id == '2' ? auth()->user()->produk_id : $request->produk_id;
+        $tanggal = date('Y-m-d');
+        $arrayKode = json_decode($request->arrayKode);
+        $parammsg = '';
+        $msg = '';
+        $msglog = '';
+        $msglog2 = '';
+        $getUser = '';
+        $data = '';
+        $dataExec = '';
+        $gTotal = $request->gTotal;
+
+        if ($request->fileexcel_id != 'today') {
+            if ($request->tipe == 'RELOAD') {
+                $defaultreload = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
+                // $defaultreload = ['3', '11', '12', '13', '14', '16', '17', '18', '19', '25', '26', '27', '28', '35', '37'];
+
+                $defaultreload = [];
+                foreach ($request->fileexcel_id as $rfileexcel) {
+                    $setupReloaddata = Setupreload::where('fileexcel_id', $rfileexcel)->where('status', '1');
+                    if ($setupReloaddata->count() > 0) {
+                        foreach ($setupReloaddata->get() as $item) {
+                            # code...
+                            $defaultreload[$rfileexcel][] = $item->statuscall_id;
+                        }
+                    } else {
+                        $defaultreload[$rfileexcel] = ['3', '12', '13', '14', '16', '18', '19', '26', '27', '28', '37'];
+                    }
+                }
+                $lastDistribusi = DB::table('distribusis')
+                    ->select('customer_id', DB::raw('MAX(id) as id'), DB::raw('COUNT(id) AS tot'))
+                    ->where('produk_id', $produk_id)
+                    ->groupBy('customer_id')
+                    ->orderBy('tot', 'asc');
+            } else {
+                /// DISTRIBUSI TIPE
+            }
+        } else {
+            //Kode Today Proses
+        }
+        foreach ($request->user_id as $user_id) {
+
+            $msglog = '';
+            $msglog2 = '';
+            $data = Customer::select(
+                'customers.id as customer_id',
+                DB::raw('CONCAT("' . $user_id . '") as user_id'),
+                DB::raw('CONCAT("' . $produk_id . '") as produk_id'),
+                DB::raw('CONCAT("1") as bank_id'),
+                DB::raw('CONCAT("0") as status'),
+                DB::raw('CURRENT_TIMESTAMP() as distribusi_at'),
+                'customers.fileexcel_id',
+            )
+                ->join('fileexcels', 'fileexcels.id', '=', 'customers.fileexcel_id');
+            if ($request->tipe == 'RELOAD') {
+                $parammsg = 'Reload';
+                $data = $data->joinSub($lastDistribusi, 'a', function ($join) {
+                    $join->on('customers.id', '=', 'a.customer_id');
+                })
+                    // $data =   $data->leftjoin(DB::raw('(' . $lastDistribusi->toSql() . ') as a'), function ($join) {
+                    //     $join->on('customers.id', '=', 'a.customer_id');
+                    // })
+                    ->leftjoin('distribusis as b', 'b.id', '=', 'a.id')
+                    ->leftjoin('users', 'users.id', '=', 'b.user_id');
+            }
+            if ($request->tipe <> 'RELOAD') {
+                if ($request->provider == 'NON-SIMPATI') {
+                    $data =   $data->where('customers.provider', '<>', 'SIMPATI')
+                        ->where('customers.provider', '<>', 'Tidak Ditemukan');
+                } else if ($request->provider == 'ALL-PROVIDER') {
+                    $data =   $data->where('customers.provider', '<>', 'Tidak Ditemukan');
+                } else {
+                    $data =   $data->where('provider', $request->provider);
+                }
+            }
+            if (isset($request->fileexcel_id) && ($request->tipe <> 'RELOAD')) {
+                $data =   $data->whereIn('customers.fileexcel_id', $request->fileexcel_id);
+            }
+            if ($request->tipe == 'DISTRIBUSI') {
+                $parammsg = 'Mendistribusi';
+                $data = $data->inRandomOrder()
+                    ->leftjoin('distribusis', function ($join) use ($produk_id, $tanggal) {
+                        $join->on('customers.id', '=', 'distribusis.customer_id')
+                            ->where(function ($query)  use ($produk_id, $tanggal) {
+                                $query->where('distribusis.produk_id', '=', $produk_id)
+                                    ->orwhereDate('distribusis.distribusi_at', $tanggal);
+                            });
+                    })->where('distribusis.produk_id', null);
+            }
+            if ($request->tipe == 'RELOAD') {
+                //dd($defaultreload);
+                $i = 0;
+                foreach ($request->fileexcel_id as $rfileexcel) {
+                    if ($i == 0) {
+                        $data = $data->where(function ($query)  use ($defaultreload, $rfileexcel, $request, $tanggal, $produk_id) {
+                            $query
+                                ->whereDate('b.distribusi_at', '<>', $tanggal)
+                                ->where('b.produk_id', $produk_id)
+                                ->whereIn('b.status', $defaultreload[$rfileexcel])
+                                ->where('customers.fileexcel_id', $rfileexcel);
+                            if ($request->provider == 'NON-SIMPATI') {
+                                $query =   $query->where('customers.provider', '<>', 'SIMPATI')
+                                    ->where('customers.provider', '<>', 'Tidak Ditemukan');
+                            } else if ($request->provider == 'ALL-PROVIDER') {
+                                $query =   $query->where('customers.provider', '<>', 'Tidak Ditemukan');
+                            } else {
+                                $query =   $query->where('provider', $request->provider);
+                            }
+                            if ($request->rbox_filter == 'sm') {
+                                if (isset($request->user_id)) {
+                                    $datauser = User::select(DB::raw('IF((users.sm_id is not null AND users.sm_id <> "0"), users.sm_id, users.id) as sm_id'))->whereIn('id', $request->user_id)->groupBy(DB::raw('1'))->get();
+                                    $query =   $query->whereNotIn('users.sm_id', $datauser);
+                                }
+                            } elseif ($request->rbox_filter == 'spv') {
+                                if (isset($request->user_id)) {
+                                    $datauser = User::select(DB::raw('IF((users.parentuser_id is not null AND users.parentuser_id <> "0"), users.parentuser_id, users.id) as sm_id'))->whereIn('id', $request->user_id)->groupBy(DB::raw('1'))->get();
+                                    $query =   $query->whereNotIn('users.parentuser_id', $datauser);
+                                }
+                            } else {
+                                if (isset($request->user_id)) {
+                                    $query =   $query->whereNotIn('users.id', $request->user_id);
+                                }
+                            }
+                        });
+                    } else {
+                        $data = $data->orWhere(function ($query)  use ($defaultreload, $rfileexcel, $request, $tanggal, $produk_id) {
+                            $query->whereDate('b.distribusi_at', '<>', $tanggal)
+                                ->where('b.produk_id', $produk_id)
+                                ->whereIn('b.status', $defaultreload[$rfileexcel])
+                                ->where('customers.fileexcel_id', $rfileexcel);
+                            if ($request->provider == 'NON-SIMPATI') {
+                                $query =   $query->where('customers.provider', '<>', 'SIMPATI')
+                                    ->where('customers.provider', '<>', 'Tidak Ditemukan');
+                            } else if ($request->provider == 'ALL-PROVIDER') {
+                                $query =   $query->where('customers.provider', '<>', 'Tidak Ditemukan');
+                            } else {
+                                $query =   $query->where('provider', $request->provider);
+                            }
+                            if ($request->rbox_filter == 'sm') {
+                                if (isset($request->user_id)) {
+                                    $datauser = User::select(DB::raw('IF((users.sm_id is not null AND users.sm_id <> "0"), users.sm_id, users.id) as sm_id'))->whereIn('id', $request->user_id)->groupBy(DB::raw('1'))->get();
+                                    $query =   $query->whereNotIn('users.sm_id', $datauser);
+                                }
+                            } elseif ($request->rbox_filter == 'spv') {
+                                if (isset($request->user_id)) {
+                                    $datauser = User::select(DB::raw('IF((users.parentuser_id is not null AND users.parentuser_id <> "0"), users.parentuser_id, users.id) as sm_id'))->whereIn('id', $request->user_id)->groupBy(DB::raw('1'))->get();
+                                    $query =   $query->whereNotIn('users.parentuser_id', $datauser);
+                                }
+                            } else {
+                                if (isset($request->user_id)) {
+                                    $query =   $query->whereNotIn('users.id', $request->user_id);
+                                }
+                            }
+                        });
+                    }
+                    $i++;
+                    //->whereIn('b.status', $defaultreload);
+                }
+            }
+            $dataExec = DB::table($data, 'c')
+                ->select(
+                    'c.customer_id',
+                    'c.user_id',
+                    'c.produk_id',
+                    'c.bank_id',
+                    'c.status',
+                    'c.distribusi_at',
+                    'c.fileexcel_id',
+                )
+                ->addSelect(DB::raw('row_number() over(partition by `c`.`fileexcel_id` order by `c`.`customer_id`) as rn'));
+            $dataExec2 = DB::table($dataExec, 'd')
+                ->select(
+                    'd.customer_id',
+                    'd.user_id',
+                    'd.produk_id',
+                    'd.bank_id',
+                    'd.status',
+                    'd.distribusi_at',
+                );
+            $z = 0;
+            $msglog2 = ' campaign ';
+            foreach ($arrayKode as $item) {
+                //echo $gTotal . '==' . $arrayKode[$z]->kode . '-----------' . $arrayKode[$z]->limit . 'aaaaa<br>';
+                if ($z == 0) {
+                    $msglog2 .= $item->kode;
+                    $totData = round(($item->limit / $gTotal) * $request->total);
+                    $dataExec2 = $dataExec2->where(function ($query)  use ($item, $totData) {
+                        $query->where('d.fileexcel_id', '=', $item->id)
+                            ->where('rn', '>=', '1')
+                            ->where('rn', '<=', $totData);
+                        //dd($totData);
+                    });
+                    $gTotal = $gTotal - $totData;
+                    $arrayKode[$z]->limit = ($item->limit - $totData) < 0 ? 0 : $item->limit - $totData;
+                } else {
+                    $msglog2 .= ',' . $item->kode;
+                    $totData = round(($item->limit / $gTotal) * $request->total);
+                    $dataExec2 = $dataExec2->orWhere(function ($query)  use ($item, $totData) {
+                        $query->where('d.fileexcel_id', '=', $item->id)
+                            ->where('rn', '>=', '1')
+                            ->where('rn', '<=', $totData);
+                        //dd($totData);
+                    });
+                    $gTotal = $gTotal - $totData;
+                    $arrayKode[$z]->limit = ($item->limit - $totData) < 0 ? 0 : $item->limit - $totData;
+                }
+                //echo $gTotal . '==' . $arrayKode[$z]->limit . '||||||||||||||' . $totData . '<br>';
+                $z++;
+            }
+            $dataExec2 = $dataExec2->get();
+            $insertData = [];
+            foreach ($dataExec2 as $item) {
+                # code...
+                $insertData[] = [
+                    'customer_id' => $item->customer_id,
+                    'user_id' => $item->user_id,
+                    'produk_id' => $item->produk_id,
+                    'bank_id' => $item->bank_id,
+                    'status' => $item->status,
+                    'distribusi_at' => $item->distribusi_at,
+                ];
+                DB::table('customers')
+                    ->where('id', $item->customer_id)
+                    ->update(['status' => 1, 'updated_at' => now()]);
+            }
+            //$distribusiInsert = $dataExec2->toArray();
+            // dd($insertData);
+            // exit;
+            Distribusi::insert($insertData);
+            $getUser = User::firstWhere('id', $user_id)->name;
+            $msg .= '
+        Sukses mendistribusi data kepada <span style="color:#00ff00;font-weight:600;">' . $getUser . '</span><br>
+        ';
+            $msglog = 'Sukses ' . $parammsg . ' data' . $msglog2 . ' provider ' . $request->provider . ' kepada ' . $getUser . '';
+
+            $logInsert = [
+                'tipe' => $request->tipe,
+                'kode' => $msglog2,
+                'provider' => $request->provider,
+                'nama_sales' => $getUser,
+                'deskripsi' => $msglog,
+                'total' => $request->total,
+                'user_id' => auth()->user()->id,
+                'created_at' => now(),
+            ];
+            Log_distribusi::create($logInsert);
+        }
+        return back()->with(['msg' => $msg]);
     }
     public function customerDistribusifrom(Request $request)
     {

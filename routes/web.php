@@ -66,6 +66,7 @@ Route::get('/customer/logdistribusi', [CustomerController::class, 'viewlogDistri
 Route::post('/customer/ajax/logdistribusi', [CustomerController::class, 'logDistribusi'])->middleware('auth');
 Route::get('/customer/distribusi2', [DistribusiController::class, 'customerDistribusi'])->middleware('auth');
 Route::post('/customer/ajax/fromnew', [DistribusiController::class, 'customersDistribusifrom_new'])->middleware('auth');
+Route::post('/customer/distribusi/prosesnew', [DistribusiController::class, 'customersDistribusiproses_new'])->middleware('auth');
 
 Route::get('/setting/reload', [ReloadController::class, 'viewCalltracking'])->middleware('auth');
 Route::post('/setting/reload/ajax', [ReloadController::class, 'ajaxRendercampaign'])->middleware('auth');

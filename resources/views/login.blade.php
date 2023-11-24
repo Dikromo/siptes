@@ -30,7 +30,7 @@
             <div class="card-body login-card-body">
                 <p class="login-box-msg">Sign in to start your session</p>
 
-                <form action="/login" method="post">
+                <form action="/login" method="post" id="formLogin">
                     @csrf
                     <div class="form-group">
                         <div class="input-group mb-3">
@@ -87,6 +87,15 @@
     <!-- AdminLTE App -->
     <script src="{{ asset('adminlte/dist/js/adminlte.min.js') }}"></script>
     <script>
+        var myBrowser = '{{ strtolower($browser) }}';
+        $('#formLogin').submit(function() {
+            if (myBrowser == 'chrome' || myBrowser == 'edge' || myBrowser == 'safari') {
+                return true;
+            } else {
+                alert('Mohon menggunakan browser CHROME, MS EDGE atau SAFARI.');
+                return false
+            }
+        });
         @if (Session::has('loginError'))
             // toastr.error('Gagal Login, Username dan password tidak sesuai!')
             $(document).Toasts('create', {
